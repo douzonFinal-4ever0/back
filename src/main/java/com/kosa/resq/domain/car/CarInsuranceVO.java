@@ -9,13 +9,11 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarVO {
+public class CarInsuranceVO {
+    private String ic_code;
     private String car_code;
-    private String car_name;
-    private String fuel_type;
-    private float fuel_effciency;
-    private float accum_mileage;
-    private String authority;
-    private Date buy_at;
-    private String memo;
+    private String manager;
+    private String manager_tel;
+    private Date join_at;
+    private Date expir_at;
 }
