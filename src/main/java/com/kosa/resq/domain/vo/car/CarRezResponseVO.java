@@ -4,17 +4,18 @@ import com.kosa.resq.domain.vo.common.MemVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarRezVO {
+@ToString
+public class CarRezResponseVO {
     private String car_rez_code;
     private Date rez_at;
     private String detail;
-    private String start_loc;
     private String end_loc;
     private float est_mileage;
     private String rez_status;
