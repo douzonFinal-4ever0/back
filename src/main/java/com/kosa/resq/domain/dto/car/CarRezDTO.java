@@ -1,4 +1,4 @@
-package com.kosa.resq.domain.car;
+package com.kosa.resq.domain.dto.car;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
