@@ -6,21 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CarRezDTO {
-    private String car_rez_code;
-    private String rez_at;
-    private String detail;
-    private float est_mileage;
-    private String rez_status;
-    private Date start_at;//대여일자
-    private Date return_at;
-    private Date updated_at;
+public class CarLocDTO {
+    private String loc_code;
+    private String loc_type;
+    private double latitude;
+    private double longitude;
+    private String address;
+    private CarRezDTO carRezDTO;
     private MemDTO memDTO;
     private CarDTO carDTO;
 }
