@@ -14,6 +14,6 @@ spring:
     password: Ownit1234567
 
 mybatis:
-  type-aliases-package: com.kosa.resq
+#  type-aliases-package: com.kosa.resq
   mapper-locations:  classpath:mapper/*/*.xml
 
