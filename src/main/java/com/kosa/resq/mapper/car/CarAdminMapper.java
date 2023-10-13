@@ -7,4 +7,5 @@ import java.util.Date;
 @Mapper
 public interface CarAdminMapper {
     public Date test();
+
 }

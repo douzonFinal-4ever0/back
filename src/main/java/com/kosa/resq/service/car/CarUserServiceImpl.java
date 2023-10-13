@@ -17,9 +17,6 @@ public class CarUserServiceImpl implements CarUserService{
     public CarRezResponseVO carRezSave(CarRezRequestVO carRezRequestVO) {//객체를 리턴하는 것 생각해보기
         String carRezCode="REZ"+mapper.carRezSeq();
         carRezRequestVO.setCar_rez_code(carRezCode);
-        if(mapper.carRezSave(carRezRequestVO)>0){
-            return ;
-        }
         return null;
     }
 }
