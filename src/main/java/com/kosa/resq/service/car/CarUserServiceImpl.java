@@ -4,13 +4,18 @@ package com.kosa.resq.service.car;
 import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
+import com.kosa.resq.domain.dto.car.CarDTO;
 import com.kosa.resq.domain.dto.car.CarLocDTO;
 import com.kosa.resq.domain.dto.car.CarRezDTO;
+import com.kosa.resq.domain.vo.car.CarLocRequestVO;
 import com.kosa.resq.domain.vo.car.CarRezRequestVO;
 import com.kosa.resq.domain.vo.car.CarRezResponseVO;
+import com.kosa.resq.domain.vo.car.CarVO;
 import com.kosa.resq.mapper.car.CarUserMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,16 +28,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CarUserServiceImpl implements CarUserService{
     @Autowired
     private CarUserMapper mapper;
 
-    public Float[] getJsonData(String roadFullAddr) {
+    //주소를 받으면 위도 경도를 출력해주는 메소드
+    public Float[] findGeoPoint(String roadFullAddr) {
         Float[] coordinate = new Float[2];
 
-        String authorization_key = "KakaoAK ef8c0ce6769c009d6a81fecdb782518b";
+        String authorization_key = "KakaoAK e062d70fee544f0d01fc99b263e7023b";
         String apiUrl = "https://dapi.kakao.com/v2/local/search/address.json";
         String jsonString = null;
 
@@ -81,38 +89,55 @@ public class CarUserServiceImpl implements CarUserService{
 
     @Transactional
     @Override
-    public CarRezDTO carRezInfoSave(CarRezDTO carRezDTO, CarLocDTO receiptLocDTO,CarLocDTO returnLocDTO,CarLocDTO destLocDTO) {
+    public CarRezDTO carRezInfoSave(CarRezDTO carRezDTO) {
         //예약 번호 생성
         int carRezCode=mapper.carRezSeq();
         carRezDTO.setCar_rez_code("REZ"+carRezCode);
-        //차량 위치 번호 생성
-        receiptLocDTO.setLoc_code("LOC"+mapper.carLocSeq());
-        returnLocDTO.setLoc_code("LOC"+mapper.carLocSeq());
-        destLocDTO.setLoc_code("LOC"+mapper.carLocSeq());
-        Float[] coords = geoCoding("대전광역시 유성구 궁동");
-        System.out.println("대전광역시 유성구 궁동" + ": ");
-        //위도 경도 설정
-//        Float[] coords =new Float[2];
-            //수령지
-//        coords=findGeoPoint(receiptLocDTO.getAddress());
-//        receiptLocDTO.setLatitude(coords[0]);
-//        receiptLocDTO.setLongitude(coords[1]);
-//        System.out.println(receiptLocDTO);
-//
-//            //반납지
-//        coords=findGeoPoint(returnLocDTO.getAddress());
-//        returnLocDTO.setLatitude(coords[0]);
-//        returnLocDTO.setLongitude(coords[1]);
-//            //목적지
-//        coords=findGeoPoint(destLocDTO.getAddress());
-//        destLocDTO.setLatitude(coords[0]);
-//        destLocDTO.setLongitude(coords[1]);
-        //save
-//        mapper.carRezSave(carRezDTO);
-//        mapper.carLocSave(receiptLocDTO);
-//        mapper.carLocSave(returnLocDTO);
-//        mapper.carLocSave(destLocDTO);
+
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
+        carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
+        carRezRequestVO.setRez_status("확정");
+
+        CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
+        String[] type = {"인수지","반납지","목적지"};
+        String[] place = {carRezDTO.getReceipt_loc(),carRezDTO.getReturn_loc(),carRezDTO.getDest_loc()};
+        int locCode=mapper.carLocSeq();
+        for(int i=0;i<carLocRequestVOs.length;i++){
+            CarLocRequestVO carLocRequestVO = new CarLocRequestVO();
+            locCode+=i;
+            carLocRequestVO.setLoc_code("LOC"+locCode);
+            //System.out.println(carLocRequestVO.getLoc_code());
+            carLocRequestVO.setLoc_type(type[i]);
+            carLocRequestVO.setAddress(place[i]);
+            carLocRequestVO.setCar_rez_code(carRezRequestVO.getCar_rez_code());
+            carLocRequestVO.setMem_code(carRezRequestVO.getMem_code());
+            carLocRequestVO.setCar_code(carRezRequestVO.getCar_code());
+            //위도 경도
+            Float[] coords =new Float[2];
+            coords=findGeoPoint(place[i]);
+            carLocRequestVO.setLatitude(coords[0]);
+            carLocRequestVO.setLongitude(coords[1]);
+            carLocRequestVOs[i]=carLocRequestVO;
+        }
+        System.out.println(carRezRequestVO);
+
+        mapper.carRezSave(carRezRequestVO);
+        mapper.carLocSave(carLocRequestVOs[0]);
+        mapper.carLocSave(carLocRequestVOs[1]);
+        mapper.carLocSave(carLocRequestVOs[2]);
 
         return carRezDTO;
+    }
+
+    @Override
+    public List<CarDTO> carGetAll() {
+        List<CarVO> carList=mapper.carGetAll();
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        List<CarDTO> carDTOList = carList.stream().map(c->mapper2.map(c,CarDTO.class)).
+                collect(Collectors.toList());
+        return carDTOList;
     }
 }

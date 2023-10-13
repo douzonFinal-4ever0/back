@@ -3,7 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.car.CarUserMapper">
-    <resultMap id="carRezMap" type="com.kosa.resq.domain.dto.car.CarRezDTO">
+
+    <resultMap id="carRezMap" type="com.kosa.resq.domain.vo.car.CarRezResponseVO">
         <id property="car_rez_code" column="car_rez_code"/>
         <result property="car_rez_code" column="car_rez_code"/>
         <result property="rez_at" column="rez_at"/>
@@ -15,7 +16,7 @@
         <collection property="memDTO" resultMap="memMap"/>
         <collection property="carDTO" resultMap="carMap"/>
     </resultMap>
-    <resultMap id="memMap" type="com.kosa.resq.domain.dto.common.MemDTO">
+    <resultMap id="memMap" type="com.kosa.resq.domain.vo.common.MemResponseVO">
         <id property="mem_code" column="mem_code"/>
         <result property="mem_code" column="mem_code"/>
         <result property="position_name" column="position_name"/>
@@ -31,7 +32,7 @@
         <result property="profile_img_url" column="profile_img_url"/>
         <collection property="deptDTO" resultMap="deptMap"/>
     </resultMap>
-    <resultMap id="deptMap" type="com.kosa.resq.domain.dto.common.DeptDTO">
+    <resultMap id="deptMap" type="com.kosa.resq.domain.vo.common.DeptVO">
         <id property="dept_code" column="dept_code"/>
         <result property="dept_code" column="dept_code"/>
         <result property="dept_name" column="dept_name"/>
@@ -39,7 +40,7 @@
         <result property="dept_head_code" column="dept_head_code"/>
         <result property="location" column="location"/>
     </resultMap>
-    <resultMap id="carMap" type="com.kosa.resq.domain.dto.car.CarDTO">
+    <resultMap id="carMap" type="com.kosa.resq.domain.vo.car.CarVO">
         <id property="car_code" column="car_code"/>
         <result property="car_code" column="car_code"/>
         <result property="car_name" column="car_name"/>
@@ -50,7 +51,7 @@
         <result property="memo" column="memo"/>
         <result property="created_at" column="created_at"/>
     </resultMap>
-    <resultMap id="carLocMap" type="com.kosa.resq.domain.dto.car.CarLocDTO">
+    <resultMap id="carLocMap" type="com.kosa.resq.domain.vo.car.CarLocResponseVO">
         <id property="loc_code" column="loc_code"/>
         <result property="loc_code" column="loc_code"/>
         <result property="loc_type" column="loc_type"/>
@@ -63,7 +64,7 @@
     <select id="carRezSeq" resultType="Integer">
         select car_rez_seq.nextval from dual
     </select>
-    <insert id="carRezSave" parameterType="com.kosa.resq.domain.dto.car.CarRezDTO">
+    <insert id="carRezSave" parameterType="com.kosa.resq.domain.vo.car.CarRezRequestVO">
         insert into car_rez (
                              car_rez_code,rez_at,detail,est_mileage,rez_status,
                              start_at,return_at,updated_at,mem_code,car_code
@@ -75,7 +76,7 @@
     <select id="carLocSeq" resultType="Integer">
         select car_loc_seq.nextval from dual
     </select>
-    <insert id="carLocSave" parameterType="com.kosa.resq.domain.dto.car.CarLocDTO">
+    <insert id="carLocSave" parameterType="com.kosa.resq.domain.vo.car.CarLocRequestVO">
         insert into car_loc(
                             loc_code,loc_type,latitude,longitude,address,car_rez_code,mem_code,car_code
         ) values (
@@ -83,5 +84,9 @@
                   #{car_rez_code},#{mem_code},#{car_code}
                          )
     </insert>
+
+    <select id="carGetAll" resultType="com.kosa.resq.domain.vo.car.CarVO">
+        select * from car where authority='모두'and status='사용가능'
+    </select>
 
 </mapper>

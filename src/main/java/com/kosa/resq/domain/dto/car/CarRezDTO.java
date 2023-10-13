@@ -23,4 +23,7 @@ public class CarRezDTO {
     private Date updated_at;
     private MemDTO memDTO;
     private CarDTO carDTO;
+    private String receipt_loc;//인수장소
+    private String return_loc;//반납장소
+    private String dest_loc;//목적지
 }
