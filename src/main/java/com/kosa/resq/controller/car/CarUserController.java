@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.CarDTO;
+import com.kosa.resq.domain.dto.car.CarDetailDTO;
 import com.kosa.resq.domain.dto.car.CarLocDTO;
 import com.kosa.resq.domain.dto.car.CarRezDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
@@ -27,13 +28,20 @@ public class CarUserController {
 
     @PostMapping("/rezSave")
     public ResponseEntity<CarRezDTO> carRezInfoSave(@RequestBody CarRezDTO carRezDTO){
+
+        System.out.println(carRezDTO);
         CarRezDTO result=service.carRezInfoSave(carRezDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @GetMapping("/availableCars")
-    public List<CarDTO> availableCarGetAll(){
+    public List<CarDetailDTO> availableCarGetAll(){
         return service.carGetAll();
+    }
+
+    @GetMapping("/carDetail/{car_code}")
+    public CarDetailDTO carDetailGetOne(@PathVariable String car_code){
+        return service.carGetOne(car_code);
     }
 }

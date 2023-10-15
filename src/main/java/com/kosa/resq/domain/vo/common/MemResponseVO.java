@@ -26,5 +26,5 @@ public class MemResponseVO {
     private String tel;
     private int is_worked;
     private String profile_img_url;
-    private DeptDTO deptDTO;
+    private DeptVO deptVO;
 }

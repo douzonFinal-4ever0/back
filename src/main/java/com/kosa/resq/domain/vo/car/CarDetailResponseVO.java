@@ -1,0 +1,23 @@
+package com.kosa.resq.domain.vo.car;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.Date;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class CarDetailResponseVO {
+    private CarVO carVO;
+    private float fuel_effciency;
+    private float accum_mileage;
+    private String car_status;
+    private Date updated_at;
+    private double car_latitude;
+    private double car_longitude;
+    private String car_address;
+}

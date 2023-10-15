@@ -5,12 +5,10 @@ import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
 import com.kosa.resq.domain.dto.car.CarDTO;
+import com.kosa.resq.domain.dto.car.CarDetailDTO;
 import com.kosa.resq.domain.dto.car.CarLocDTO;
 import com.kosa.resq.domain.dto.car.CarRezDTO;
-import com.kosa.resq.domain.vo.car.CarLocRequestVO;
-import com.kosa.resq.domain.vo.car.CarRezRequestVO;
-import com.kosa.resq.domain.vo.car.CarRezResponseVO;
-import com.kosa.resq.domain.vo.car.CarVO;
+import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.mapper.car.CarUserMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -87,6 +85,7 @@ public class CarUserServiceImpl implements CarUserService{
         return coordinate;
     }
 
+
     @Transactional
     @Override
     public CarRezDTO carRezInfoSave(CarRezDTO carRezDTO) {
@@ -103,6 +102,10 @@ public class CarUserServiceImpl implements CarUserService{
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
         String[] type = {"인수지","반납지","목적지"};
         String[] place = {carRezDTO.getReceipt_loc(),carRezDTO.getReturn_loc(),carRezDTO.getDest_loc()};
+        Float[] f=findGeoPoint(carRezDTO.getReceipt_loc());
+        System.out.println(place[0]);
+        System.out.println(place[1]);
+        System.out.println(place[2]);
         int locCode=mapper.carLocSeq();
         for(int i=0;i<carLocRequestVOs.length;i++){
             CarLocRequestVO carLocRequestVO = new CarLocRequestVO();
@@ -117,6 +120,8 @@ public class CarUserServiceImpl implements CarUserService{
             //위도 경도
             Float[] coords =new Float[2];
             coords=findGeoPoint(place[i]);
+            System.out.println(coords[0]);
+            System.out.println(coords[1]);
             carLocRequestVO.setLatitude(coords[0]);
             carLocRequestVO.setLongitude(coords[1]);
             carLocRequestVOs[i]=carLocRequestVO;
@@ -132,12 +137,21 @@ public class CarUserServiceImpl implements CarUserService{
     }
 
     @Override
-    public List<CarDTO> carGetAll() {
-        List<CarVO> carList=mapper.carGetAll();
+    public List<CarDetailDTO> carGetAll() {
+        List<CarDetailResponseVO> carList=mapper.carGetAll();
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-        List<CarDTO> carDTOList = carList.stream().map(c->mapper2.map(c,CarDTO.class)).
+        List<CarDetailDTO> carDetailDTOList = carList.stream().map(c->mapper2.map(c,CarDetailDTO.class)).
                 collect(Collectors.toList());
-        return carDTOList;
+        return carDetailDTOList;
+    }
+
+    @Override
+    public CarDetailDTO carGetOne(String car_code) {
+        CarDetailResponseVO carDetailResponseVO = mapper.carGetOne(car_code);
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        CarDetailDTO carDetailDTO = mapper2.map(carDetailResponseVO,CarDetailDTO.class);
+        return carDetailDTO;
     }
 }

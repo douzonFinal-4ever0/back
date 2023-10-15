@@ -15,8 +15,6 @@ class CarUserMapperTest {
     private CarUserMapper mapper;
     @Test
     void carRezSave() {
-        CarRezDTO carRezDTO= new CarRezDTO();
-
-        //mapper.carRezSave(carRezDTO);
+        System.out.println(mapper.carGetAll());
     }
 }
