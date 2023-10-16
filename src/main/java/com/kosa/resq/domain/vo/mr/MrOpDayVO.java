@@ -8,5 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MrOpDayVO {
-    public String mr_code;
+    private int day;
+    private String op_day_code;
+//    private List<MrDTO> mrDTO;
 }
