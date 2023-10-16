@@ -12,9 +12,5 @@ public class CarAdminMapperTest {
     @Autowired
     private CarAdminMapper mapper;
 
-    @Test
-    public void test(){
-        System.out.println(mapper.test());
-    }
 
 }

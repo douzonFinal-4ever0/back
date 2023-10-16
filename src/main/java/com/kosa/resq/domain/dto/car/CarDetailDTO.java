@@ -1,0 +1,21 @@
+package com.kosa.resq.domain.dto.car;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CarDetailDTO {
+    private String car_code;
+    private int fuel_effciency;
+    private int accum_mileage;
+    private String car_status;
+    private Date updated_at;
+    private int car_latitude;
+    private int car_longitude;
+    private String car_address;
+}

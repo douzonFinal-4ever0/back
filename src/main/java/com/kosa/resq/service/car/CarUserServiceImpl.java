@@ -89,7 +89,7 @@ public class CarUserServiceImpl implements CarUserService{
         receiptLocDTO.setLoc_code("LOC"+mapper.carLocSeq());
         returnLocDTO.setLoc_code("LOC"+mapper.carLocSeq());
         destLocDTO.setLoc_code("LOC"+mapper.carLocSeq());
-        Float[] coords = geoCoding("대전광역시 유성구 궁동");
+//        Float[] coords = geoCoding("대전광역시 유성구 궁동");
         System.out.println("대전광역시 유성구 궁동" + ": ");
         //위도 경도 설정
 //        Float[] coords =new Float[2];

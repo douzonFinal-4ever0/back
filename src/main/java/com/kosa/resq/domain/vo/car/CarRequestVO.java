@@ -1,9 +1,6 @@
-package com.kosa.resq.domain.dto.car;
+package com.kosa.resq.domain.vo.car;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,7 +8,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CarDTO {
+public class CarRequestVO {
     private String car_code;
     private String car_name;
     private String type;
@@ -20,5 +17,4 @@ public class CarDTO {
     private Date buy_at;
     private String memo;
     private String status;
-    private CarDetailDTO carDetail;
 }
