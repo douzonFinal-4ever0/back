@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MemResponseVO {
+public class MemResquestVO {
     private String mem_code;
     private String position_name;
     private String name;
@@ -26,5 +26,5 @@ public class MemResponseVO {
     private String tel;
     private int is_worked;
     private String profile_img_url;
-    private DeptVO deptVO;
+    private String dept_code;
 }
