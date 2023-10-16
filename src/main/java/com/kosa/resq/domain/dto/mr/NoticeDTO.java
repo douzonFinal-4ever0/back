@@ -16,5 +16,6 @@ public class NoticeDTO {
     private String deleted_at;
     private String contents;
     private int is_opened;
+    private String notice_title;
     private List<NoticeFileDTO> notice_file;
 }
