@@ -1,11 +1,9 @@
 package com.kosa.resq.controller.mr;
 
-import com.kosa.resq.domain.dto.mr.MrDTO;
-import com.kosa.resq.domain.dto.mr.MrKeyWordDTO;
-import com.kosa.resq.domain.dto.mr.MrRezDTO;
-import com.kosa.resq.domain.dto.mr.NoticeDTO;
+import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.service.mr.MrAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,5 +36,17 @@ public class MrAdminController {
     @PostMapping("/notice")
     public void addNotice(@RequestBody NoticeDTO notice) {
         service.addNotice(notice);
+    }
+
+    @PostMapping("/mrRegister")
+//    @Transactional
+    public void addMr(@RequestBody MrDTO mr) {
+//        service.addMr(mr);
+        List<MrKeyWordDTO> keyword = mr.getMr_keyword();
+        for (int i = 0; i < keyword.size(); i++) {
+            System.out.println("keyWordName : " + keyword.get(i).getKeyword_name());
+        }
+        List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
+//        System.out.println("mpOpDay : "+mrOpDay[0]);
     }
 }
