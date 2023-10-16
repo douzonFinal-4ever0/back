@@ -3,8 +3,33 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.car.CarAdminMapper">
-<!--    <select id="test">-->
-<!--        select sysdate-->
-<!--        from dual-->
-<!--    </select>-->
+
+    <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
+        INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at, status)
+        VALUES (#{car_code}, #{car_name}, #{type}, #{fuel_type}, #{authority}, LOCALTIMESTAMP, #{memo}, LOCALTIMESTAMP,
+                #{status})
+    </insert>
+
+<!--    <resultMap id="carResultMap" type="com.kosa.resq.domain.vo.car.CarResponseVO">-->
+<!--        <id property="car_code" column="car_code" />-->
+<!--        <result property="car_name" column="raw_type" />-->
+<!--        <result property="memo" column="memo" />-->
+<!--        <result property="unit" column="unit" />-->
+<!--        <result property="standard_quantity" column="standard_quantity" />-->
+<!--        <result property="origin" column="origin" />-->
+<!--        <association property="item" resultMap="itemMap"/>-->
+<!--    </resultMap>-->
+
+    <!--    차량 정보 리스트-->
+    <select id="carGetAll" resultType="com.kosa.resq.domain.vo.car.CarResponseVO">
+        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo
+        FROM car c1
+                 LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
+                 LEFT JOIN operation o ON o.car_code = c1.car_code
+                 LEFT JOIN (SELECT car_code, MAX(created_at) AS max_created_at
+                            FROM operation
+                            GROUP BY car_code) latest_operation
+                           ON o.car_code = latest_operation.car_code AND o.created_at = latest_operation.max_created_at
+    </select>
+
 </mapper>
