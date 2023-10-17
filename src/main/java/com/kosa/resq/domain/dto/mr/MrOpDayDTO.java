@@ -13,5 +13,5 @@ import java.util.List;
 public class MrOpDayDTO {
     private int day;
     private String op_day_code;
-//    private List<MrDTO> mrDTO;
+    private String mr_code;
 }

@@ -92,9 +92,9 @@
     </select>
     
     <insert id="addNotice">
-        insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED)
+        insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
         values ('N' || LPAD(TO_CHAR(notice_code_seq.NEXTVAL), 3, '0'), 'MEM001', localtimestamp, localtimestamp, null,
-                #{contents}, #{is_opened})
+                #{contents}, #{is_opened},#{notice_title})
     </insert>
 
     <insert id="addMr">
@@ -102,17 +102,24 @@
                         AVL_START_TIME, AVL_END_TIME,
                         IS_OPENED, IS_USED, MR_TYPE,
                         CREATED_AT, UPDATED_AT, DELETED_AT)
-        values ('R' || LPAD(TO_CHAR(MR_CODE_SEQ.NEXTVAL), 3, '0'), #{mr_name}, #{maximum_capacity}, #{location},
+        <selectKey keyProperty="mr_code" order="BEFORE"
+                   resultType="String">
+            select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        values (#{mr_code}, #{mr_name}, #{maximum_capacity}, #{location},
                 TO_TIMESTAMP(to_char(localtimestamp, 'YYYY-MM-DD') || ' 09:00:00'),
                 TO_TIMESTAMP(to_char(localtimestamp + INTERVAL '99' YEAR, 'YYYY-MM-DD') || ' 21:00:00'),
-                0, 0, #{mr_type}, localtimestamp, localtimestamp, null);
+                0, 0, #{mr_type}, localtimestamp, localtimestamp, null)
     </insert>
+
     <insert id="mrAvailableDay">
         insert into MR_OP_DAY (MR_CODE, DAY, OP_DAY_CODE)
-        values (#{mr_code}, #{day}, MR_OP_DAY_SEQ.nextval);
+        values (#{mr_code}, #{day}, MR_OP_DAY_SEQ.nextval)
     </insert>
+
     <insert id="addMrKeyword">
         insert into MR_KEYWORD (KEYWORD_CODE, MR_CODE, KEYWORD_NAME)
-        values (MR_KEYWORD_SEQ.nextval, #{mr_code}, #{keyword_name});
+        values (MR_KEYWORD_SEQ.nextval, #{mr_code}, #{keyword_name})
     </insert>
+
 </mapper>

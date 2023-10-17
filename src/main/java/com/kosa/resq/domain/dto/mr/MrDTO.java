@@ -4,6 +4,7 @@ import com.kosa.resq.domain.vo.mr.MrOpDayVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class MrDTO {
     private String mr_code;
     private String mr_name;
