@@ -24,6 +24,7 @@
     <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.dto.mr.MrKeyWordDTO">
         <id property="keyword_code" column="keyword_code"/>
         <result property="keyword_name" column="keyword_name"/>
+        <result property="mr_code" column="mr_code"/>
     </resultMap>
     
     <resultMap id="mr_imgMap" type="com.kosa.resq.domain.dto.mr.MrImgDTO">
@@ -34,6 +35,7 @@
     <resultMap id="mr_op_dayMap" type="com.kosa.resq.domain.dto.mr.MrOpDayDTO">
         <id property="op_day_code" column="op_day_code"/>
         <result property="day" column="day"/>
+        <result property="mr_code" column="mr_code"/>
     </resultMap>
     
     <resultMap id="mr_rezMap" type="com.kosa.resq.domain.dto.mr.MrRezDTO">
@@ -58,6 +60,7 @@
         <result property="deleted_at" column="deleted_at"/>
         <result property="contents" column="contents"/>
         <result property="is_opened" column="is_opened"/>
+        <result property="notice_title" column="notice_title"/>
         <collection property="notice_file" resultMap="notice_fileMap"/>
     </resultMap>
 
