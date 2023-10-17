@@ -4,10 +4,7 @@ package com.kosa.resq.service.car;
 import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
-import com.kosa.resq.domain.dto.car.CarDTO;
-import com.kosa.resq.domain.dto.car.CarDetailDTO;
-import com.kosa.resq.domain.dto.car.CarLocDTO;
-import com.kosa.resq.domain.dto.car.CarRezDTO;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.mapper.car.CarUserMapper;
 import org.json.JSONArray;
@@ -132,26 +129,25 @@ public class CarUserServiceImpl implements CarUserService{
         mapper.carLocSave(carLocRequestVOs[0]);
         mapper.carLocSave(carLocRequestVOs[1]);
         mapper.carLocSave(carLocRequestVOs[2]);
-
         return carRezDTO;
     }
 
     @Override
-    public List<CarDetailDTO> carGetAll() {
+    public List<CarDetailDTO2> carGetAll() {
         List<CarDetailResponseVO> carList=mapper.carGetAll();
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-        List<CarDetailDTO> carDetailDTOList = carList.stream().map(c->mapper2.map(c,CarDetailDTO.class)).
+        List<CarDetailDTO2> carDetailDTOList = carList.stream().map(c->mapper2.map(c,CarDetailDTO2.class)).
                 collect(Collectors.toList());
         return carDetailDTOList;
     }
 
     @Override
-    public CarDetailDTO carGetOne(String car_code) {
+    public CarDetailDTO2 carGetOne(String car_code) {
         CarDetailResponseVO carDetailResponseVO = mapper.carGetOne(car_code);
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-        CarDetailDTO carDetailDTO = mapper2.map(carDetailResponseVO,CarDetailDTO.class);
+        CarDetailDTO2 carDetailDTO = mapper2.map(carDetailResponseVO,CarDetailDTO2.class);
         return carDetailDTO;
     }
 }

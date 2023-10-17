@@ -22,5 +22,5 @@ public class CarRezResponseVO {
     private Date return_at;
     private Date updated_at;
     private MemResponseVO memResponseVO;
-    private CarRequestVO carVO;
+    private CarVO carVO;
 }

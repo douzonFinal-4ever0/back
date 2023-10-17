@@ -1,9 +1,6 @@
 package com.kosa.resq.service.mr;
 
-import com.kosa.resq.domain.dto.mr.MrDTO;
-import com.kosa.resq.domain.dto.mr.MrKeyWordDTO;
-import com.kosa.resq.domain.dto.mr.MrRezDTO;
-import com.kosa.resq.domain.dto.mr.NoticeDTO;
+import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.mapper.mr.MrAdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +15,7 @@ public class MrAdminServiceImpl implements MrAdminService {
     public List<MrDTO> mrList() {
         return mapper.mrList();
     }
+    @Override
     public List<MrRezDTO> mrRez() {
         return mapper.mrRez();
     }
@@ -30,6 +28,21 @@ public class MrAdminServiceImpl implements MrAdminService {
     @Override
     public void addNotice(NoticeDTO notice) {
         mapper.addNotice(notice);
+    }
+
+    @Override
+    public void addMr(MrDTO mr) {
+        mapper.addMr(mr);
+    }
+
+    @Override
+    public void mrAvailableDay(MrOpDayDTO mrOpDay) {
+        mapper.mrAvailableDay(mrOpDay);
+    }
+
+    @Override
+    public void addMrKeyword(MrKeyWordDTO mrKeyWord) {
+        mapper.addMrKeyword(mrKeyWord);
     }
 
 }
