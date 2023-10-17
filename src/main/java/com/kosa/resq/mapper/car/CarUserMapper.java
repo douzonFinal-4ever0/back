@@ -16,4 +16,5 @@ public interface CarUserMapper {
     public int carLocSeq();
     public List<CarDetailResponseVO> carGetAll();
     public CarDetailResponseVO carGetOne(String car_code);
+    public CarRezResponseVO carRezGetOne(String car_rez_code);
 }

@@ -107,4 +107,9 @@
     <select id="memGetOne" resultMap="memMap">
         select * from mem m join dept d on m.dept_code=d.dept_code where m.mem_code=#{mem_code}
     </select>
+    <select id="carRezGetOne" resultMap="carRezMap">
+        select * from car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
+            join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
+        where r.car_rez_code = #{car_rez_code}
+    </select>
 </mapper>
