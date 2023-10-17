@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.CarDTO;
+import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.CarRequestVO;
 import com.kosa.resq.domain.vo.car.CarResponseVO;
 import com.kosa.resq.service.car.CarAdminService;
@@ -30,6 +31,12 @@ public class CarAdminController {
 
         log.info(carRequestVO.toString());
         carAdminService.carSave(carRequestVO);
+    }
+
+    // 사용자 리스트 조회
+    @GetMapping("/memList")
+    public List<MemDTO> memGetAll() {
+        return carAdminService.memGetAll();
     }
 
     // 차량 조회 - 리스트

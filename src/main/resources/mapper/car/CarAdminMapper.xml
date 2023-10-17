@@ -32,4 +32,8 @@
                            ON o.car_code = latest_operation.car_code AND o.created_at = latest_operation.max_created_at
     </select>
 
+    <select id="memGetAll" resultType="com.kosa.resq.domain.vo.common.MemResponseVO">
+        SELECT mem_code, dept_code, position_name, name, email, role, hired_at, created_at, address, tel, is_worked, profile_img_url FROM mem
+    </select>
+
 </mapper>
