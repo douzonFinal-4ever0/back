@@ -75,6 +75,9 @@
         select car_rez_seq.nextval from dual
     </select>
     <insert id="carRezSave" parameterType="com.kosa.resq.domain.vo.car.CarRezRequestVO">
+<!--        <selectKey keyProperty="car_rez_code" order="BEFORE" resultType="String">-->
+<!--            select 'REZ'||car_rez_seq.nextval from dual-->
+<!--        </selectKey>-->
         insert into car_rez (
                              car_rez_code,rez_at,detail,est_mileage,rez_status,
                              start_at,return_at,updated_at,mem_code,car_code
@@ -87,6 +90,9 @@
         select car_loc_seq.nextval from dual
     </select>
     <insert id="carLocSave" parameterType="com.kosa.resq.domain.vo.car.CarLocRequestVO">
+<!--        <selectKey keyProperty="loc_code" order="BEFORE" resultType="String">-->
+<!--            select 'LOC'||car_loc_seq.nextval from dual-->
+<!--        </selectKey>-->
         insert into car_loc(
                             loc_code,loc_type,latitude,longitude,address,car_rez_code,mem_code,car_code
         ) values (
@@ -97,7 +103,7 @@
 
     <select id="carGetAll" resultMap="carDetailMap">
         select c.car_code, c.car_name, d.car_address from car c join car_detail d on c.car_code=d.car_code
-        where authority='모두'and status='사용가능'
+        where authority='모두'and car_status='사용가능'
     </select>
 
     <select id="carGetOne" resultMap="carDetailMap">
@@ -111,5 +117,8 @@
         select * from car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
             join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
         where r.car_rez_code = #{car_rez_code}
+    </select>
+    <select id="carLocInfoGetAll">
+        select * from car_loc where car_rez_code=#{car_rez_code}
     </select>
 </mapper>
