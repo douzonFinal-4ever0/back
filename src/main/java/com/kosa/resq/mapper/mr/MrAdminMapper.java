@@ -7,11 +7,11 @@ import java.util.List;
 
 @Mapper
 public interface MrAdminMapper {
-    public List<MrDTO> mrList();
-    public List<MrRezDTO> mrRez();
-    public List<NoticeDTO> noticeList();
-    public void addNotice(NoticeDTO notice);
-    public void addMr(MrDTO mr);
-    public void mrAvailableDay(MrOpDayDTO mrOpDay);
-    public void addMrKeyword(MrKeyWordDTO mrKeyWord);
+    public List<MrDTO> mrGetAll();
+    public List<MrRezDTO> mrRezGetAll();
+    public List<NoticeDTO> noticeGetAll();
+    public void noticeSave(NoticeDTO notice);
+    public void mrSave(MrDTO mr);
+    public void mrAvailableDaySave(MrOpDayDTO mrOpDay);
+    public void mrKeywordSave(MrKeyWordDTO mrKeyWord);
 }
