@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +20,6 @@ public class CarDTO {
     private Date buy_at;
     private String memo;
     private CarDetailDTO carDetail;
+    private CarUserDTO carUser;
+
 }
