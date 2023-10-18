@@ -45,4 +45,9 @@ public class MrAdminServiceImpl implements MrAdminService {
         mapper.mrKeywordSave(mrKeyWord);
     }
 
+    @Override
+    public void mrUpdate(MrDTO mr) {
+        mapper.mrUpdate(mr);
+    }
+
 }

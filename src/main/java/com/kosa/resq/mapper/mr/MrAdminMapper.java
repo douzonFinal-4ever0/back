@@ -14,4 +14,5 @@ public interface MrAdminMapper {
     public void mrSave(MrDTO mr);
     public void mrAvailableDaySave(MrOpDayDTO mrOpDay);
     public void mrKeywordSave(MrKeyWordDTO mrKeyWord);
+    public void mrUpdate(MrDTO mr);
 }
