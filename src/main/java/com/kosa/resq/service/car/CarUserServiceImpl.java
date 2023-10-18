@@ -85,7 +85,7 @@ public class CarUserServiceImpl implements CarUserService{
 
     @Transactional
     @Override
-    public CarRezDTO carRezInfoSave(CarRezDTO carRezDTO) {
+    public CarRezDTO2 carRezInfoSave(CarRezDTO carRezDTO) {
         //예약 번호 생성
         int carRezCode=mapper.carRezSeq();
         carRezDTO.setCar_rez_code("REZ"+carRezCode);
@@ -108,7 +108,7 @@ public class CarUserServiceImpl implements CarUserService{
             CarLocRequestVO carLocRequestVO = new CarLocRequestVO();
             locCode+=i;
             carLocRequestVO.setLoc_code("LOC"+locCode);
-            //System.out.println(carLocRequestVO.getLoc_code());
+            System.out.println(carLocRequestVO.getLoc_code());
             carLocRequestVO.setLoc_type(type[i]);
             carLocRequestVO.setAddress(place[i]);
             carLocRequestVO.setCar_rez_code(carRezRequestVO.getCar_rez_code());
@@ -119,8 +119,8 @@ public class CarUserServiceImpl implements CarUserService{
             coords=findGeoPoint(place[i]);
             System.out.println(coords[0]);
             System.out.println(coords[1]);
-            carLocRequestVO.setLatitude(coords[0]);
-            carLocRequestVO.setLongitude(coords[1]);
+            carLocRequestVO.setLatitude(coords[1]);
+            carLocRequestVO.setLongitude(coords[0]);
             carLocRequestVOs[i]=carLocRequestVO;
         }
         System.out.println(carRezRequestVO);
@@ -129,7 +129,10 @@ public class CarUserServiceImpl implements CarUserService{
         mapper.carLocSave(carLocRequestVOs[0]);
         mapper.carLocSave(carLocRequestVOs[1]);
         mapper.carLocSave(carLocRequestVOs[2]);
-        return carRezDTO;
+        CarRezResponseVO carRezResponseVO=mapper.carRezGetOne(carRezDTO.getCar_rez_code());
+        CarRezDTO2 carRezDTO2 = mapper2.map(carRezResponseVO,CarRezDTO2.class);
+        carRezDTO2.setCarLoc(carLocInfoGetAll(carRezDTO.getCar_rez_code()));
+        return carRezDTO2;
     }
 
     @Override
@@ -149,5 +152,15 @@ public class CarUserServiceImpl implements CarUserService{
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         CarDetailDTO2 carDetailDTO = mapper2.map(carDetailResponseVO,CarDetailDTO2.class);
         return carDetailDTO;
+    }
+
+    @Override
+    public List<CarLocDTO> carLocInfoGetAll(String car_rez_code) {
+        List<CarLocResponseVO> carLocList=mapper.carLocInfoGetAll(car_rez_code);
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        List<CarLocDTO> carDetailDTOList = carLocList.stream().map(c->mapper2.map(c,CarLocDTO.class)).
+                collect(Collectors.toList());
+        return carDetailDTOList;
     }
 }
