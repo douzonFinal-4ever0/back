@@ -19,34 +19,44 @@ public class MrAdminController {
     }
 
     @GetMapping("/mrList")
-    public List<MrDTO> mrList() {
-        return service.mrList();
+    public List<MrDTO> mrGetAll() {
+        return service.mrGetAll();
     }
 
     @GetMapping("/mrRez")
-    public List<MrRezDTO> mrRez() {
-        return service.mrRez();
+    public List<MrRezDTO> mrRezGetAll() {
+        return service.mrRezGetAll();
     }
 
     @GetMapping("/notice")
-    public List<NoticeDTO> noticeList() {
-        return service.noticeList();
+    public List<NoticeDTO> noticeGetAll() {
+        return service.noticeGetAll();
     }
 
     @PostMapping("/notice")
-    public void addNotice(@RequestBody NoticeDTO notice) {
-        service.addNotice(notice);
+    public void noticeSave(@RequestBody NoticeDTO notice) {
+        service.noticeSave(notice);
     }
 
     @PostMapping("/mrRegister")
-//    @Transactional
-    public void addMr(@RequestBody MrDTO mr) {
-//        service.addMr(mr);
+    @Transactional
+    public void mrSave(@RequestBody MrDTO mr) {
         List<MrKeyWordDTO> keyword = mr.getMr_keyword();
-        for (int i = 0; i < keyword.size(); i++) {
-            System.out.println("keyWordName : " + keyword.get(i).getKeyword_name());
-        }
         List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
-//        System.out.println("mpOpDay : "+mrOpDay[0]);
+
+        // 먼저 MR 정보를 저장하고 mr_code를 가져옴
+        service.mrSave(mr);
+        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
+
+        // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
+        for (MrKeyWordDTO keywordDTO : keyword) {
+            keywordDTO.setMr_code(mrCode);
+            service.mrKeywordSave(keywordDTO);
+        }
+
+        for (MrOpDayDTO opDayDTO : mrOpDay) {
+            opDayDTO.setMr_code(mrCode);
+            service.mrAvailableDaySave(opDayDTO);
+        }
     }
 }

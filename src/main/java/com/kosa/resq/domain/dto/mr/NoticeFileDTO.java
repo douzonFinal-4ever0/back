@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class NoticeFileDTO {
     private String img_code;
     private String url;
+    private String mr_code;
 }

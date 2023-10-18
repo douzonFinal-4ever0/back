@@ -12,37 +12,37 @@ public class MrAdminServiceImpl implements MrAdminService {
     @Autowired
     private MrAdminMapper mapper;
     @Override
-    public List<MrDTO> mrList() {
-        return mapper.mrList();
+    public List<MrDTO> mrGetAll() {
+        return mapper.mrGetAll();
     }
     @Override
-    public List<MrRezDTO> mrRez() {
-        return mapper.mrRez();
-    }
-
-    @Override
-    public List<NoticeDTO> noticeList() {
-        return mapper.noticeList();
+    public List<MrRezDTO> mrRezGetAll() {
+        return mapper.mrRezGetAll();
     }
 
     @Override
-    public void addNotice(NoticeDTO notice) {
-        mapper.addNotice(notice);
+    public List<NoticeDTO> noticeGetAll() {
+        return mapper.noticeGetAll();
     }
 
     @Override
-    public void addMr(MrDTO mr) {
-        mapper.addMr(mr);
+    public void noticeSave(NoticeDTO notice) {
+        mapper.noticeSave(notice);
     }
 
     @Override
-    public void mrAvailableDay(MrOpDayDTO mrOpDay) {
-        mapper.mrAvailableDay(mrOpDay);
+    public void mrSave(MrDTO mr) {
+        mapper.mrSave(mr);
     }
 
     @Override
-    public void addMrKeyword(MrKeyWordDTO mrKeyWord) {
-        mapper.addMrKeyword(mrKeyWord);
+    public void mrAvailableDaySave(MrOpDayDTO mrOpDay) {
+        mapper.mrAvailableDaySave(mrOpDay);
+    }
+
+    @Override
+    public void mrKeywordSave(MrKeyWordDTO mrKeyWord) {
+        mapper.mrKeywordSave(mrKeyWord);
     }
 
 }
