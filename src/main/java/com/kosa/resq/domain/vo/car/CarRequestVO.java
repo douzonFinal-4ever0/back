@@ -16,5 +16,4 @@ public class CarRequestVO {
     private String authority;
     private Date buy_at;
     private String memo;
-    private String status;
 }
