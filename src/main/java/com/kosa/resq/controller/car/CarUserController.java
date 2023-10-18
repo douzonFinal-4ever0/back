@@ -24,10 +24,10 @@ public class CarUserController {
     private CarUserService service;
 
     @PostMapping("/rezSave")
-    public ResponseEntity<CarRezDTO> carRezInfoSave(@RequestBody CarRezDTO carRezDTO){
+    public ResponseEntity<CarRezDTO2> carRezInfoSave(@RequestBody CarRezDTO carRezDTO){
 
         System.out.println(carRezDTO);
-        CarRezDTO result=service.carRezInfoSave(carRezDTO);
+        CarRezDTO2 result=service.carRezInfoSave(carRezDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
@@ -40,5 +40,10 @@ public class CarUserController {
     @GetMapping("/carDetail/{car_code}")
     public CarDetailDTO2 carDetailGetOne(@PathVariable String car_code){
         return service.carGetOne(car_code);
+    }
+
+    @GetMapping("/locations/{car_rez_code}")
+    public List<CarLocDTO> carLocInfoGetAll(@PathVariable String car_rez_code){
+        return service.carLocInfoGetAll(car_rez_code);
     }
 }

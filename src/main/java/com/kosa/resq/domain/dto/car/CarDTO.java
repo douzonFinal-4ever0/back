@@ -19,6 +19,5 @@ public class CarDTO {
     private String authority;
     private Date buy_at;
     private String memo;
-    private String status;
     private CarDetailDTO carDetail;
 }
