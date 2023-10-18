@@ -13,6 +13,7 @@
         <result property="rez_status" column="rez_status"/>
         <result property="start_at" column="start_at"/>
         <result property="return_at" column="return_at"/>
+        <result property="updated_at" column="updated_at"/>
         <collection property="memResponseVO" resultMap="memMap"/>
         <collection property="carVO" resultMap="carMap"/>
     </resultMap>
@@ -102,7 +103,11 @@
     </insert>
 
     <select id="carGetAll" resultMap="carDetailMap">
-        select c.car_code, c.car_name, d.car_address from car c join car_detail d on c.car_code=d.car_code
+        select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
+        where authority='모두'and car_status='사용가능'
+    </select>
+    <select id="carGetAll2" resultMap="carDetailMap">
+        select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
         where authority='모두'and car_status='사용가능'
     </select>
 
@@ -120,5 +125,14 @@
     </select>
     <select id="carLocInfoGetAll">
         select * from car_loc where car_rez_code=#{car_rez_code}
+    </select>
+
+    <select id="carRezGetAll" resultType="com.kosa.resq.domain.vo.car.CarRezInfoResponseVO">
+        select r.car_rez_code,r.rez_status, r.start_at,r.return_at,m.name,
+               dept.dept_name,c.car_name,c.car_code,r.detail,c.type
+        from
+            car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
+            join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
+        where m.mem_code = #{mem_code}
     </select>
 </mapper>

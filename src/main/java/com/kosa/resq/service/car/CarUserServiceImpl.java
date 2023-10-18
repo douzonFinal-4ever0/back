@@ -5,6 +5,7 @@ import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
 import com.kosa.resq.domain.dto.car.*;
+import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.mapper.car.CarUserMapper;
 import org.json.JSONArray;
@@ -146,6 +147,13 @@ public class CarUserServiceImpl implements CarUserService{
     }
 
     @Override
+    public List<AvailableCarResponseVO> carGetAll2() {
+        List<AvailableCarResponseVO> carList=mapper.carGetAll2();
+        return carList;
+    }
+
+
+    @Override
     public CarDetailDTO2 carGetOne(String car_code) {
         CarDetailResponseVO carDetailResponseVO = mapper.carGetOne(car_code);
         ModelMapper mapper2 = new ModelMapper();
@@ -159,8 +167,29 @@ public class CarUserServiceImpl implements CarUserService{
         List<CarLocResponseVO> carLocList=mapper.carLocInfoGetAll(car_rez_code);
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-        List<CarLocDTO> carDetailDTOList = carLocList.stream().map(c->mapper2.map(c,CarLocDTO.class)).
-                collect(Collectors.toList());
+        List<CarLocDTO> carDetailDTOList = carLocList.stream().map(c->mapper2.map(c,CarLocDTO.class))
+                .collect(Collectors.toList());
         return carDetailDTOList;
+    }
+
+    //@Transactional
+    @Override
+    public List<CarRezInfoResponseVO> carRezGetAll(String mem_code) {
+//        List<CarRezResponseVO> carRezResponseVOList=mapper.carRezGetAll(mem_code);
+//        ModelMapper mapper2 = new ModelMapper();
+//        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+//        List<CarRezDTO2> carRezDTO2List = carRezResponseVOList.stream().map(c-> {
+//                    CarRezDTO2 carRezDTO2 = mapper2.map(c, CarRezDTO2.class);
+//                    CarDTO carDTO = mapper2.map(c.getCarVO(),CarDTO.class);
+//                    CarDetailDTO carDetailDTO = mapper2.map(mapper.carGetOne(carDTO.getCar_code()),CarDetailDTO.class);
+//                    carDTO.setCarDetail(carDetailDTO);
+//                    carRezDTO2.setCarDTO(carDTO);
+//                    MemDTO memDTO = mapper2.map(c.getMemResponseVO(),MemDTO.class);
+//                    carRezDTO2.setMemDTO(memDTO);
+//                    return carRezDTO2;
+//                })
+//                .collect(Collectors.toList());
+
+        return mapper.carRezGetAll(mem_code);
     }
 }
