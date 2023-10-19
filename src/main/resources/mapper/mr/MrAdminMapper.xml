@@ -112,7 +112,7 @@
         values (#{mr_code}, #{mr_name}, #{maximum_capacity}, #{location},
                 TO_TIMESTAMP(to_char(localtimestamp, 'YYYY-MM-DD') || ' 09:00:00'),
                 TO_TIMESTAMP(to_char(localtimestamp + INTERVAL '99' YEAR, 'YYYY-MM-DD') || ' 21:00:00'),
-                0, 0, #{mr_type}, localtimestamp, localtimestamp, null)
+                0, 1, #{mr_type}, localtimestamp, localtimestamp, null)
     </insert>
 
     <insert id="mrAvailableDaySave">
@@ -132,5 +132,15 @@
         insert into MR_KEYWORD (KEYWORD_CODE, MR_CODE, KEYWORD_NAME)
         values (MR_KEYWORD_SEQ.nextval, #{mr_code}, #{keyword_name})
     </insert>
-
+    <update id="mrUpdate">
+        update MR
+        set
+            MR_NAME=#{mr_name},
+            MR_TYPE=#{mr_type},
+            LOCATION=#{location},
+            MAXIMUM_CAPACITY=#{maximum_capacity},
+            IS_OPENED       = #{is_opened},
+            UPDATED_AT = localtimestamp
+        where MR_CODE = #{mr_code}
+    </update>
 </mapper>
