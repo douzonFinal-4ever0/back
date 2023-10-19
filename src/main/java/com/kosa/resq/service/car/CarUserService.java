@@ -2,6 +2,7 @@ package com.kosa.resq.service.car;
 
 import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.vo.car.AvailableCarResponseVO;
+import com.kosa.resq.domain.vo.car.CarNameCodeResponseVO;
 import com.kosa.resq.domain.vo.car.CarRezInfoResponseVO;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public List<AvailableCarResponseVO> carGetAll2();
     public CarDetailDTO2 carGetOne(String car_code);
     public List<CarLocDTO> carLocInfoGetAll(String car_rez_code);
     public List<CarRezInfoResponseVO> carRezGetAll(String mem_code);
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code,String rez_status);
+    public List<CarNameCodeResponseVO> searchCarGetAll();
 }

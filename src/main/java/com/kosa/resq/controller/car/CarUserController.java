@@ -2,10 +2,7 @@ package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.MemDTO;
-import com.kosa.resq.domain.vo.car.AvailableCarResponseVO;
-import com.kosa.resq.domain.vo.car.CarRezInfoResponseVO;
-import com.kosa.resq.domain.vo.car.CarRezRequestVO;
-import com.kosa.resq.domain.vo.car.CarRezResponseVO;
+import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.service.car.CarUserService;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
@@ -55,5 +52,14 @@ public class CarUserController {
     @GetMapping("/rezList/{mem_code}")
     public List<CarRezInfoResponseVO> carRezGetAll(@PathVariable String mem_code){
         return service.carRezGetAll(mem_code);
+    }
+    @GetMapping("/rezList/{mem_code}/{rez_status}")
+    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(@PathVariable String mem_code,@PathVariable String rez_status){
+        return service.filterCarRezGetAll(mem_code,rez_status);
+    }
+
+    @GetMapping("/searchCarList")
+    public List<CarNameCodeResponseVO> searchCarGetAll(){
+        return service.searchCarGetAll();
     }
 }

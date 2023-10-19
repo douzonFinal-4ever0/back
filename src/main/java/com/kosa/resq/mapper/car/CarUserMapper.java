@@ -20,4 +20,6 @@ public interface CarUserMapper {
     public CarRezResponseVO carRezGetOne(String car_rez_code);
     public List<CarLocResponseVO> carLocInfoGetAll(String car_rez_code);
     public List<CarRezInfoResponseVO> carRezGetAll(String mem_code);
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code,String rez_status);
+    public List<CarNameCodeResponseVO> searchCarGetAll ();
 }

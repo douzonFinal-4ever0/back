@@ -192,4 +192,19 @@ public class CarUserServiceImpl implements CarUserService{
 
         return mapper.carRezGetAll(mem_code);
     }
+
+    @Override
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code, String rez_status) {
+        String  status;
+        if(rez_status.equals("0")){
+            return mapper.carRezGetAll(mem_code);
+        }else{
+            return mapper.filterCarRezGetAll(mem_code,rez_status);
+        }
+    }
+
+    @Override
+    public List<CarNameCodeResponseVO> searchCarGetAll() {
+        return mapper.searchCarGetAll();
+    }
 }

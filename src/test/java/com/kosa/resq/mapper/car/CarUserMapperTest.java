@@ -18,7 +18,8 @@ class CarUserMapperTest {
     private CarUserService service;
     @Test
     void carRezSave() {
-        System.out.println(mapper.carRezGetAll("MEM001"));
-        System.out.println(service.carRezGetAll("MEM001"));
+//        System.out.println(mapper.carRezGetAll("MEM001"));
+//        System.out.println(mapper.filterCarRezGetAll("MEM001","0"));
+        System.out.println(mapper.searchCarGetAll());
     }
 }
