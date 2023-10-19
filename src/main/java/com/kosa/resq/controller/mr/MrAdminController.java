@@ -59,4 +59,9 @@ public class MrAdminController {
             service.mrAvailableDaySave(opDayDTO);
         }
     }
+
+    @PatchMapping("/mrUpdate")
+    public void mrUpdate(@RequestBody MrDTO mr){
+        service.mrUpdate(mr);
+    }
 }

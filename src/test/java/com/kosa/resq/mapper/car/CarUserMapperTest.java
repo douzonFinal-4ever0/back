@@ -1,6 +1,7 @@
 package com.kosa.resq.mapper.car;
 
 import com.kosa.resq.domain.dto.car.CarRezDTO;
+import com.kosa.resq.service.car.CarUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +14,12 @@ class CarUserMapperTest {
 
     @Autowired
     private CarUserMapper mapper;
+    @Autowired
+    private CarUserService service;
     @Test
     void carRezSave() {
-        System.out.println(mapper.carGetAll());
+//        System.out.println(mapper.carRezGetAll("MEM001"));
+//        System.out.println(mapper.filterCarRezGetAll("MEM001","0"));
+        System.out.println(mapper.searchCarGetAll());
     }
 }
