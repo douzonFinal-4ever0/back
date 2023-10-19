@@ -4,6 +4,30 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.car.CarAdminMapper">
 
+
+    <resultMap id="carDetailMap" type="com.kosa.resq.domain.vo.car.CarDetailResponseVO">
+        <result property="fuel_effciency" column="fuel_effciency"/>
+        <result property="accum_mileage" column="accum_mileage"/>
+        <result property="car_status" column="car_status"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="car_latitude" column="car_latitude"/>
+        <result property="car_longitude" column="car_longitude"/>
+        <result property="car_address" column="car_address"/>
+        <association property="carVO" resultMap="carMap"/>
+    </resultMap>
+    <resultMap id="carMap" type="com.kosa.resq.domain.vo.car.CarVO">
+        <id property="car_code" column="car_code"/>
+        <result property="car_code" column="car_code"/>
+        <result property="car_name" column="car_name"/>
+        <result property="type" column="type"/>
+        <result property="fuel_type" column="fuel_type"/>
+        <result property="authority" column="authority"/>
+        <result property="buy_at" column="buy_at"/>
+        <result property="memo" column="memo"/>
+        <result property="created_at" column="created_at"/>
+    </resultMap>
+
+
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
         INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at)
         VALUES (#{car_code}, #{car_name}, #{type}, #{fuel_type}, #{authority}, #{buy_at}, #{memo}, LOCALTIMESTAMP)
@@ -23,7 +47,7 @@
         INSERT INTO car_user(car_code, mem_code, created_at) VALUES(#{car_code}, #{mem_code}, LOCALTIMESTAMP )
     </insert>
 
-    <select id="carGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarResponseVO">
+    <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">
         SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo
         FROM car c1
                  LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
@@ -36,19 +60,9 @@
         WHERE c1.car_code = #{car_code}
     </select>
 
-<!--    <resultMap id="carResultMap" type="com.kosa.resq.domain.vo.car.CarResponseVO">-->
-<!--        <id property="car_code" column="car_code" />-->
-<!--        <result property="car_name" column="raw_type" />-->
-<!--        <result property="memo" column="memo" />-->
-<!--        <result property="unit" column="unit" />-->
-<!--        <result property="standard_quantity" column="standard_quantity" />-->
-<!--        <result property="origin" column="origin" />-->
-<!--        <association property="item" resultMap="itemMap"/>-->
-<!--    </resultMap>-->
-
     <!--    차량 정보 리스트-->
-    <select id="carGetAll" resultType="com.kosa.resq.domain.vo.car.CarResponseVO">
-        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo
+    <select id="carGetAll" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">
+        SELECT c1.type, c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo
         FROM car c1
                  LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
                  LEFT JOIN operation o ON o.car_code = c1.car_code
@@ -60,6 +74,11 @@
 
     <select id="memGetAll" resultType="com.kosa.resq.domain.vo.common.MemResponseVO">
         SELECT mem_code, dept_code, position_name, name, email, role, hired_at, created_at, address, tel, is_worked, profile_img_url FROM mem
+    </select>
+
+    <select id="carGetOne" parameterType="String" resultMap="carDetailMap">
+        select c.car_name, c.car_code, d.accum_mileage, c.authority, c.fuel_type, d.fuel_effciency, d.car_address from car c join car_detail d on c.car_code=d.car_code
+        where c.car_code=#{car_code}
     </select>
 
 </mapper>
