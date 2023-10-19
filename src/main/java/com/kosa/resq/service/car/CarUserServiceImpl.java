@@ -95,7 +95,7 @@ public class CarUserServiceImpl implements CarUserService{
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
         carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
-        carRezRequestVO.setRez_status("확정");
+        carRezRequestVO.setRez_status("1");
 
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
         String[] type = {"인수지","반납지","목적지"};
