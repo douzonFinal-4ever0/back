@@ -217,4 +217,32 @@ public class CarUserServiceImpl implements CarUserService{
     public int carRezDelete(String car_rez_code) {
         return mapper.carRezDelete(car_rez_code);
     }
+    @Transactional
+    @Override
+    public CarRezDTO2 carRezInfoUpdate(CarRezDTO carRezDTO) {
+//        System.out.println(carRezDTO);
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
+//        System.out.println(carRezRequestVO);
+//        System.out.println(carRezDTO.getCar_rez_code());
+        mapper.carRezUpdate(carRezRequestVO);
+        //인수지
+        CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
+        String[] address={carRezDTO.getReceipt_loc(),carRezDTO.getReturn_loc(),carRezDTO.getDest_loc()};
+        String[] type = {"인수지","반납지","목적지"};
+        for(int i=0;i<3;i++){
+            CarLocRequestVO carLocRequestVO = new CarLocRequestVO();
+            carLocRequestVO.setCar_rez_code(carRezDTO.getCar_rez_code());
+            carLocRequestVO.setAddress(address[i]);
+            carLocRequestVO.setLoc_type(type[i]);
+            Float[] coords =new Float[2];
+            coords=findGeoPoint(carLocRequestVO.getAddress());
+            carLocRequestVO.setLongitude(coords[0]);
+            carLocRequestVO.setLatitude(coords[1]);
+//            System.out.println(carLocRequestVO);
+            mapper.carLocUpdate(carLocRequestVO);
+        }
+        return null;
+    }
 }

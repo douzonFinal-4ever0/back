@@ -23,4 +23,6 @@ public interface CarUserMapper {
     public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code,String rez_status);
     public List<CarNameCodeResponseVO> searchCarGetAll ();
     public int carRezDelete(String car_rez_code);
+    public int carRezUpdate(CarRezRequestVO carRezRequestVO);
+    public int carLocUpdate(CarLocRequestVO carLocRequestVO);
 }
