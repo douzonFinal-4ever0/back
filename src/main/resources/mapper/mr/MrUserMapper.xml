@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.resq.mapper.mr.MrUserMapper">
+    <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
+        <selectKey keyProperty="mr_rez_code" order="BEFORE"
+                   resultType="String">
+            select 'REZ' || LPAD(TO_CHAR(MR_REZ_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO MR_REZ (MR_REZ_CODE, MEM_CODE, MR_CODE, REZ_START_TIME, REZ_END_TIME, CREATED_AT, UPDATED_AT,
+        DELETED_AT, REZ_STATUS, M_NAME, M_TYPE, IS_CONFIRMED, REZ_TYPE, TOT_PT_CTN)
+        VALUES (#{mr_rez_code}, #{mem_code}, #{mr_code}, #{rez_start_time}, #{rez_end_time},
+        localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
+    </insert>
+</mapper>
