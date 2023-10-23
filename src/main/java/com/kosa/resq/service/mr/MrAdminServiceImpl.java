@@ -50,4 +50,9 @@ public class MrAdminServiceImpl implements MrAdminService {
         mapper.mrUpdate(mr);
     }
 
+    @Override
+    public void mrDeactivate(MrDTO mr) {
+        mapper.mrDeactivate(mr);
+    }
+
 }

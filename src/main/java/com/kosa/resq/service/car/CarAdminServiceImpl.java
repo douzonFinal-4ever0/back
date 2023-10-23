@@ -48,11 +48,11 @@ public class CarAdminServiceImpl implements CarAdminService{
 
 
     @Override
-    public List<MemDTO> memGetAll() {
+    public List<MemResponseVO> memGetAll() {
         ModelMapper modelMapper = new ModelMapper();
         List<MemResponseVO> carResponseVOs = carAdminMapper.memGetAll();
-        List<MemDTO> memDTOList = carResponseVOs.stream().map(source -> modelMapper.map(source, MemDTO.class)).collect(Collectors.toList());
-        return memDTOList;
+//        List<MemDTO> memDTOList = carResponseVOs.stream().map(source -> modelMapper.map(source, MemDTO.class)).collect(Collectors.toList());
+        return carResponseVOs;
     }
 
     @Override
