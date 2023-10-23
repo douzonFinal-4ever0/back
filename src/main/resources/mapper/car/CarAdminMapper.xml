@@ -27,6 +27,29 @@
         <result property="created_at" column="created_at"/>
     </resultMap>
 
+    <resultMap id="memResultMap" type="com.kosa.resq.domain.vo.common.MemResponseVO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="hired_at" column="hired_at"/>
+        <result property="created_at" column="created_at"/>
+        <result property="address" column="address"/>
+        <result property="tel" column="tel"/>
+        <result property="is_worked" column="is_worked"/>
+        <result property="profile_img_url" column="profile_img_url"/>
+        <association property="deptVO" resultMap="deptMap"/>
+    </resultMap>
+
+    <resultMap id="deptMap" type="com.kosa.resq.domain.vo.common.DeptVO">
+        <result property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="dept_tel" column="dept_tel"/>
+        <result property="dept_head_code" column="dept_head_code"/>
+        <result property="location" column="location"/>
+    </resultMap>
+
 
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
         INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at)
@@ -48,7 +71,7 @@
     </insert>
 
     <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">
-        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo
+        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo, c1.type
         FROM car c1
                  LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
                  LEFT JOIN operation o ON o.car_code = c1.car_code
@@ -72,13 +95,18 @@
                            ON o.car_code = latest_operation.car_code AND o.created_at = latest_operation.max_created_at
     </select>
 
-    <select id="memGetAll" resultType="com.kosa.resq.domain.vo.common.MemResponseVO">
-        SELECT mem_code, dept_code, position_name, name, email, role, hired_at, created_at, address, tel, is_worked, profile_img_url FROM mem
+    <select id="memGetAll" resultMap="memResultMap">
+        SELECT m.mem_code, position_name, name, email, role, hired_at, created_at, address, tel, is_worked, profile_img_url, d.dept_code, dept_name ,dept_tel, dept_head_code, location
+        FROM mem m
+        INNER JOIN dept d
+        ON m.dept_code = d.dept_code
     </select>
 
     <select id="carGetOne" parameterType="String" resultMap="carDetailMap">
-        select c.car_name, c.car_code, d.accum_mileage, c.authority, c.fuel_type, d.fuel_effciency, d.car_address from car c join car_detail d on c.car_code=d.car_code
-        where c.car_code=#{car_code}
+        SELECT c.car_name, c.car_code, c.type, c.authority, c.fuel_type, c.buy_at, c.memo, c.created_at,
+               d.accum_mileage, d.fuel_effciency, d.car_status, d.updated_at, d.car_address, d.car_latitude, d.car_longitude
+            FROM car c INNER JOIN car_detail d ON c.car_code=d.car_code
+        WHERE c.car_code=#{car_code}
     </select>
 
 </mapper>

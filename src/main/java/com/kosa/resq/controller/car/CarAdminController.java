@@ -3,6 +3,7 @@ package com.kosa.resq.controller.car;
 import com.kosa.resq.domain.dto.car.CarDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.service.car.CarAdminService;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
@@ -53,7 +54,7 @@ public class CarAdminController {
 
     // 사용자 리스트 조회
     @GetMapping("/memList")
-    public List<MemDTO> memGetAll() {
+    public List<MemResponseVO> memGetAll() {
         return carAdminService.memGetAll();
     }
 
