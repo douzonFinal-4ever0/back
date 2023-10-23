@@ -64,4 +64,9 @@ public class MrAdminController {
     public void mrUpdate(@RequestBody MrDTO mr){
         service.mrUpdate(mr);
     }
+
+    @PatchMapping("/mrDeactivate")
+    public void mrDeactivate(@RequestBody MrDTO mr){
+        service.mrDeactivate(mr);
+    }
 }
