@@ -20,4 +20,5 @@ public List<AvailableCarResponseVO> carGetAll2();
     public List<CarNameCodeResponseVO> searchCarGetAll();
     public CarRezResponseVO carRezDetailGetOne(String car_rez_code);
     public int carRezDelete(String car_rez_code);
+    public CarRezDTO2 carRezInfoUpdate(CarRezDTO carRezDTO);
 }

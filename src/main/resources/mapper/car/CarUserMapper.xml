@@ -149,4 +149,13 @@
     <delete id="carRezDelete">
         delete from car_rez where car_rez_code = #{car_rez_code}
     </delete>
+    <update id="carRezUpdate">
+        update car_rez set car_code=#{car_code},detail=#{detail},est_mileage=#{est_mileage},updated_at=localtimestamp
+                       where car_rez_code=#{car_rez_code}
+    </update>
+    <update id="carLocUpdate">
+        update car_loc set car_address=#{car_address},
+                           latitude=#{latitude},longitude=#{longitude}
+                       where car_rez_code=#{car_rez_code} and loc_type=#{loc_type}
+    </update>
 </mapper>
