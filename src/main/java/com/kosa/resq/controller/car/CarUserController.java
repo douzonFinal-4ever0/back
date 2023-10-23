@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -53,13 +55,23 @@ public class CarUserController {
     public List<CarRezInfoResponseVO> carRezGetAll(@PathVariable String mem_code){
         return service.carRezGetAll(mem_code);
     }
-    @GetMapping("/rezList/{mem_code}/{rez_status}")
-    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(@PathVariable String mem_code,@PathVariable String rez_status){
-        return service.filterCarRezGetAll(mem_code,rez_status);
-    }
+//    @GetMapping("/rezList/{mem_code}/{rez_status}")
+//    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(@PathVariable String mem_code,@PathVariable String rez_status){
+//        return service.filterCarRezGetAll(mem_code,rez_status);
+//    }
 
     @GetMapping("/searchCarList")
     public List<CarNameCodeResponseVO> searchCarGetAll(){
         return service.searchCarGetAll();
+    }
+
+    @GetMapping("/carRezDetail/{car_rez_code}")
+    public CarRezResponseVO carRezDetailGetOne(@PathVariable String car_rez_code){
+        return service.carRezDetailGetOne(car_rez_code);
+    }
+    @DeleteMapping("/carRezDetail/{car_rez_code}")
+    public ResponseEntity<String> carRezDelete(@PathVariable String car_rez_code){
+        service.carRezDelete(car_rez_code);
+        return ResponseEntity.noContent().build();
     }
 }

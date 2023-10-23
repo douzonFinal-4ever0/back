@@ -18,7 +18,7 @@ public class MrRezDTO {
     private String updated_at;
     private String deleted_at;
     private String rez_status;
-    private String m_purpose;
+    private String m_name;
     private String m_type;
     private int is_confirmed;
     private int rez_type;

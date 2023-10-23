@@ -46,7 +46,7 @@
         <result property="updated_at" column="updated_at"/>
         <result property="deleted_at" column="deleted_at"/>
         <result property="rez_status" column="rez_status"/>
-        <result property="m_purpose" column="m_purpose"/>
+        <result property="m_name" column="m_name"/>
         <result property="m_type" column="m_type"/>
         <result property="is_confirmed" column="is_confirmed"/>
         <result property="rez_type" column="rez_type"/>
@@ -78,6 +78,7 @@
         select * from MR m left outer join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
             left outer join MR_IMG mi on m.MR_CODE = mi.MR_CODE
             left outer join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
+        order by m.mr_code
         ]]>
     </select>
     
@@ -140,7 +141,23 @@
             LOCATION=#{location},
             MAXIMUM_CAPACITY=#{maximum_capacity},
             IS_OPENED       = #{is_opened},
-            UPDATED_AT = localtimestamp
+            UPDATED_AT = localtimestamp,
+            DELETED_AT = null
         where MR_CODE = #{mr_code}
     </update>
+    <update id="mrDeactivate">
+        update MR
+        set
+            MR_NAME=#{mr_name},
+            MR_TYPE=#{mr_type},
+            LOCATION=#{location},
+            MAXIMUM_CAPACITY=#{maximum_capacity},
+            IS_OPENED       = 1,
+            DELETED_AT = localtimestamp
+        where MR_CODE = #{mr_code}
+    </update>
+    <select id="suppliesGetAll">
+        select *
+        from SUPPLIES
+    </select>
 </mapper>

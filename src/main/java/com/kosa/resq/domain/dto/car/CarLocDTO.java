@@ -16,7 +16,10 @@ public class CarLocDTO {
     private double latitude;
     private double longitude;
     private String address;
-    private CarRezDTO carRezDTO;
-    private MemDTO memDTO;
-    private CarDTO carDTO;
+//    private CarRezDTO carRezDTO;
+//    private MemDTO memDTO;
+//    private CarDTO carDTO;
+    private String car_rez_code;
+    private String mem_code;
+    private String car_code;
 }
