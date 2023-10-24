@@ -12,13 +12,13 @@ import java.util.Date;
 public class OperationDTO {
     private String operation_code;
     private String memo;
-    private int bef_mileage;
-    private int aft_mileage;
-    private int distance;
+    private double bef_mileage;
+    private double aft_mileage;
+    private double distance;
     private Date created_at;
     private Date updated_at;
-    private int nomal_biz_mileage;
-    private int commute_mileage;
+    private double nomal_biz_mileage;
+    private double commute_mileage;
     private String car_rez_code;
     private String mem_code;
     private String car_code;
