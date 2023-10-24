@@ -68,10 +68,27 @@ public class CarAdminController {
     // 차량 상세 조회
     @GetMapping("/car/carGetOne")
     public CarDetailResponseVO carGetOne(@RequestParam String car_code) {
+//        log.info(carAdminService.carGetOne(car_code).toString());
         return carAdminService.carGetOne(car_code);
     }
 
     // 차량 수정
+    @PutMapping("/car/carModify")
+    public void carUpdate(@RequestBody CarDTO carDTO) {
+//        log.info(carDTO.toString());
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        CarRequestVO carRequestVO = mapper.map(carDTO, CarRequestVO.class);
+        CarDetailRequestVO carDetailRequestVO = mapper.map(carDTO.getCarDetail(), CarDetailRequestVO.class);
+        carDetailRequestVO.setCar_code(carRequestVO.getCar_code());
+        CarUserRequestVO carUserRequestVO = mapper.map(carDTO.getCarUser(), CarUserRequestVO.class);
+        carUserRequestVO.setCar_code(carRequestVO.getCar_code());
+
+        log.info(carRequestVO.toString());
+        log.info(carDetailRequestVO.toString());
+        log.info(carUserRequestVO.toString());
+        carAdminService.carModify(carRequestVO, carDetailRequestVO, carUserRequestVO);
+    }
 
     // 차량 삭제
 

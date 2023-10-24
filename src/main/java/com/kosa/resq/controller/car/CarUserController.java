@@ -74,4 +74,9 @@ public class CarUserController {
         service.carRezDelete(car_rez_code);
         return ResponseEntity.noContent().build();
     }
+    @PatchMapping("/carRezDetail")
+    public ResponseEntity<CarRezDTO2> carRezInfoUpdate(@RequestBody CarRezDTO carRezDTO){
+        service.carRezInfoUpdate(carRezDTO);
+        return null;
+    }
 }

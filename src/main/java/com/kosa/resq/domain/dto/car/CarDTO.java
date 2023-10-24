@@ -17,6 +17,7 @@ public class CarDTO {
     private String type;
     private String fuel_type;
     private String authority;
+    private int max_capacity;
     private Date buy_at;
     private String memo;
     private CarDetailDTO carDetail;

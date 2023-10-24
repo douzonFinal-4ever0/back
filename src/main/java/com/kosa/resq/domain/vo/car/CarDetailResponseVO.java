@@ -21,4 +21,5 @@ public class CarDetailResponseVO {
     private double car_latitude;
     private double car_longitude;
     private String car_address;
+    private CarUserResponseVO carUser;
 }
