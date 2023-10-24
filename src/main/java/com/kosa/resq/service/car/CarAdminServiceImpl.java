@@ -60,5 +60,22 @@ public class CarAdminServiceImpl implements CarAdminService{
         return carAdminMapper.carGetOne(car_code);
     }
 
+    @Transactional
+    @Override
+    public void carModify(CarRequestVO carVO, CarDetailRequestVO carDetailRequestVO, CarUserRequestVO carUserRequestVO) {
+        // mapper
+        carAdminMapper.carModify(carVO);
+        carAdminMapper.carDetailModify(carDetailRequestVO);
+        if(carVO.getAuthority().equals("지정")) {
+            int result = carAdminMapper.carUserModify(carUserRequestVO);
+            if(result == 0) {
+                carAdminMapper.carUserSave(carUserRequestVO);
+            }
+        } else {
+            carAdminMapper.carUserDelete(carVO.getCar_code());
+        }
+        
+    }
+
 
 }
