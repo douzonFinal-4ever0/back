@@ -14,6 +14,7 @@ public class CarRequestVO {
     private String type;
     private String fuel_type;
     private String authority;
+    private int max_capacity;
     private Date buy_at;
     private String memo;
 }

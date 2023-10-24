@@ -11,7 +11,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class CarDetailDTO {
     private String car_code;
-    private int fuel_effciency;
+    private double fuel_effciency;
     private int accum_mileage;
     private String car_status;
     private Date updated_at;
