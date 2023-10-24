@@ -69,14 +69,16 @@ public class CarUserController {
     public CarRezResponseVO carRezDetailGetOne(@PathVariable String car_rez_code){
         return service.carRezDetailGetOne(car_rez_code);
     }
+
     @DeleteMapping("/carRezDetail/{car_rez_code}")
     public ResponseEntity<String> carRezDelete(@PathVariable String car_rez_code){
         service.carRezDelete(car_rez_code);
         return ResponseEntity.noContent().build();
     }
+
     @PatchMapping("/carRezDetail")
     public ResponseEntity<CarRezDTO2> carRezInfoUpdate(@RequestBody CarRezDTO carRezDTO){
-        service.carRezInfoUpdate(carRezDTO);
-        return null;
+        CarRezDTO2 result=service.carRezInfoUpdate(carRezDTO);
+        return ResponseEntity.ok(result);
     }
 }

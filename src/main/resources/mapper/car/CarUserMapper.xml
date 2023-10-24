@@ -154,7 +154,7 @@
                        where car_rez_code=#{car_rez_code}
     </update>
     <update id="carLocUpdate">
-        update car_loc set car_address=#{car_address},
+        update car_loc set address=#{address},
                            latitude=#{latitude},longitude=#{longitude}
                        where car_rez_code=#{car_rez_code} and loc_type=#{loc_type}
     </update>
