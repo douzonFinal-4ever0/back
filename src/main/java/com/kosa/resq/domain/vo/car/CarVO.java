@@ -20,5 +20,6 @@ public class CarVO {
     private String authority;
     private Date buy_at;
     private String memo;
+    private int max_capacity;
     private Date created_at;
 }

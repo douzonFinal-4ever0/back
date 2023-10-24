@@ -14,7 +14,9 @@
         <result property="car_longitude" column="car_longitude"/>
         <result property="car_address" column="car_address"/>
         <association property="carVO" resultMap="carMap"/>
+        <association property="carUser" resultMap="carUserMap"/>
     </resultMap>
+
     <resultMap id="carMap" type="com.kosa.resq.domain.vo.car.CarVO">
         <id property="car_code" column="car_code"/>
         <result property="car_code" column="car_code"/>
@@ -25,6 +27,15 @@
         <result property="buy_at" column="buy_at"/>
         <result property="memo" column="memo"/>
         <result property="created_at" column="created_at"/>
+        <result property="max_capacity" column="max_capacity"/>
+    </resultMap>
+
+    <resultMap id="carUserMap" type="com.kosa.resq.domain.vo.car.CarUserResponseVO">
+        <result property="mem_code" column="mem_code"/>
+        <result property="dept_code" column="dept_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="dept_name" column="dept_name"/>
     </resultMap>
 
     <resultMap id="memResultMap" type="com.kosa.resq.domain.vo.common.MemResponseVO">
@@ -52,8 +63,8 @@
 
 
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
-        INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at)
-        VALUES (#{car_code}, #{car_name}, #{type}, #{fuel_type}, #{authority}, #{buy_at}, #{memo}, LOCALTIMESTAMP)
+        INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at, max_capacity)
+        VALUES (#{car_code}, #{car_name}, #{type}, #{fuel_type}, #{authority}, #{buy_at}, #{memo}, LOCALTIMESTAMP, #{max_capacity})
     </insert>
 
     <insert id="carDetailSave" parameterType="com.kosa.resq.domain.vo.car.CarDetailRequestVO">
@@ -103,10 +114,32 @@
     </select>
 
     <select id="carGetOne" parameterType="String" resultMap="carDetailMap">
-        SELECT c.car_name, c.car_code, c.type, c.authority, c.fuel_type, c.buy_at, c.memo, c.created_at,
-               d.accum_mileage, d.fuel_effciency, d.car_status, d.updated_at, d.car_address, d.car_latitude, d.car_longitude
-            FROM car c INNER JOIN car_detail d ON c.car_code=d.car_code
+        SELECT c.car_name, c.car_code, c.type, c.authority, c.fuel_type, c.buy_at, c.memo, c.created_at, c.max_capacity,
+               d.accum_mileage, d.fuel_effciency, d.car_status, d.updated_at, d.car_address, d.car_latitude, d.car_longitude,
+               u.mem_code, u.name, u.dept_code, u.position_name, u.dept_name
+        FROM car c INNER JOIN car_detail d ON c.car_code=d.car_code
+                   LEFT JOIN (select u.car_code, u.mem_code, m.name, m.dept_code, m.position_name, m.dept_name from
+            (select mem.mem_code, dept.dept_code, position_name, name, dept_name from mem inner join dept ON mem.dept_code = dept.dept_code) m
+                INNER JOIN car_user u
+                           ON m.mem_code = u.mem_code) u ON c.car_code = u.car_code
         WHERE c.car_code=#{car_code}
     </select>
+
+<!--    차량 수정 -->
+    <update id="carModify" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
+        UPDATE car SET car_name=#{car_name}, memo=#{memo}, authority=#{authority} WHERE car_code=#{car_code}
+    </update>
+
+    <update id="carDetailModify" parameterType="com.kosa.resq.domain.vo.car.CarDetailRequestVO">
+        UPDATE car_detail SET fuel_effciency=#{fuel_effciency},updated_at=LOCALTIMESTAMP, accum_mileage=#{accum_mileage} WHERE car_code=#{car_code}
+    </update>
+
+    <update id="carUserModify" parameterType="com.kosa.resq.domain.vo.car.CarUserRequestVO">
+        UPDATE car_user SET mem_code=#{mem_code}, updated_at=LOCALTIMESTAMP WHERE car_code=#{car_code}
+    </update>
+
+    <delete id="carUserDelete" parameterType="String">
+        DELETE car_user WHERE car_code=#{car_code}
+    </delete>
 
 </mapper>

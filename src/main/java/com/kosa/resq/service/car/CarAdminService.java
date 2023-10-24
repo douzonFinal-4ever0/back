@@ -13,4 +13,6 @@ public interface CarAdminService {
     CarListResponseVO carListGetOne(String car_code);
     public List<MemResponseVO> memGetAll();
     public CarDetailResponseVO carGetOne(String car_code);
+    // 차량 수정
+    public void carModify(CarRequestVO carVO, CarDetailRequestVO carDetailRequestVO, CarUserRequestVO carUserRequestVO);
 }
