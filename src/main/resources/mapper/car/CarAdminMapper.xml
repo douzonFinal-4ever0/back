@@ -142,4 +142,18 @@
         DELETE car_user WHERE car_code=#{car_code}
     </delete>
 
+<!--    차량 정비 항목들 조회-->
+    <select id="getCarMaintItemList" resultType="com.kosa.resq.domain.vo.car.CarMaintResponseVO">
+        SELECT maint_item_code, maint_name, cycle, type FROM car_maint
+    </select>
+
+    <select id="getMaintComList" resultType="com.kosa.resq.domain.vo.car.MaintComResponseVO">
+        SELECT mc_code, mc_name, mc_tell, mc_category FROM maint_com
+    </select>
+
+<!--    차량 정비 등록하기-->
+    <insert id="maintRecordSave" parameterType="com.kosa.resq.domain.vo.car.MaintRecordRequestVO">
+        INSERT INTO maint_record (car_code, car)
+    </insert>
+
 </mapper>

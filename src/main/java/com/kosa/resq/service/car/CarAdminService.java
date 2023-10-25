@@ -15,4 +15,7 @@ public interface CarAdminService {
     public CarDetailResponseVO carGetOne(String car_code);
     // 차량 수정
     public void carModify(CarRequestVO carVO, CarDetailRequestVO carDetailRequestVO, CarUserRequestVO carUserRequestVO);
+
+    // 차량 정비 항목, 정비 회사 정보 가져오기
+    CarMaintItemResponseVO carMaintItemGetAll();
 }
