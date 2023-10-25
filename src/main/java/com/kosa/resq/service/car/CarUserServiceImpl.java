@@ -224,7 +224,8 @@ public class CarUserServiceImpl implements CarUserService{
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
-//        System.out.println(carRezRequestVO);
+        carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
+        System.out.println(carRezRequestVO);
 //        System.out.println(carRezDTO.getCar_rez_code());
         mapper.carRezUpdate(carRezRequestVO);
         //인수지
@@ -241,8 +242,15 @@ public class CarUserServiceImpl implements CarUserService{
             carLocRequestVO.setLongitude(coords[0]);
             carLocRequestVO.setLatitude(coords[1]);
 //            System.out.println(carLocRequestVO);
-            mapper.carLocUpdate(carLocRequestVO);
+//            mapper.carLocUpdate(carLocRequestVO);
+            carLocRequestVOs[i]=carLocRequestVO;
         }
-        return null;
+        mapper.carLocUpdate(carLocRequestVOs[0]);
+        mapper.carLocUpdate(carLocRequestVOs[1]);
+        mapper.carLocUpdate(carLocRequestVOs[2]);
+        CarRezResponseVO carRezResponseVO=mapper.carRezGetOne(carRezDTO.getCar_rez_code());
+        CarRezDTO2 carRezDTO2 = mapper2.map(carRezResponseVO,CarRezDTO2.class);
+        carRezDTO2.setCarLoc(carLocInfoGetAll(carRezDTO.getCar_rez_code()));
+        return carRezDTO2;
     }
 }
