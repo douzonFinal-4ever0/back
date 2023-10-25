@@ -77,5 +77,13 @@ public class CarAdminServiceImpl implements CarAdminService{
         
     }
 
+    @Override
+    public CarMaintItemResponseVO carMaintItemGetAll() {
+        CarMaintItemResponseVO carMaintItemResponseVO = new CarMaintItemResponseVO();
+        carMaintItemResponseVO.setCarMaintItemList(carAdminMapper.getCarMaintItemList());
+        carMaintItemResponseVO.setMaintComList(carAdminMapper.getMaintComList());
+        return carMaintItemResponseVO;
+    }
+
 
 }

@@ -25,4 +25,7 @@ public interface CarAdminMapper {
 
     int carUserDelete(String car_code);
 
+    List<CarMaintResponseVO> getCarMaintItemList();
+    List<MaintComResponseVO> getMaintComList();
+
 }
