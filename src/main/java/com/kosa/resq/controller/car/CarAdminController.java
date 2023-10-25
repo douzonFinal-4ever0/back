@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.CarDTO;
+import com.kosa.resq.domain.dto.car.CarMaintItemDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -92,6 +93,18 @@ public class CarAdminController {
 
     // 차량 삭제
 
+
+    // 정비 내역, 정비 업체 조회
+    @GetMapping("/car/getMaintItem")
+    public CarMaintItemResponseVO getCarMaintItem() {
+        return carAdminService.carMaintItemGetAll();
+    }
+
+    // 정비 등록
+    @PostMapping("/car/maintRecordRegister")
+    public void maintRecordSave(@RequestBody CarMaintItemDTO carMaintItemDTO) {
+        log.info(carMaintItemDTO.toString());
+    }
 
 
 }
