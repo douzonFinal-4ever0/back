@@ -3,6 +3,57 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.mr.MrUserMapper">
+    <resultMap id="mrMap" type="com.kosa.resq.domain.vo.mr.MrResponseVO">
+        <id property="mr_code" column="mr_code"/>
+        <result property="mr_name" column="mr_name"/>
+        <result property="maximum_capacity" column="maximum_capacity"/>
+        <result property="location" column="location"/>
+        <result property="avl_start_time" column="avl_start_time"/>
+        <result property="avl_end_time" column="avl_end_time"/>
+        <result property="is_opened" column="is_opened"/>
+        <result property="is_used" column="is_used"/>
+        <result property="mr_type" column="mr_type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+        <collection property="mr_keyword" resultMap="mr_keywordMap"/>
+        <collection property="mr_img" resultMap="mr_imgMap"/>
+        <collection property="mr_op_day" resultMap="mr_op_dayMap"/>
+    </resultMap>
+
+    <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.vo.mr.MrKeywordResponseVO">
+        <id property="keyword_code" column="keyword_code"/>
+        <result property="keyword_name" column="keyword_name"/>
+        <result property="mr_code" column="mr_code"/>
+    </resultMap>
+
+    <resultMap id="mr_imgMap" type="com.kosa.resq.domain.vo.mr.MrImgResponseVO">
+        <id property="img_code" column="img_code"/>
+        <result property="url" column="url"/>
+    </resultMap>
+
+    <resultMap id="mr_op_dayMap" type="com.kosa.resq.domain.vo.mr.MrOpDayResponseVO">
+        <id property="op_day_code" column="op_day_code"/>
+        <result property="day" column="day"/>
+        <result property="mr_code" column="mr_code"/>
+    </resultMap>
+
+    <resultMap id="mr_rezMap" type="com.kosa.resq.domain.vo.mr.MrRezResponseVO">
+        <id property="mr_rez_code" column="mr_rez_code"/>
+        <result property="rez_start_time" column="rez_start_time"/>
+        <result property="rez_end_time" column="rez_end_time"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+        <result property="rez_status" column="rez_status"/>
+        <result property="m_name" column="m_name"/>
+        <result property="m_type" column="m_type"/>
+        <result property="is_confirmed" column="is_confirmed"/>
+        <result property="rez_type" column="rez_type"/>
+        <collection property="mr" resultMap="mrMap"/>
+    </resultMap>
+
+
     <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
         <selectKey keyProperty="mr_rez_code" order="BEFORE"
                    resultType="String">
@@ -13,4 +64,37 @@
         VALUES (#{mr_rez_code}, #{mem_code}, #{mr_code}, #{rez_start_time}, #{rez_end_time},
         localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
     </insert>
+
+
+
+    <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
+      <![CDATA[
+            SELECT *
+            FROM mr
+            WHERE mr_code NOT IN (
+                SELECT DISTINCT  mr_code
+                FROM mr_rez
+                WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                  AND (
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    )
+
+            )
+        ]]>
+    </select>
+
 </mapper>
+
+

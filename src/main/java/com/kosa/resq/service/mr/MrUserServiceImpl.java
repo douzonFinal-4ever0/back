@@ -1,6 +1,9 @@
 package com.kosa.resq.service.mr;
 
+import com.kosa.resq.domain.dto.mr.MrDTO;
+import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
 import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
+import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRezRequestVO;
 import com.kosa.resq.mapper.mr.MrUserMapper;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -79,5 +83,13 @@ public class MrUserServiceImpl implements MrUserService {
             // 저장 실패 시 예외 처리
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<MrResponseVO> mrRecommendGetAll(MrRecommendRequestDTO mrRecommendRequestDTO) {
+        log.info("================= mrRecommendGetAll 서비스 =============================");
+        List<MrResponseVO> mr =  mapper.mrRecommendGetAll(mrRecommendRequestDTO.getRez_date(),
+                mrRecommendRequestDTO.getRez_start_time(), mrRecommendRequestDTO.getRez_end_time());
+        return mr;
     }
 }
