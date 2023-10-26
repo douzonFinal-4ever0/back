@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.service.mr.MrAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,5 +69,10 @@ public class MrAdminController {
     @PatchMapping("/mrDeactivate")
     public void mrDeactivate(@RequestBody MrDTO mr){
         service.mrDeactivate(mr);
+    }
+
+    @GetMapping("/template")
+    public List<TemplateVO> templateGetAll(){
+        return service.templateGetAll();
     }
 }

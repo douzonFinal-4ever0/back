@@ -1,6 +1,7 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.mapper.mr.MrAdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,11 @@ public class MrAdminServiceImpl implements MrAdminService {
     @Override
     public void mrDeactivate(MrDTO mr) {
         mapper.mrDeactivate(mr);
+    }
+
+    @Override
+    public List<TemplateVO> templateGetAll() {
+        return mapper.templateGetAll();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.vo.mr.TemplateVO;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface MrAdminService {
     public void mrKeywordSave(MrKeyWordDTO mrKeyWord);
     public void mrUpdate(MrDTO mr);
     public void mrDeactivate(MrDTO mr);
+    public List<TemplateVO> templateGetAll();
 }

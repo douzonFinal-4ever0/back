@@ -156,8 +156,8 @@
             DELETED_AT = localtimestamp
         where MR_CODE = #{mr_code}
     </update>
-    <select id="suppliesGetAll">
+    <select id="templateGetAll">
         select *
-        from SUPPLIES
+        from TEMPLATE
     </select>
 </mapper>
