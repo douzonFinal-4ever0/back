@@ -22,5 +22,5 @@ public class MrRezResponseVO {
     private String m_type;
     private int is_confirmed;
     private int rez_type;
-    private List<MrResponseVO> mr;
+    private MrResponseVO mr;
 }
