@@ -27,7 +27,7 @@ public class MrResponseVO {
     private Date created_at;
     private Date updated_at;
     private Date deleted_at;
-    private List<MrKeyWordDTO> mr_keyword;
-    private List<MrImgDTO> mr_img;
-    private List<MrOpDayDTO> mr_op_day;
+    private List<MrKeywordResponseVO> mr_keyword;
+    private List<MrImgResponseVO> mr_img;
+    private List<MrOpDayResponseVO> mr_op_day;
 }

@@ -3,6 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.mr.MrUserMapper">
+
     <resultMap id="mrMap" type="com.kosa.resq.domain.vo.mr.MrResponseVO">
         <id property="mr_code" column="mr_code"/>
         <result property="mr_name" column="mr_name"/>
@@ -68,32 +69,34 @@
 
 
     <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
-      <![CDATA[
-            SELECT *
-            FROM mr
-            WHERE mr_code NOT IN (
-                SELECT DISTINCT  mr_code
-                FROM mr_rez
-                WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
-                  AND (
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                    )
-
-            )
+    <![CDATA[
+        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
+        FROM mr m
+                 LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
+                 LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
+                 LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+        WHERE m.mr_code NOT IN (
+            SELECT DISTINCT mr_code
+            FROM mr_rez
+            WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+              AND (
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                )
+        )
         ]]>
-    </select>
+</select>
 
 </mapper>
 
