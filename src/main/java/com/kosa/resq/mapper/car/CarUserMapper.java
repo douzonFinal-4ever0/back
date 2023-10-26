@@ -25,4 +25,5 @@ public interface CarUserMapper {
     public int carRezDelete(String car_rez_code);
     public int carRezUpdate(CarRezRequestVO carRezRequestVO);
     public int carLocUpdate(CarLocRequestVO carLocRequestVO);
+    public int carLocDelete(String car_rez_code);
 }

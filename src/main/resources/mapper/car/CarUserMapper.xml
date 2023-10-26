@@ -150,12 +150,37 @@
         delete from car_rez where car_rez_code = #{car_rez_code}
     </delete>
     <update id="carRezUpdate">
-        update car_rez set car_code=#{car_code},detail=#{detail},est_mileage=#{est_mileage},updated_at=localtimestamp
+        update car_rez set car_code=#{car_code},detail=#{detail},est_mileage=#{est_mileage},start_at=#{start_at},
+                           return_at=#{return_at},updated_at=localtimestamp
                        where car_rez_code=#{car_rez_code}
     </update>
     <update id="carLocUpdate">
-        update car_loc set address=#{address},
+        update car_loc set address=#{address},car_code=#{car_code}
                            latitude=#{latitude},longitude=#{longitude}
                        where car_rez_code=#{car_rez_code} and loc_type=#{loc_type}
+    </update>
+    <delete id="carLocDelete">
+        delete from car_loc where car_rez_code=#{car_rez_code}
+    </delete>
+<!--    운행 완료 -> 예약상태 완료 변경, 차량 상태 이용가능,누적 거리, 위치-->
+    <insert id="operationSave" parameterType="com.kosa.resq.domain.vo.car.OperationRequestVO">
+        <selectKey keyProperty="operation_code" order="BEFORE" resultType="String">
+            select 'OPR'||operation_seq.nextval from dual
+        </selectKey>
+        insert into operation(
+                              operation_code,car_rez_code,mem_code,car_code,memo,bef_mileage,aft_mileage,
+                              distance,nomal_biz_mileage,commute_mileage,created_at,updated_at
+        ) values (
+              #{operation_code},#{car_rez_code},#{mem_code},#{car_code},#{memo},#{bef_mileage},#{aft_mileage},
+              #{distance},#{nomal_biz_mileage},#{commute_mileage},localtimestamp,localtimestamp
+              )
+    </insert>
+    <update id="carRezCompleteUpdate">
+        update car_rez set rez_status='2',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
+    </update>
+    <update id="carDetailUpdate">
+        update carDetail set car_status='사용가능',accum_mileage=#{accum_mileage},
+                             car_latitude=#{car_latitude},car_longitude=#{car_longitude},car_address=#{car_address}
+        where car_code=#{car_code}
     </update>
 </mapper>

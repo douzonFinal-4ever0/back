@@ -78,7 +78,8 @@ public class CarUserController {
 
     @PatchMapping("/carRezDetail")
     public ResponseEntity<CarRezDTO2> carRezInfoUpdate(@RequestBody CarRezDTO carRezDTO){
-        CarRezDTO2 result=service.carRezInfoUpdate(carRezDTO);
-        return ResponseEntity.ok(result);
+//        CarRezDTO2 result=service.getCarRezDTO2(carRezDTO);
+        CarRezDTO2 success=service.carRezInfoUpdate(carRezDTO);
+        return ResponseEntity.ok(success);
     }
 }

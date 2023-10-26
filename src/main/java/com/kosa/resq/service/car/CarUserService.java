@@ -5,6 +5,7 @@ import com.kosa.resq.domain.vo.car.AvailableCarResponseVO;
 import com.kosa.resq.domain.vo.car.CarNameCodeResponseVO;
 import com.kosa.resq.domain.vo.car.CarRezInfoResponseVO;
 import com.kosa.resq.domain.vo.car.CarRezResponseVO;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
@@ -21,4 +22,5 @@ public List<AvailableCarResponseVO> carGetAll2();
     public CarRezResponseVO carRezDetailGetOne(String car_rez_code);
     public int carRezDelete(String car_rez_code);
     public CarRezDTO2 carRezInfoUpdate(CarRezDTO carRezDTO);
+//    public CarRezDTO2 getCarRezDTO2(CarRezDTO carRezDTO);
 }
