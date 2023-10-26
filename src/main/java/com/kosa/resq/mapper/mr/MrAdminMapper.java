@@ -1,6 +1,7 @@
 package com.kosa.resq.mapper.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.vo.mr.TemplateVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,4 +17,5 @@ public interface MrAdminMapper {
     public void mrKeywordSave(MrKeyWordDTO mrKeyWord);
     public void mrUpdate(MrDTO mr);
     public void mrDeactivate(MrDTO mr);
+    public List<TemplateVO> templateGetAll();
 }

@@ -4,13 +4,14 @@ import com.kosa.resq.domain.dto.mr.MrImgDTO;
 import com.kosa.resq.domain.dto.mr.MrKeyWordDTO;
 import com.kosa.resq.domain.dto.mr.MrOpDayDTO;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MrResponseVO {
