@@ -85,5 +85,17 @@ public class CarAdminServiceImpl implements CarAdminService{
         return carMaintItemResponseVO;
     }
 
+    @Override
+    public String maintRecordSave(MaintRecordRequestVO maintRecordRequestVO) {
+        carAdminMapper.maintRecordSave(maintRecordRequestVO);
+        maintRecordRequestVO.setMaint_code("MAINT" + maintRecordRequestVO.getMaint_code());
+        return maintRecordRequestVO.getMaint_code();
+    }
+
+    @Override
+    public List<MaintRecordResponseVO> maintOneCarRecordGetAll(String car_code) {
+        return carAdminMapper.maintOneCarRecordGetAll(car_code);
+    }
+
 
 }
