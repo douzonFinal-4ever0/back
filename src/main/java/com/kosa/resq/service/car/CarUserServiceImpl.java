@@ -96,6 +96,7 @@ public class CarUserServiceImpl implements CarUserService{
         CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
         carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
         carRezRequestVO.setRez_status("1");
+        System.out.println(carRezRequestVO);
 
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
         String[] type = {"인수지","반납지","목적지"};
@@ -133,6 +134,7 @@ public class CarUserServiceImpl implements CarUserService{
         CarRezResponseVO carRezResponseVO=mapper.carRezGetOne(carRezDTO.getCar_rez_code());
         CarRezDTO2 carRezDTO2 = mapper2.map(carRezResponseVO,CarRezDTO2.class);
         carRezDTO2.setCarLoc(carLocInfoGetAll(carRezDTO.getCar_rez_code()));
+        System.out.println(carRezDTO2);
         return carRezDTO2;
     }
 
