@@ -1,8 +1,18 @@
 package com.kosa.resq.domain.vo.car;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Date;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MaintRecordRequestVO {
+
+    private String maint_code;
+
     private String car_code;
     private String maint_item_code;
     private String mc_code;
