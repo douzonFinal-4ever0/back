@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -22,4 +23,6 @@ public class OperationDTO {
     private String car_rez_code;
     private String mem_code;
     private String car_code;
+//    private CarDetailDTO carDetailDTO;
+    private List<ExpenditureDTO> expenditureDTO;
 }

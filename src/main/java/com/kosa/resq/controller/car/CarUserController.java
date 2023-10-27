@@ -5,6 +5,7 @@ import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.service.car.CarUserService;
 import lombok.Getter;
+import oracle.jdbc.proxy.annotation.Post;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
@@ -51,14 +52,14 @@ public class CarUserController {
     public List<CarLocDTO> carLocInfoGetAll(@PathVariable String car_rez_code){
         return service.carLocInfoGetAll(car_rez_code);
     }
-    @GetMapping("/rezList/{mem_code}")
-    public List<CarRezInfoResponseVO> carRezGetAll(@PathVariable String mem_code){
-        return service.carRezGetAll(mem_code);
-    }
-//    @GetMapping("/rezList/{mem_code}/{rez_status}")
-//    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(@PathVariable String mem_code,@PathVariable String rez_status){
-//        return service.filterCarRezGetAll(mem_code,rez_status);
+//    @GetMapping("/rezList/{mem_code}")
+//    public List<CarRezInfoResponseVO> carRezGetAll(@PathVariable String mem_code){
+//        return service.carRezGetAll(mem_code);
 //    }
+    @GetMapping("/rezList/{mem_code}/{rez_status}")
+    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(@PathVariable String mem_code,@PathVariable String rez_status){
+        return service.filterCarRezGetAll(mem_code,rez_status);
+    }
 
     @GetMapping("/searchCarList")
     public List<CarNameCodeResponseVO> searchCarGetAll(){
@@ -81,5 +82,12 @@ public class CarUserController {
 //        CarRezDTO2 result=service.getCarRezDTO2(carRezDTO);
         CarRezDTO2 success=service.carRezInfoUpdate(carRezDTO);
         return ResponseEntity.ok(success);
+    }
+
+    @PostMapping("/operation")
+    public ResponseEntity<OperationDTO> operationInfoSave(@RequestBody OperationDTO operationDTO){
+        System.out.println("controller: "+operationDTO);
+        service.operationInfoSave(operationDTO);
+        return ResponseEntity.ok(operationDTO);
     }
 }

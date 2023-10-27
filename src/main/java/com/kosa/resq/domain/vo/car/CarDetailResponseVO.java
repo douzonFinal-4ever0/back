@@ -14,8 +14,8 @@ import java.sql.Date;
 @ToString
 public class CarDetailResponseVO {
     private CarVO carVO;
-    private float fuel_effciency;
-    private float accum_mileage;
+    private double fuel_effciency;
+    private double accum_mileage;
     private String car_status;
     private Date updated_at;
     private double car_latitude;

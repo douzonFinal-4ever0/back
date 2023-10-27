@@ -95,7 +95,7 @@ public class CarUserServiceImpl implements CarUserService{
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
         carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
-        carRezRequestVO.setRez_status("1");
+        carRezRequestVO.setRez_status("2");
         System.out.println(carRezRequestVO);
 
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
@@ -199,15 +199,15 @@ public class CarUserServiceImpl implements CarUserService{
         return mapper.carRezGetAll(mem_code);
     }
 
-//    @Override
-//    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code, String rez_status) {
-//        String  status;
-//        if(rez_status.equals("0")){
-//            return mapper.carRezGetAll(mem_code);
-//        }else{
-//            return mapper.filterCarRezGetAll(mem_code,rez_status);
-//        }
-//    }
+    @Override
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code, String rez_status) {
+        String  status;
+        if(rez_status.equals("0")){
+            return mapper.carRezGetAll(mem_code);
+        }else{
+            return mapper.filterCarRezGetAll(mem_code,rez_status);
+        }
+    }
 
     @Override
     public List<CarNameCodeResponseVO> searchCarGetAll() {
@@ -296,5 +296,27 @@ public class CarUserServiceImpl implements CarUserService{
         carRezDTO2.setCarDTO(carDTO);
         System.out.println(carRezDTO2);
         return carRezDTO2;
+    }
+
+    @Transactional
+    @Override
+    public OperationDTO operationInfoSave(OperationDTO operationDTO) {
+        //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
+        operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
+        System.out.println("service: "+ operationDTO);
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        OperationRequestVO operationRequestVO = mapper2.map(operationDTO,OperationRequestVO.class);
+//        operationRequestVO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
+        System.out.println("operationRequestVO: "+operationRequestVO);
+        mapper.operationSave(operationRequestVO);
+        mapper.carRezCompleteUpdate(operationRequestVO.getCar_rez_code());
+        CarLocResponseVO carLocResponseVO = mapper.carLocReturnGetOne(operationRequestVO.getCar_rez_code());
+        CarDetailRequestVO carDetailRequestVO = new CarDetailRequestVO(
+                operationRequestVO.getCar_code(),operationRequestVO.getAft_mileage(),carLocResponseVO.getLatitude(),
+                carLocResponseVO.getLongitude(),carLocResponseVO.getAddress()
+        );
+        mapper.carDetailUpdate(carDetailRequestVO);
+        return null;
     }
 }

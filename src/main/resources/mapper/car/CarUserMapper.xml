@@ -134,6 +134,7 @@
             car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
             join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
         where m.mem_code = #{mem_code}
+        order by (CASE WHEN r.rez_status = '1' THEN 1 ELSE 2 END),r.updated_at desc
     </select>
     <select id="filterCarRezGetAll" resultMap="carRezMap">
         select r.car_rez_code,r.rez_status, r.start_at,r.return_at,m.name,
@@ -142,6 +143,7 @@
             car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
                       join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
         where m.mem_code = #{mem_code} and r.rez_status=#{rez_status}
+        order by r.updated_at desc
     </select>
     <select id="searchCarGetAll" resultType="com.kosa.resq.domain.vo.car.CarNameCodeResponseVO">
         select car_code,car_name from car
@@ -176,11 +178,14 @@
               )
     </insert>
     <update id="carRezCompleteUpdate">
-        update car_rez set rez_status='2',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
+        update car_rez set rez_status='3',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
     </update>
     <update id="carDetailUpdate">
-        update carDetail set car_status='사용가능',accum_mileage=#{accum_mileage},
+        update car_detail set car_status='사용가능',accum_mileage=#{accum_mileage},
                              car_latitude=#{car_latitude},car_longitude=#{car_longitude},car_address=#{car_address}
         where car_code=#{car_code}
     </update>
+    <select id="carLocReturnGetOne">
+        select * from car_loc where car_rez_code=#{car_rez_code} and loc_type='반납지'
+    </select>
 </mapper>

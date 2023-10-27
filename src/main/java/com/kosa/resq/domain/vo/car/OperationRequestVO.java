@@ -1,12 +1,9 @@
 package com.kosa.resq.domain.vo.car;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
