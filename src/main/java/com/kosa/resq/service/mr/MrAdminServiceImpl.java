@@ -61,4 +61,14 @@ public class MrAdminServiceImpl implements MrAdminService {
         return mapper.templateGetAll();
     }
 
+    @Override
+    public NoticeDTO noticeGetOne(String notice_code) {
+        return mapper.noticeGetOne(notice_code);
+    }
+
+    @Override
+    public void noticeDelete(String notice_code) {
+        mapper.noticeDelete(notice_code);
+    }
+
 }
