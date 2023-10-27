@@ -54,6 +54,32 @@
         <collection property="mr" resultMap="mrMap"/>
     </resultMap>
 
+    <resultMap id="deptMap" type="com.kosa.resq.domain.vo.common.DeptVO">
+        <id property="dept_code" column="dept_code"/>
+        <result property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="dept_tel" column="dept_tel"/>
+        <result property="dept_head_code" column="dept_head_code"/>
+        <result property="location" column="location"/>
+    </resultMap>
+
+    <resultMap id="memMap" type="com.kosa.resq.domain.vo.common.MemResponseVO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="hired_at" column="hired_at"/>
+        <result property="created_at" column="created_at"/>
+        <result property="address" column="address"/>
+        <result property="tel" column="tel"/>
+        <result property="is_worked" column="is_worked"/>
+        <result property="profile_img_url" column="profile_img_url"/>
+        <collection property="deptVO" resultMap="deptMap"/>
+    </resultMap>
+
 
     <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
         <selectKey keyProperty="mr_rez_code" order="BEFORE"
@@ -67,6 +93,29 @@
     </insert>
 
 
+    <select id="memGetAll" resultType="com.kosa.resq.domain.vo.common.MemResponseVO" resultMap="memMap">
+        <![CDATA[
+        SELECT
+            M.mem_code,
+            M.dept_code,
+            M.position_name,
+            M.name,
+            M.email,
+            M.role,
+            M.profile_img_url,
+            M.hired_at,
+            M.created_at,
+            M.address,
+            M.tel,
+            M.is_worked,
+            D.dept_name,
+            D.dept_tel ,
+            D.dept_head_code,
+            D.location AS
+        FROM MEM M
+                 INNER JOIN DEPT D ON M.dept_code = D.dept_code
+        ]]>
+    </select>
 
     <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
     <![CDATA[

@@ -1,8 +1,11 @@
 package com.kosa.resq.service.mr;
 
+import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.MrDTO;
 import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
 import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
+import com.kosa.resq.domain.vo.common.MemResponseVO;
+import com.kosa.resq.domain.vo.common.MemResquestVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRezRequestVO;
 import com.kosa.resq.mapper.mr.MrUserMapper;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -88,8 +92,14 @@ public class MrUserServiceImpl implements MrUserService {
     @Override
     public List<MrResponseVO> mrRecommendGetAll(MrRecommendRequestDTO mrRecommendRequestDTO) {
         log.info("================= mrRecommendGetAll 서비스 =============================");
-        List<MrResponseVO> mr =  mapper.mrRecommendGetAll(mrRecommendRequestDTO.getRez_date(),
+        List<MrResponseVO> mr = mapper.mrRecommendGetAll(mrRecommendRequestDTO.getRez_date(),
                 mrRecommendRequestDTO.getRez_start_time(), mrRecommendRequestDTO.getRez_end_time());
         return mr;
+    }
+
+
+    @Override
+    public List<MemResponseVO> memGatAll() {
+        return mapper.memGetAll();
     }
 }

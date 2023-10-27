@@ -1,8 +1,10 @@
 package com.kosa.resq.controller.mr;
 
+import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.MrDTO;
 import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
 import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
+import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.service.mr.MrUserService;
 import lombok.extern.log4j.Log4j2;
@@ -22,22 +24,9 @@ public class MrUserController {
     private MrUserService service;
 
     @GetMapping("/recommend")
-    public ResponseEntity<List<MrResponseVO>> mrRecommendGetAll(@RequestParam String m_type,
-                                                                @RequestParam String rez_date,
-                                                                @RequestParam String rez_start_time,
-                                                                @RequestParam String rez_end_time,
-                                                                @RequestParam int tot_pt_ctn) {
+    public ResponseEntity<List<MrResponseVO>> mrRecommendGetAll(@ModelAttribute MrRecommendRequestDTO mrRecommendRequestDTO) {
         log.info("[GET] mrRecommendGetAll 컨트롤러 ============");
-        MrRecommendRequestDTO mrRecommendRequestDTO = new MrRecommendRequestDTO();
-        mrRecommendRequestDTO.setM_type(m_type);
-        mrRecommendRequestDTO.setRez_date(rez_date);
-        mrRecommendRequestDTO.setRez_start_time(rez_start_time);
-        mrRecommendRequestDTO.setRez_end_time(rez_end_time);
-        mrRecommendRequestDTO.setTot_pt_ctn(tot_pt_ctn);
-
         List<MrResponseVO> result = service.mrRecommendGetAll(mrRecommendRequestDTO);
-
-
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -47,5 +36,11 @@ public class MrUserController {
         log.info(requestDTO);
         service.mrRezSave(requestDTO);
         return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/mem")
+    public ResponseEntity<List<MemResponseVO>> memGatAll() {
+        List<MemResponseVO> result = service.memGatAll();
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
