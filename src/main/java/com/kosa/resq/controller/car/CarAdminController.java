@@ -16,7 +16,7 @@ import java.util.List;
 
 @Log
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/manager")
 public class CarAdminController {
 
     @Autowired
@@ -56,12 +56,15 @@ public class CarAdminController {
     // 사용자 리스트 조회
     @GetMapping("/memList")
     public List<MemResponseVO> memGetAll() {
-        return carAdminService.memGetAll();
+
+        return carAdminService.memGetAll(
+        );
     }
 
     // 차량 조회 - 리스트
     @GetMapping("/car/carList")
     public List<CarListResponseVO> carGetAll() {
+        log.info("aaa");
         return carAdminService.carGetAll();
     }
 
