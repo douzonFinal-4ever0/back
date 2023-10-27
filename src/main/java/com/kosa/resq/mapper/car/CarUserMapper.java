@@ -1,5 +1,6 @@
 package com.kosa.resq.mapper.car;
 
+import com.kosa.resq.domain.dto.car.CarDetailDTO;
 import com.kosa.resq.domain.dto.car.CarLocDTO;
 import com.kosa.resq.domain.dto.car.CarRezDTO;
 import com.kosa.resq.domain.vo.car.*;
@@ -25,4 +26,9 @@ public interface CarUserMapper {
     public int carRezDelete(String car_rez_code);
     public int carRezUpdate(CarRezRequestVO carRezRequestVO);
     public int carLocUpdate(CarLocRequestVO carLocRequestVO);
+    public int carLocDelete(String car_rez_code);
+    public int operationSave(OperationRequestVO operationRequestVO);
+    public int carRezCompleteUpdate(String car_rez_code);
+    public int carDetailUpdate(CarDetailRequestVO carDetailRequestVO);
+    public CarLocResponseVO carLocReturnGetOne(String car_rez_code);
 }

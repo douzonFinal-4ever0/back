@@ -95,7 +95,7 @@ public class CarUserServiceImpl implements CarUserService{
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
         carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
-        carRezRequestVO.setRez_status("1");
+        carRezRequestVO.setRez_status("2");
         System.out.println(carRezRequestVO);
 
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
@@ -134,6 +134,10 @@ public class CarUserServiceImpl implements CarUserService{
         CarRezResponseVO carRezResponseVO=mapper.carRezGetOne(carRezDTO.getCar_rez_code());
         CarRezDTO2 carRezDTO2 = mapper2.map(carRezResponseVO,CarRezDTO2.class);
         carRezDTO2.setCarLoc(carLocInfoGetAll(carRezDTO.getCar_rez_code()));
+        MemDTO memDTO = mapper2.map(carRezResponseVO.getMemResponseVO(),MemDTO.class);
+        carRezDTO2.setMemDTO(memDTO);
+        CarDTO carDTO = mapper2.map(carRezResponseVO.getCarDetailResponseVO().getCarVO(),CarDTO.class);
+        carRezDTO2.setCarDTO(carDTO);
         System.out.println(carRezDTO2);
         return carRezDTO2;
     }
@@ -195,15 +199,15 @@ public class CarUserServiceImpl implements CarUserService{
         return mapper.carRezGetAll(mem_code);
     }
 
-//    @Override
-//    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code, String rez_status) {
-//        String  status;
-//        if(rez_status.equals("0")){
-//            return mapper.carRezGetAll(mem_code);
-//        }else{
-//            return mapper.filterCarRezGetAll(mem_code,rez_status);
-//        }
-//    }
+    @Override
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code, String rez_status) {
+        String  status;
+        if(rez_status.equals("0")){
+            return mapper.carRezGetAll(mem_code);
+        }else{
+            return mapper.filterCarRezGetAll(mem_code,rez_status);
+        }
+    }
 
     @Override
     public List<CarNameCodeResponseVO> searchCarGetAll() {
@@ -219,9 +223,11 @@ public class CarUserServiceImpl implements CarUserService{
     public int carRezDelete(String car_rez_code) {
         return mapper.carRezDelete(car_rez_code);
     }
+
     @Transactional
     @Override
     public CarRezDTO2 carRezInfoUpdate(CarRezDTO carRezDTO) {
+        mapper.carLocDelete(carRezDTO.getCar_rez_code());
 //        System.out.println(carRezDTO);
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
@@ -230,29 +236,87 @@ public class CarUserServiceImpl implements CarUserService{
         System.out.println(carRezRequestVO);
 //        System.out.println(carRezDTO.getCar_rez_code());
         mapper.carRezUpdate(carRezRequestVO);
-        //인수지
+        //장소
+//        CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
+//        String[] address={carRezDTO.getReceipt_loc(),carRezDTO.getReturn_loc(),carRezDTO.getDest_loc()};
+//        String[] type = {"인수지","반납지","목적지"};
+//        for(int i=0;i<3;i++){
+//            CarLocRequestVO carLocRequestVO = new CarLocRequestVO();
+//            carLocRequestVO.setCar_rez_code(carRezDTO.getCar_rez_code());
+//            carLocRequestVO.setAddress(address[i]);
+//            carLocRequestVO.setLoc_type(type[i]);
+//            carLocRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
+//            Float[] coords =new Float[2];
+//            coords=findGeoPoint(carLocRequestVO.getAddress());
+//            carLocRequestVO.setLongitude(coords[0]);
+//            carLocRequestVO.setLatitude(coords[1]);
+//            carLocRequestVOs[i]=carLocRequestVO;
+//        }
+//        mapper.carLocUpdate(carLocRequestVOs[0]);
+//        mapper.carLocUpdate(carLocRequestVOs[1]);
+//        mapper.carLocUpdate(carLocRequestVOs[2]);
+
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
-        String[] address={carRezDTO.getReceipt_loc(),carRezDTO.getReturn_loc(),carRezDTO.getDest_loc()};
         String[] type = {"인수지","반납지","목적지"};
-        for(int i=0;i<3;i++){
+        String[] place = {carRezDTO.getReceipt_loc(),carRezDTO.getReturn_loc(),carRezDTO.getDest_loc()};
+        Float[] f=findGeoPoint(carRezDTO.getReceipt_loc());
+        System.out.println(place[0]);
+        System.out.println(place[1]);
+        System.out.println(place[2]);
+        int locCode=mapper.carLocSeq();
+        for(int i=0;i<carLocRequestVOs.length;i++){
             CarLocRequestVO carLocRequestVO = new CarLocRequestVO();
-            carLocRequestVO.setCar_rez_code(carRezDTO.getCar_rez_code());
-            carLocRequestVO.setAddress(address[i]);
+            locCode+=i;
+            carLocRequestVO.setLoc_code("LOC"+locCode);
+            System.out.println(carLocRequestVO.getLoc_code());
             carLocRequestVO.setLoc_type(type[i]);
+            carLocRequestVO.setAddress(place[i]);
+            carLocRequestVO.setCar_rez_code(carRezRequestVO.getCar_rez_code());
+            carLocRequestVO.setMem_code(carRezRequestVO.getMem_code());
+            carLocRequestVO.setCar_code(carRezRequestVO.getCar_code());
+            //위도 경도
             Float[] coords =new Float[2];
-            coords=findGeoPoint(carLocRequestVO.getAddress());
-            carLocRequestVO.setLongitude(coords[0]);
+            coords=findGeoPoint(place[i]);
+            System.out.println(coords[0]);
+            System.out.println(coords[1]);
             carLocRequestVO.setLatitude(coords[1]);
-//            System.out.println(carLocRequestVO);
-//            mapper.carLocUpdate(carLocRequestVO);
+            carLocRequestVO.setLongitude(coords[0]);
             carLocRequestVOs[i]=carLocRequestVO;
+            System.out.println(carLocRequestVO);
         }
-        mapper.carLocUpdate(carLocRequestVOs[0]);
-        mapper.carLocUpdate(carLocRequestVOs[1]);
-        mapper.carLocUpdate(carLocRequestVOs[2]);
+        mapper.carLocSave(carLocRequestVOs[0]);
+        mapper.carLocSave(carLocRequestVOs[1]);
+        mapper.carLocSave(carLocRequestVOs[2]);
         CarRezResponseVO carRezResponseVO=mapper.carRezGetOne(carRezDTO.getCar_rez_code());
         CarRezDTO2 carRezDTO2 = mapper2.map(carRezResponseVO,CarRezDTO2.class);
         carRezDTO2.setCarLoc(carLocInfoGetAll(carRezDTO.getCar_rez_code()));
+        MemDTO memDTO = mapper2.map(carRezResponseVO.getMemResponseVO(),MemDTO.class);
+        carRezDTO2.setMemDTO(memDTO);
+        CarDTO carDTO = mapper2.map(carRezResponseVO.getCarDetailResponseVO().getCarVO(),CarDTO.class);
+        carRezDTO2.setCarDTO(carDTO);
+        System.out.println(carRezDTO2);
         return carRezDTO2;
+    }
+
+    @Transactional
+    @Override
+    public OperationDTO operationInfoSave(OperationDTO operationDTO) {
+        //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
+        operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
+        System.out.println("service: "+ operationDTO);
+        ModelMapper mapper2 = new ModelMapper();
+        mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        OperationRequestVO operationRequestVO = mapper2.map(operationDTO,OperationRequestVO.class);
+//        operationRequestVO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
+        System.out.println("operationRequestVO: "+operationRequestVO);
+        mapper.operationSave(operationRequestVO);
+        mapper.carRezCompleteUpdate(operationRequestVO.getCar_rez_code());
+        CarLocResponseVO carLocResponseVO = mapper.carLocReturnGetOne(operationRequestVO.getCar_rez_code());
+        CarDetailRequestVO carDetailRequestVO = new CarDetailRequestVO(
+                operationRequestVO.getCar_code(),operationRequestVO.getAft_mileage(),carLocResponseVO.getLatitude(),
+                carLocResponseVO.getLongitude(),carLocResponseVO.getAddress()
+        );
+        mapper.carDetailUpdate(carDetailRequestVO);
+        return null;
     }
 }
