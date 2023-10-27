@@ -85,16 +85,38 @@ public class CarAdminServiceImpl implements CarAdminService{
         return carMaintItemResponseVO;
     }
 
+    @Transactional
     @Override
-    public String maintRecordSave(MaintRecordRequestVO maintRecordRequestVO) {
+    public MaintRecordResponseVO maintRecordSave(MaintRecordRequestVO maintRecordRequestVO) {
         carAdminMapper.maintRecordSave(maintRecordRequestVO);
         maintRecordRequestVO.setMaint_code("MAINT" + maintRecordRequestVO.getMaint_code());
-        return maintRecordRequestVO.getMaint_code();
+
+        // 차량 상태 '정비중'으로 변경
+        carAdminMapper.updateCarStatus(maintRecordRequestVO.getCar_code(), "정비중");
+
+        log.info(maintRecordRequestVO.getMaint_code());
+        return carAdminMapper.maintRecordGetOne(maintRecordRequestVO.getMaint_code());
     }
 
     @Override
     public List<MaintRecordResponseVO> maintOneCarRecordGetAll(String car_code) {
         return carAdminMapper.maintOneCarRecordGetAll(car_code);
+    }
+
+    @Override
+    public void maintEndAtUpdate(MaintModifyRequestVO maintModifyRequestVO) {
+        // 정비 종료일을 현재 날짜로 등록
+        for(String maint_code : maintModifyRequestVO.getMaint_codes()) {
+            carAdminMapper.maintEndAtUpdate(maint_code);
+        }
+//       선택한 정비를 모두 완료처리를 하고, 차량의 상태를 변경시켜야 하는데, 정비 완료처리가 되지 않은 차량은 차량 상태를 변경하면 안됨..
+        // 차량에 정비 등록일이 모두 적용되었는지 확인.
+        int isMaintEnd = carAdminMapper.maintEndCheck(maintModifyRequestVO.getCar_code());
+        // null인걸 찾음. 결과가 0이면 모두 정비 완료 처리되었다는 뜻.
+        if(isMaintEnd == 0) {
+            carAdminMapper.updateCarStatus(maintModifyRequestVO.getCar_code(), "사용가능");
+        }
+
     }
 
 

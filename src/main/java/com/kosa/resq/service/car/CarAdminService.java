@@ -19,7 +19,9 @@ public interface CarAdminService {
     // 차량 정비 항목, 정비 회사 정보 가져오기
     CarMaintItemResponseVO carMaintItemGetAll();
     // 차량 정비 등록
-    String maintRecordSave(MaintRecordRequestVO maintRecordRequestVO);
+    MaintRecordResponseVO maintRecordSave(MaintRecordRequestVO maintRecordRequestVO);
 
     List<MaintRecordResponseVO> maintOneCarRecordGetAll(String car_code);
+    void maintEndAtUpdate(MaintModifyRequestVO maintModifyRequestVO);
+
 }

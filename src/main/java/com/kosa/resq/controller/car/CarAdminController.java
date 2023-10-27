@@ -102,17 +102,26 @@ public class CarAdminController {
 
     // 정비 등록
     @PostMapping("/car/maintRecordRegister")
-    public String maintRecordSave(@RequestBody CarMaintItemDTO carMaintItemDTO) {
+    public MaintRecordResponseVO maintRecordSave(@RequestBody CarMaintItemDTO carMaintItemDTO) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MaintRecordRequestVO maintRecordRequestVO = mapper.map(carMaintItemDTO, MaintRecordRequestVO.class);
+
         return carAdminService.maintRecordSave(maintRecordRequestVO);
     }
 
     // 차량 하나의 정비 리스트 불러오기
     @GetMapping("/car/maintOneCarRecordList")
     public List<MaintRecordResponseVO> maintOneCarRecordGetAll(@RequestParam String car_code) {
+        log.info(car_code);
         return carAdminService.maintOneCarRecordGetAll(car_code);
+    }
+
+    // 선택한 정비 완료 처리
+    @PostMapping("/car/maintCarStatusModify")
+    public void maintCarStatusUpdate(@RequestBody MaintModifyRequestVO maintModifyRequestVO) {
+        carAdminService.maintEndAtUpdate(maintModifyRequestVO);
+
     }
 
 
