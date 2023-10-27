@@ -1,5 +1,6 @@
 package com.kosa.resq.controller.mr;
 
+import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.MrDTO;
 import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
 import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
@@ -37,9 +38,9 @@ public class MrUserController {
         return ResponseEntity.ok("success");
     }
 
-//    @GetMapping("/mem")
-//    public ResponseEntity<List<MemResponseVO>> memGatAll() {
-//        List<MemResponseVO> result = service.memGatAll();
-//        return new ResponseEntity<>(result, HttpStatus.OK);
-//    }
+    @GetMapping("/mem")
+    public ResponseEntity<List<MemResponseVO>> memGatAll() {
+        List<MemResponseVO> result = service.memGatAll();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
