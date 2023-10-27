@@ -1,9 +1,6 @@
 package com.kosa.resq.domain.dto.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
@@ -25,4 +22,19 @@ public class MemDTO {
     private int is_worked;
     private String profile_img_url;
     private DeptDTO deptDTO;
+
+    @Builder
+    MemDTO(String mem_code,
+           String name,
+           String email,
+           String password,
+           String role,
+           int is_worked){
+        this.mem_code=mem_code;
+        this.password=password;
+        this.name=name;
+        this.is_worked=is_worked;
+        this.email=email;
+        this.role=role;
+    }
 }
