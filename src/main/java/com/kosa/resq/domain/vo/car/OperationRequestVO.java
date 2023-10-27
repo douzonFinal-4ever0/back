@@ -1,16 +1,13 @@
-package com.kosa.resq.domain.dto.car;
+package com.kosa.resq.domain.vo.car;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OperationDTO {
+@ToString
+public class OperationRequestVO {
     private String operation_code;
     private String memo;
     private double bef_mileage;
@@ -23,6 +20,4 @@ public class OperationDTO {
     private String car_rez_code;
     private String mem_code;
     private String car_code;
-//    private CarDetailDTO carDetailDTO;
-    private List<ExpenditureDTO> expenditureDTO;
 }

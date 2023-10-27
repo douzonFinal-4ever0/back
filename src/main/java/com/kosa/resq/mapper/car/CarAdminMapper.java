@@ -29,8 +29,16 @@ public interface CarAdminMapper {
     List<MaintComResponseVO> getMaintComList();
     // 정비 등록
     void maintRecordSave(MaintRecordRequestVO maintRecordRequestVO);
+    void updateCarStatus(String car_code, String status);
 
     // 정비 불러오기
     List<MaintRecordResponseVO> maintOneCarRecordGetAll(String car_code);
+
+    MaintRecordResponseVO maintRecordGetOne(String maint_code);
+    // 완료 처리
+    void maintEndAtUpdate(String maint_code);
+
+    int maintEndCheck(String car_code);
+
 
 }
