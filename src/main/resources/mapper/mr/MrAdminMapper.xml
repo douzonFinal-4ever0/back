@@ -94,7 +94,17 @@
         NOTICE_FILE NF on n.NOTICE_CODE = NF.NOTICE_CODE
         order BY n.NOTICE_CODE desc
     </select>
-    
+
+    <select id="noticeGetOne">
+        select *
+        from NOTICE
+        where NOTICE_CODE=#{notice_code}
+    </select>
+    <delete id="noticeDelete">
+        delete
+        from NOTICE
+        where NOTICE_CODE=#{notice_code}
+    </delete>
     <insert id="noticeSave">
         insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
         values ('N' || LPAD(TO_CHAR(notice_code_seq.NEXTVAL), 3, '0'), 'MEM001', localtimestamp, localtimestamp, null,
@@ -160,4 +170,5 @@
         select *
         from TEMPLATE
     </select>
+
 </mapper>

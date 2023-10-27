@@ -75,4 +75,13 @@ public class MrAdminController {
     public List<TemplateVO> templateGetAll(){
         return service.templateGetAll();
     }
+
+    @GetMapping("/notice/{notice_code}")
+    public NoticeDTO noticeGetOne(@PathVariable String notice_code){
+        return service.noticeGetOne(notice_code);
+    }
+    @DeleteMapping("/notice/delete/{notice_code}")
+    public void noticeDelete(@PathVariable String notice_code){
+        service.noticeDelete(notice_code);
+    }
 }

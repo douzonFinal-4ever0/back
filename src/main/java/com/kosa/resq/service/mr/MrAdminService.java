@@ -16,4 +16,6 @@ public interface MrAdminService {
     public void mrUpdate(MrDTO mr);
     public void mrDeactivate(MrDTO mr);
     public List<TemplateVO> templateGetAll();
+    public NoticeDTO noticeGetOne(String notice_code);
+    public void noticeDelete(String notice_code);
 }
