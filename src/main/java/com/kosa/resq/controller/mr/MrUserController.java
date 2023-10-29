@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
+import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
 import com.kosa.resq.domain.dto.mr.MrDTO;
 import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
 import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
@@ -8,6 +9,7 @@ import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.service.mr.MrUserService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.annotations.Param;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,5 +44,11 @@ public class MrUserController {
     public ResponseEntity<List<MemResponseVO>> memGatAll() {
         List<MemResponseVO> result = service.memGatAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/mem/bm")
+    public ResponseEntity<List<BmGroupMemResponseDTO>> bmGroupMemGetAll(@RequestParam("mem_code") String mem_code) {
+        List<BmGroupMemResponseDTO> result = service.bmGroupMemGetAll(mem_code);
+        return  new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

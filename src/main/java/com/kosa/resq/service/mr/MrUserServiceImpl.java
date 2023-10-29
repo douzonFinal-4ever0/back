@@ -1,6 +1,7 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
+import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
 import com.kosa.resq.domain.dto.mr.MrDTO;
 import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
 import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
@@ -97,9 +98,13 @@ public class MrUserServiceImpl implements MrUserService {
         return mr;
     }
 
-
     @Override
     public List<MemResponseVO> memGatAll() {
         return mapper.memGetAll();
+    }
+
+    @Override
+    public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code) {
+        return mapper.bmGroupMemGetAll(mem_code);
     }
 }
