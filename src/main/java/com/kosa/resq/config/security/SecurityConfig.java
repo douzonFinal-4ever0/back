@@ -58,11 +58,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.applyPermitDefaultValues(); // 기본 CORS 허용 설정 적용
-//        corsConfig.addAllowedMethod("DELETE");
-//        corsConfig.addAllowedMethod("PUT");
-//        corsConfig.addAllowedMethod("POST");
-//        corsConfig.addAllowedMethod("PATCH");
-//        corsConfig.addAllowedMethod("GET");
+        corsConfig.addAllowedMethod("DELETE");
+        corsConfig.addAllowedMethod("PUT");
+        corsConfig.addAllowedMethod("POST");
+        corsConfig.addAllowedMethod("PATCH");
+        corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedOrigin("http://localhost:3000"); // 클라이언트 앱의 출처(origin)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

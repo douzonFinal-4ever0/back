@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -304,8 +305,21 @@ public class CarUserServiceImpl implements CarUserService{
         //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
         operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
         System.out.println("service: "+ operationDTO);
+        //메퍼 만들기
         ModelMapper mapper2 = new ModelMapper();
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        //만약 지출이 있을 경우
+        if(operationDTO.getExpenditureDTO()!=null){
+            List<ExpenditureRequestVO> expenditureRequestVOList=new ArrayList<>();
+            List<ExpenditureDTO> expenditureDTOList = operationDTO.getExpenditureDTO();
+            for(ExpenditureDTO expenditureDTO:expenditureDTOList){
+                expenditureDTO.setAccount("차량 정비");
+                expenditureDTO.setMem_code(operationDTO.getMem_code());
+                ExpenditureRequestVO expenditureRequestVO = mapper2.map(expenditureDTO,ExpenditureRequestVO.class);
+                mapper.expenditureSave(expenditureRequestVO);
+            }
+        }
+
         OperationRequestVO operationRequestVO = mapper2.map(operationDTO,OperationRequestVO.class);
 //        operationRequestVO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
         System.out.println("operationRequestVO: "+operationRequestVO);
