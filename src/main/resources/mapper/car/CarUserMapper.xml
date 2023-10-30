@@ -188,4 +188,16 @@
     <select id="carLocReturnGetOne">
         select * from car_loc where car_rez_code=#{car_rez_code} and loc_type='반납지'
     </select>
+    <insert id="expenditureSave">
+        <selectKey keyProperty="exp_code" order="BEFORE" resultType="String">
+            select 'EXP'||expenditure_seq.nextval from dual
+        </selectKey>
+            insert into expenditure (
+                                     exp_code,exp_at,exp_content,cost,status,
+                                     created_at,updated_at,url,account,ac_detail,pay_method,mem_code
+            ) values (
+                    #{exp_code},#{exp_at},#{exp_content},#{cost},#{status},localtimestamp,localtimestamp,#{url},
+                    #{account},#{ac_detail},#{pay_method},#{mem_code}
+            )
+    </insert>
 </mapper>

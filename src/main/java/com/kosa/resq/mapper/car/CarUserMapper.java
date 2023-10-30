@@ -31,4 +31,5 @@ public interface CarUserMapper {
     public int carRezCompleteUpdate(String car_rez_code);
     public int carDetailUpdate(CarDetailRequestVO carDetailRequestVO);
     public CarLocResponseVO carLocReturnGetOne(String car_rez_code);
+    public int expenditureSave(ExpenditureRequestVO expenditureRequestVO);
 }
