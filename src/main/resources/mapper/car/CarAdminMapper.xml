@@ -127,7 +127,7 @@
 
     <!--    차량 정보 리스트-->
     <select id="carGetAll" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">
-        SELECT c1.type, c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo
+        SELECT c1.type, c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c2.car_status, c1.memo
         FROM car c1
                  LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
                  LEFT JOIN operation o ON o.car_code = c1.car_code
@@ -235,6 +235,22 @@
         SELECT COUNT(*) FROM maint_record WHERE car_code=#{car_code} AND maint_end_at IS NULL
     </select>
 
+<!--    선택한 정비 삭제-->
+    <delete id="maintRecordDelete" parameterType="String">
+        DELETE FROM maint_record where maint_code=#{maint_code}
+    </delete>
 
+
+<!--    운행 내역 전체 조회-->
+    <select id="operationGetAll" >
+        SELECT
+        FROM operation o
+                 LEFT JOIN (SELECT car_rez.car_rez_code, detail, start_at, return_at, loc_type, latitude, longitude, address FROM car_rez LEFT JOIN car_loc ON car_rez.car_rez_code = car_loc.car_rez_code) r
+                           ON o.car_rez_code = r.car_rez_code
+                 LEFT JOIN (SELECT car.car_code, car_name, type, accum_mileage, car_status, car_latitude, car_longitude, car_address FROM car LEFT JOIN car_detail ON car.car_code = car_detail.car_code) c
+                           ON o.car_code = c.car_code
+                 LEFT JOIN (SELECT mem_code, name, position_name, dept.dept_code, dept_name FROM mem INNER JOIN dept ON mem.dept_code = dept.dept_code) m
+                           ON o.mem_code = m.mem_code
+    </select>
 
 </mapper>
