@@ -16,5 +16,6 @@ public class CarListResponseVO {
     private Date created_at;
     private int accum_mileage;
     private String memo;
+    private String car_status;
 
 }

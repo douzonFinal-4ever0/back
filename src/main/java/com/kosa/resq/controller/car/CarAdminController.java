@@ -7,6 +7,7 @@ import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.service.car.CarAdminService;
 import lombok.extern.java.Log;
+import org.apache.ibatis.annotations.Delete;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,13 @@ public class CarAdminController {
         carAdminService.carModify(carRequestVO, carDetailRequestVO, carUserRequestVO);
     }
 
-    // 차량 삭제
+    // 차량 삭제 (상태 변경)
+    @PutMapping("/car/carDelete")
+    public void carDelete(@RequestBody String car_code) {
+        log.info(car_code);
+        carAdminService.carDelete(car_code);
+
+    }
 
 
     // 정비 내역, 정비 업체 조회
@@ -124,6 +131,15 @@ public class CarAdminController {
     @PostMapping("/car/maintCarStatusModify")
     public void maintCarStatusUpdate(@RequestBody MaintModifyRequestVO maintModifyRequestVO) {
         carAdminService.maintEndAtUpdate(maintModifyRequestVO);
+
+    }
+
+    // 선택한 정비 삭제
+    @PostMapping("/car/maintRecordDelete")
+    public void maintRecordDelete(@RequestBody MaintModifyRequestVO maintModifyRequestVO) {
+        log.info(maintModifyRequestVO.getCar_code());
+        log.info(maintModifyRequestVO.getMaint_codes().toString());
+        carAdminService.maintRecordDelete(maintModifyRequestVO);
 
     }
 
