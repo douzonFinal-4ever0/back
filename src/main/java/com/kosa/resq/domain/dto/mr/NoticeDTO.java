@@ -18,4 +18,5 @@ public class NoticeDTO {
     private int is_opened;
     private String notice_title;
     private List<NoticeFileDTO> notice_file;
+    private String mem_code;
 }

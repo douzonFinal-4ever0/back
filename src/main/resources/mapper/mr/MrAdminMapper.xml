@@ -61,6 +61,7 @@
         <result property="contents" column="contents"/>
         <result property="is_opened" column="is_opened"/>
         <result property="notice_title" column="notice_title"/>
+        <result property="mem_code" column="mem_code"/>
         <collection property="notice_file" resultMap="notice_fileMap"/>
     </resultMap>
 
@@ -109,7 +110,7 @@
 
     <insert id="noticeSave">
         insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
-        values ('N' || LPAD(TO_CHAR(notice_code_seq.NEXTVAL), 3, '0'), 'MEM001', localtimestamp, localtimestamp, null,
+        values ('N' || LPAD(TO_CHAR(notice_code_seq.NEXTVAL), 3, '0'), #{mem_code}, localtimestamp, localtimestamp, null,
                 #{contents}, #{is_opened},#{notice_title})
     </insert>
 
