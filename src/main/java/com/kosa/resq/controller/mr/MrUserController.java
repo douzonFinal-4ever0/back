@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/mr")
@@ -50,5 +51,12 @@ public class MrUserController {
     public ResponseEntity<List<BmGroupMemResponseDTO>> bmGroupMemGetAll(@RequestParam("mem_code") String mem_code) {
         List<BmGroupMemResponseDTO> result = service.bmGroupMemGetAll(mem_code);
         return  new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping("/mem/bm")
+    public ResponseEntity<String> bmGroupMemDelete(@RequestBody Map<String, Object> requestBody) {
+        List<String> deleteMemCodeList = (List<String>) requestBody.get("deleteMemCodeList");
+        log.info(deleteMemCodeList);
+        return ResponseEntity.ok("mem delete ");
     }
 }
