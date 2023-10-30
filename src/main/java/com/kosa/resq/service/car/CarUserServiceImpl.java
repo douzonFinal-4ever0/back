@@ -315,7 +315,14 @@ public class CarUserServiceImpl implements CarUserService{
             for(ExpenditureDTO expenditureDTO:expenditureDTOList){
                 expenditureDTO.setAccount("차량 정비");
                 expenditureDTO.setMem_code(operationDTO.getMem_code());
+                expenditureDTO.setStatus("미승인");
+                if(expenditureDTO.getUrl()==null){
+                    expenditureDTO.setUrl("");
+                }
+//                System.out.println("expDTO: "+expenditureDTO);
                 ExpenditureRequestVO expenditureRequestVO = mapper2.map(expenditureDTO,ExpenditureRequestVO.class);
+                //지출 정보 저장
+                System.out.println("expVO: "+expenditureRequestVO);
                 mapper.expenditureSave(expenditureRequestVO);
             }
         }
@@ -323,14 +330,17 @@ public class CarUserServiceImpl implements CarUserService{
         OperationRequestVO operationRequestVO = mapper2.map(operationDTO,OperationRequestVO.class);
 //        operationRequestVO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
         System.out.println("operationRequestVO: "+operationRequestVO);
+        //운행 정보 저장
         mapper.operationSave(operationRequestVO);
+        //차량 예약 정보 업데이트
         mapper.carRezCompleteUpdate(operationRequestVO.getCar_rez_code());
         CarLocResponseVO carLocResponseVO = mapper.carLocReturnGetOne(operationRequestVO.getCar_rez_code());
         CarDetailRequestVO carDetailRequestVO = new CarDetailRequestVO(
                 operationRequestVO.getCar_code(),operationRequestVO.getAft_mileage(),carLocResponseVO.getLatitude(),
                 carLocResponseVO.getLongitude(),carLocResponseVO.getAddress()
         );
+        //차량 상세 정보 업데이트
         mapper.carDetailUpdate(carDetailRequestVO);
-        return null;
+        return operationDTO;
     }
 }

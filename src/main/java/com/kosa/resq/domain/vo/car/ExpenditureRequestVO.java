@@ -4,7 +4,7 @@ import lombok.*;
 
 import java.util.Date;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -14,6 +14,7 @@ public class ExpenditureRequestVO {
     private String exp_content;
     private int cost;
     private String url;
+    private String status;
     private String account;
     private String ac_detail;
     private String pay_method;
