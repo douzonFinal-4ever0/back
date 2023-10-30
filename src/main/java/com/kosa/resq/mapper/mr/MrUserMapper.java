@@ -1,5 +1,6 @@
 package com.kosa.resq.mapper.mr;
 
+import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRequestVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
@@ -15,5 +16,7 @@ public interface MrUserMapper {
 
     public List<MemResponseVO> memGetAll();
 
-    List<MrResponseVO> mrRecommendGetAll(String rez_date, String rez_start_time, String rez_end_time);
+    public List<MrResponseVO> mrRecommendGetAll(String rez_date, String rez_start_time, String rez_end_time);
+
+    public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code);
 }

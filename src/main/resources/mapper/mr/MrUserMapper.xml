@@ -80,6 +80,18 @@
         <collection property="deptVO" resultMap="deptMap"/>
     </resultMap>
 
+    <resultMap id="bmGroupMap" type="com.kosa.resq.domain.vo.mr.BmGroupVO">
+        <id property="bm_group_code" column="bm_group_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="bm_group_name" column="bm_group_name"/>
+    </resultMap>
+
+    <resultMap id="bmGroupMemMap" type="com.kosa.resq.domain.vo.mr.BmGroupMemVO">
+        <id property="bm_code" column="bm_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="bm_group_code" column="bm_group_code"/>
+    </resultMap>
+
 
     <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
         <selectKey keyProperty="mr_rez_code" order="BEFORE"
@@ -118,34 +130,45 @@
     </select>
 
     <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
-    <![CDATA[
-        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
-        FROM mr m
-                 LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
-                 LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
-                 LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
-        WHERE m.mr_code NOT IN (
-            SELECT DISTINCT mr_code
-            FROM mr_rez
-            WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
-              AND (
-                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                    OR
-                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                     TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
-                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                    OR
-                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                    OR
-                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                )
-        )
+        <![CDATA[
+            SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
+            FROM mr m
+                     LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
+                     LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
+                     LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+            WHERE m.mr_code NOT IN (
+                SELECT DISTINCT mr_code
+                FROM mr_rez
+                WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                  AND (
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    )
+            )
+            ]]>
+    </select>
+
+    <select id="bmGroupMemGetAll" resultType="com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO">
+        <![CDATA[
+        SELECT BMG.bm_group_code, BMG.bm_group_name, M.mem_code, M.name, M.POSITION_NAME, M.email, M.profile_img_url, M.TEL, D.dept_name
+        FROM BM_GROUP BMG
+                 JOIN BM_GROUP_MEM GM ON BMG.bm_group_code = GM.bm_group_code
+                 JOIN MEM M ON GM.mem_code = M.mem_code
+                 JOIN DEPT D ON M.dept_code = D.dept_code
+        WHERE BMG.mem_code = #{mem_code}
         ]]>
-</select>
+    </select>
 
 </mapper>
 
