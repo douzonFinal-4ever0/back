@@ -78,6 +78,11 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
+    public void carDelete(String car_code) {
+        carAdminMapper.updateCarStatus(car_code, "삭제됨");
+    }
+
+    @Override
     public CarMaintItemResponseVO carMaintItemGetAll() {
         CarMaintItemResponseVO carMaintItemResponseVO = new CarMaintItemResponseVO();
         carMaintItemResponseVO.setCarMaintItemList(carAdminMapper.getCarMaintItemList());
@@ -111,6 +116,21 @@ public class CarAdminServiceImpl implements CarAdminService{
         }
 //       선택한 정비를 모두 완료처리를 하고, 차량의 상태를 변경시켜야 하는데, 정비 완료처리가 되지 않은 차량은 차량 상태를 변경하면 안됨..
         // 차량에 정비 등록일이 모두 적용되었는지 확인.
+        int isMaintEnd = carAdminMapper.maintEndCheck(maintModifyRequestVO.getCar_code());
+        // null인걸 찾음. 결과가 0이면 모두 정비 완료 처리되었다는 뜻.
+        if(isMaintEnd == 0) {
+            carAdminMapper.updateCarStatus(maintModifyRequestVO.getCar_code(), "사용가능");
+        }
+
+    }
+
+    @Override
+    public void maintRecordDelete(MaintModifyRequestVO maintModifyRequestVO) {
+        // 정비 삭제 처리
+        for(String maint_code : maintModifyRequestVO.getMaint_codes()) {
+            carAdminMapper.maintRecordDelete(maint_code);
+        }
+
         int isMaintEnd = carAdminMapper.maintEndCheck(maintModifyRequestVO.getCar_code());
         // null인걸 찾음. 결과가 0이면 모두 정비 완료 처리되었다는 뜻.
         if(isMaintEnd == 0) {

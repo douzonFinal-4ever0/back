@@ -40,5 +40,7 @@ public interface CarAdminMapper {
 
     int maintEndCheck(String car_code);
 
+    void maintRecordDelete(String maint_code);
+
 
 }

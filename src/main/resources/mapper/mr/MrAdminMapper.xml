@@ -100,11 +100,13 @@
         from NOTICE
         where NOTICE_CODE=#{notice_code}
     </select>
+
     <delete id="noticeDelete">
         delete
         from NOTICE
         where NOTICE_CODE=#{notice_code}
     </delete>
+
     <insert id="noticeSave">
         insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
         values ('N' || LPAD(TO_CHAR(notice_code_seq.NEXTVAL), 3, '0'), 'MEM001', localtimestamp, localtimestamp, null,
@@ -127,22 +129,35 @@
     </insert>
 
     <insert id="mrAvailableDaySave">
-        <selectKey keyProperty="mr_code" order="BEFORE"
-                   resultType="String">
-            select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual
-        </selectKey>
-        insert into MR_OP_DAY (MR_CODE, DAY, OP_DAY_CODE)
-        values (#{mr_code}, #{day}, MR_OP_DAY_SEQ.nextval)
+        <!--        <selectKey keyProperty="mr_code" order="BEFORE"-->
+        <!--                   resultType="String">-->
+        <!--            select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual-->
+        <!--        </selectKey>-->
+        insert into MR_OP_DAY (OP_DAY_CODE,MR_CODE, DAY )
+        values (MR_OP_DAY_SEQ.nextval,
+        <if test="mr_code != null">
+            #{mr_code}
+        </if>
+        <if test="mr_code == null">
+            (select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual)
+        </if>, #{day} )
     </insert>
 
     <insert id="mrKeywordSave">
-        <selectKey keyProperty="mr_code" order="BEFORE"
-                   resultType="String">
-            select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual
-        </selectKey>
+        <!--        <selectKey keyProperty="mr_code" order="BEFORE"-->
+        <!--                   resultType="String">-->
+        <!--            select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual-->
+        <!--        </selectKey>-->
         insert into MR_KEYWORD (KEYWORD_CODE, MR_CODE, KEYWORD_NAME)
-        values (MR_KEYWORD_SEQ.nextval, #{mr_code}, #{keyword_name})
+        values (MR_KEYWORD_SEQ.nextval,
+        <if test="mr_code != null">
+            #{mr_code}
+        </if>
+        <if test="mr_code == null">
+            (select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual)
+        </if>, #{keyword_name})
     </insert>
+
     <update id="mrUpdate">
         update MR
         set
@@ -155,6 +170,7 @@
             DELETED_AT = null
         where MR_CODE = #{mr_code}
     </update>
+
     <update id="mrDeactivate">
         update MR
         set
@@ -166,6 +182,7 @@
             DELETED_AT = localtimestamp
         where MR_CODE = #{mr_code}
     </update>
+
     <select id="templateGetAll">
         select *
         from TEMPLATE
