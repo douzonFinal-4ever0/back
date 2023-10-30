@@ -63,7 +63,21 @@ public class MrAdminController {
 
     @PatchMapping("/mrUpdate")
     public void mrUpdate(@RequestBody MrDTO mr){
+        List<MrKeyWordDTO> keyword = mr.getMr_keyword();
+        List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
         service.mrUpdate(mr);
+
+        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
+        // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
+        for (MrKeyWordDTO keywordDTO : keyword) {
+            keywordDTO.setMr_code(mrCode);
+            service.mrKeywordSave(keywordDTO);
+        }
+
+        for (MrOpDayDTO opDayDTO : mrOpDay) {
+            opDayDTO.setMr_code(mrCode);
+            service.mrAvailableDaySave(opDayDTO);
+        }
     }
 
     @PatchMapping("/mrDeactivate")
