@@ -84,13 +84,54 @@
         <result property="type" column="type"/>
     </resultMap>
 
-
     <resultMap id="maintComMap" type="com.kosa.resq.domain.vo.car.MaintComResponseVO">
         <id property="mc_code" column="mc_code"/>
         <result property="mc_name" column="mc_name"/>
         <result property="mc_tell" column="mc_tell"/>
         <result property="mc_category" column="mc_category"/>
     </resultMap>
+
+<!--    운행 목록 result Map-->
+
+    <resultMap id="operationMap" type="com.kosa.resq.domain.vo.car.OperationResponseVO">
+        <id property="operation_code" column="operation_code"/>
+        <result property="memo" column="memo"/>
+        <result property="bef_mileage" column="bef_mileage"/>
+        <result property="aft_mileage" column="aft_mileage"/>
+        <result property="distance" column="distance"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="nomal_biz_mileage" column="nomal_biz_mileage"/>
+        <result property="commute_mileage" column="commute_mileage"/>
+        <result property="detail" column="detail"/>
+        <result property="start_at" column="start_at"/>
+        <result property="return_at" column="return_at"/>
+        <result property="car_code" column="car_code"/>
+        <result property="car_name" column="car_name"/>
+        <result property="type" column="type"/>
+        <result property="accum_mileage" column="accum_mileage"/>
+        <result property="car_status" column="car_status"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="name" column="name"/>
+        <result property="position_name" column="position_name"/>
+        <result property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="car_rez_code" column="o_code"/>
+        <collection property="carLocList" resultMap="carLocMap"/>
+    </resultMap>
+
+
+    <resultMap id="carLocMap" type="com.kosa.resq.domain.vo.car.CarLocVO">
+        <result property="loc_code" column="loc_code"/>
+        <result property="car_rez_code" column="r_code"/>
+        <result property="loc_type" column="loc_type"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="address" column="address"/>
+    </resultMap>
+
+
+
 
 
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
@@ -102,11 +143,6 @@
         INSERT INTO car_detail(car_code, fuel_effciency, accum_mileage, car_status)
         VALUES (#{car_code}, #{fuel_effciency}, #{accum_mileage}, #{car_status})
     </insert>
-
-<!--    <insert id="carDetailSave" parameterType="com.kosa.resq.domain.vo.car.CarDetailRequestVO">-->
-<!--        INSERT INTO car_detail(car_code, fuel_effciency, accum_mileage, car_status, updated_at, car_latitude, car_longitude, car_address)-->
-<!--        VALUES (#{car_code}, #{fuel_effciency}, #{accum_mileage}, #{car_status}, #{updated_at}, #{car_latitude}, #{car_longitude}, #{car_address})-->
-<!--    </insert>-->
 
     <insert id="carUserSave" parameterType="com.kosa.resq.domain.vo.car.CarUserRequestVO">
         INSERT INTO car_user(car_code, mem_code, created_at) VALUES(#{car_code}, #{mem_code}, LOCALTIMESTAMP )
@@ -240,17 +276,49 @@
         DELETE FROM maint_record where maint_code=#{maint_code}
     </delete>
 
+    <!--    정비 현황 조회-->
+    <select id="currentMaintGet" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CurrentMaintResponseVO">
+    <![CDATA[
+        SELECT cm.*,
+               mr.car_code,
+               mr.mileage,
+               mr.maint_start_at,
+               mr.accum_mileage
+        FROM car_maint cm
+                 LEFT JOIN (SELECT maint_item_code,
+                                   c.car_code,
+                                   maint_start_at,
+                                   mileage,
+                                   c.accum_mileage,
+                                   ROW_NUMBER() OVER (PARTITION BY maint_item_code ORDER BY maint_start_at DESC) AS rn
+                            FROM maint_record
+                                     LEFT JOIN car_detail c
+                                               ON maint_record.car_code = c.car_code
+                            WHERE c.car_code = #{car_code}
+                               OR c.car_code IS NULL) mr
+                           ON cm.maint_item_code = mr.maint_item_code
+                               AND mr.rn = 1
+        WHERE cm.type = 1
+        ]]>
+    </select>
 
-<!--    운행 내역 전체 조회-->
-    <select id="operationGetAll" >
-        SELECT
+    <select id="accumeMileageGet" parameterType="String" resultType="int">
+        select accum_mileage from car_detail where car_code=#{car_code}
+    </select>
+
+
+    <!--    운행 내역 전체 조회-->
+    <select id="operationGetAll" resultMap="operationMap">
+        <![CDATA[
+        SELECT operation_code, memo, bef_mileage ,aft_mileage , distance, created_at, updated_at, nomal_biz_mileage, commute_mileage, o.car_rez_code o_code, r.car_rez_code r_code, detail, start_at, return_at, loc_type, latitude, longitude, address, c.car_code, car_name, type, accum_mileage, car_status, car_latitude, car_longitude, car_address, m.mem_code, name,position_name, dept_code, dept_name
         FROM operation o
-                 LEFT JOIN (SELECT car_rez.car_rez_code, detail, start_at, return_at, loc_type, latitude, longitude, address FROM car_rez LEFT JOIN car_loc ON car_rez.car_rez_code = car_loc.car_rez_code) r
-                           ON o.car_rez_code = r.car_rez_code
-                 LEFT JOIN (SELECT car.car_code, car_name, type, accum_mileage, car_status, car_latitude, car_longitude, car_address FROM car LEFT JOIN car_detail ON car.car_code = car_detail.car_code) c
-                           ON o.car_code = c.car_code
-                 LEFT JOIN (SELECT mem_code, name, position_name, dept.dept_code, dept_name FROM mem INNER JOIN dept ON mem.dept_code = dept.dept_code) m
-                           ON o.mem_code = m.mem_code
+                 JOIN (SELECT car_rez.car_rez_code, detail, start_at, return_at, loc_type, latitude, longitude, address FROM car_rez LEFT JOIN car_loc ON car_rez.car_rez_code = car_loc.car_rez_code) r
+                      ON o.car_rez_code = r.car_rez_code
+                 JOIN (SELECT car.car_code, car_name, type, accum_mileage, car_status, car_latitude, car_longitude, car_address FROM car LEFT JOIN car_detail ON car.car_code = car_detail.car_code) c
+                      ON o.car_code = c.car_code
+                 JOIN (SELECT mem_code, name, position_name, dept.dept_code, dept_name FROM mem INNER JOIN dept ON mem.dept_code = dept.dept_code) m
+                      ON o.mem_code = m.mem_code
+        ]]>
     </select>
 
 </mapper>

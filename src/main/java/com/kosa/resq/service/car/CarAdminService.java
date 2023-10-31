@@ -25,5 +25,8 @@ public interface CarAdminService {
     List<MaintRecordResponseVO> maintOneCarRecordGetAll(String car_code);
     void maintEndAtUpdate(MaintModifyRequestVO maintModifyRequestVO);
     void maintRecordDelete(MaintModifyRequestVO maintModifyRequestVO);
+    // 운행 내역 조회
+    List<OperationResponseVO> operationGetAll();
+    List<CurrentMaintResponseVO> currentMaintGet(String car_code);
 
 }
