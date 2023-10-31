@@ -18,4 +18,6 @@ public interface MrUserService {
     public List<MemResponseVO> memGatAll();
 
     public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code);
+
+    public void bmGroupMemSave(String master_code, String mem_code);
 }
