@@ -1,10 +1,7 @@
 package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
-import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
-import com.kosa.resq.domain.dto.mr.MrDTO;
-import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
-import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
+import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.service.mr.MrUserService;
@@ -26,22 +23,19 @@ public class MrUserController {
     @Autowired
     private MrUserService service;
 
-    @GetMapping("/recommend")
+    @GetMapping("/recommend") // 회의실 추천 조회
     public ResponseEntity<List<MrResponseVO>> mrRecommendGetAll(@ModelAttribute MrRecommendRequestDTO mrRecommendRequestDTO) {
-        log.info("[GET] mrRecommendGetAll 컨트롤러 ============");
         List<MrResponseVO> result = service.mrRecommendGetAll(mrRecommendRequestDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/rez")
+    @PostMapping("/rez") // 회의실 예약 등록
     public ResponseEntity<String> mrRezSave(@RequestBody MrRezRequestDTO requestDTO) {
-        log.info("[POST] mrRezSave 컨트롤러 ============");
-        log.info(requestDTO);
         service.mrRezSave(requestDTO);
-        return ResponseEntity.ok("success");
+        return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
-    @GetMapping("/mem")
+    @GetMapping("/mem") // 멤버 전체 조회
     public ResponseEntity<List<MemResponseVO>> memGatAll() {
         List<MemResponseVO> result = service.memGatAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -57,19 +51,14 @@ public class MrUserController {
     @PatchMapping("/mem/bm") // 즐겨찾기 삭제
     public ResponseEntity<String> bmGroupMemDelete(@RequestBody Map<String, Object> requestBody) {
         List<String> deleteMemCodeList = (List<String>) requestBody.get("deleteMemCodeList");
-        log.info(deleteMemCodeList);
         return ResponseEntity.ok("mem delete ");
     }
-    
-    @PostMapping("/mem/bm") // 즐겨찾기 개별 멤버 등록
-    public  ResponseEntity<String> bmGroupMemSave(@RequestBody Map<String, String> requestBody) {
-        String master_code = requestBody.get("master");
-        String mem_code = requestBody.get("member");
 
-        log.info("+++++ 개별 멤버 컨트롤러 +++++");
-
-        service.bmGroupMemSave(master_code, mem_code);
-
-        return ResponseEntity.ok("mem save success");
+    @PostMapping("/mem/bm") // 즐겨찾기 그룹 멤버 등록
+    public ResponseEntity<String> bmGroupSave(@RequestBody BmGroupRequestDTO requestBody) {
+        log.info("==================즐겨찾기 그룹 컨트롤러==================");
+        log.info(requestBody);
+        service.bmGroupMemSave(requestBody);
+        return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 }

@@ -1,10 +1,7 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
-import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
-import com.kosa.resq.domain.dto.mr.MrDTO;
-import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
-import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
+import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 
@@ -19,5 +16,5 @@ public interface MrUserService {
 
     public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code);
 
-    public void bmGroupMemSave(String master_code, String mem_code);
+    public void bmGroupMemSave(BmGroupRequestDTO bmGroupRequestDTO);
 }

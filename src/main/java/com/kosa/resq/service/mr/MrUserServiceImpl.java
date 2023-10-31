@@ -1,10 +1,7 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
-import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
-import com.kosa.resq.domain.dto.mr.MrDTO;
-import com.kosa.resq.domain.dto.mr.MrRecommendRequestDTO;
-import com.kosa.resq.domain.dto.mr.MrRezRequestDTO;
+import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.common.MemResquestVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
@@ -110,11 +107,13 @@ public class MrUserServiceImpl implements MrUserService {
 
     @Transactional
     @Override
-    public void bmGroupMemSave(String master_code, String mem_code) {
-        log.info("+++++ 개별 멤버 서비스  +++++");
-        log.info(master_code);
-        log.info(mem_code);
-        String bm_group_code = mapper.bmGroupSave(master_code, null);
-        mapper.bmGroupMemSave(bm_group_code, mem_code);
+    public void bmGroupMemSave(BmGroupRequestDTO bmGroupRequestDTO) {
+        log.info("+++++ 즐겨찾기 서비스 +++++");
+        log.info(bmGroupRequestDTO.getGroupName());
+        mapper.bmGroupSave(bmGroupRequestDTO.getGroupName(), bmGroupRequestDTO.getMaster());
+        String bm_group_code = mapper.bmGroupGetOne(bmGroupRequestDTO.getMaster());
+        for (String mem_code: bmGroupRequestDTO.getMembers()) {
+            mapper.bmGroupMemSave(bm_group_code, mem_code);
+        }
     }
 }
