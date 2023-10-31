@@ -140,7 +140,19 @@ public class CarAdminController {
         log.info(maintModifyRequestVO.getCar_code());
         log.info(maintModifyRequestVO.getMaint_codes().toString());
         carAdminService.maintRecordDelete(maintModifyRequestVO);
+    }
 
+    //차량 운행 내역 조회
+    @GetMapping("/car/operationList")
+    public List<OperationResponseVO> operationGetAll() {
+        log.info(carAdminService.operationGetAll().toString());
+        return carAdminService.operationGetAll();
+    }
+
+    @GetMapping("/car/currentMaint")
+    public List<CurrentMaintResponseVO> currentMaintGet(@RequestParam String car_code) {
+
+        return carAdminService.currentMaintGet(car_code);
     }
 
 

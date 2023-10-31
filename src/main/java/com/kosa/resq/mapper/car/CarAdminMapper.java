@@ -41,6 +41,11 @@ public interface CarAdminMapper {
     int maintEndCheck(String car_code);
 
     void maintRecordDelete(String maint_code);
+    // 운행 내역 조회
+    List<OperationResponseVO> operationGetAll();
+    List<CurrentMaintResponseVO> currentMaintGet(String car_code);
+
+    int accumeMileageGet(String car_code);
 
 
 }
