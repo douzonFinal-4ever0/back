@@ -114,7 +114,10 @@ public class TokenUtil {
 
         claims.put("userId", mem.getEmail());
         claims.put("userNm", mem.getName());
+        claims.put("userPosition",mem.getPosition_name());
+        claims.put("userDeptNm",mem.getDeptDTO().getDept_name());
         claims.put("userRole",mem.getRole());
+        claims.put("userCode",mem.getMem_code());
         return claims;
     }
 

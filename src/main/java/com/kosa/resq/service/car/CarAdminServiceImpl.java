@@ -139,5 +139,20 @@ public class CarAdminServiceImpl implements CarAdminService{
 
     }
 
+    @Override
+    public List<OperationResponseVO> operationGetAll() {
+        return carAdminMapper.operationGetAll();
+    }
+
+    @Override
+    public List<CurrentMaintResponseVO> currentMaintGet(String car_code) {
+        List<CurrentMaintResponseVO> currentMaintResponseVOList = carAdminMapper.currentMaintGet(car_code);
+        currentMaintResponseVOList.forEach((item) -> {
+            item.setAccum_mileage(carAdminMapper.accumeMileageGet(car_code));
+        });
+//        log.info(currentMaintResponseVOList.toString());
+        return currentMaintResponseVOList;
+    }
+
 
 }
