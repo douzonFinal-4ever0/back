@@ -16,6 +16,7 @@ public class ExpenditureDTO {
     private Date exp_at;
     private String exp_content;
     private int cost;
+    private String status;
     private String url;
     private String account;
     private String ac_detail;

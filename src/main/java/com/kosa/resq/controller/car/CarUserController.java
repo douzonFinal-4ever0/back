@@ -87,7 +87,7 @@ public class CarUserController {
     @PostMapping("/operation")
     public ResponseEntity<OperationDTO> operationInfoSave(@RequestBody OperationDTO operationDTO){
         System.out.println("controller: "+operationDTO);
-//        service.operationInfoSave(operationDTO);
+        service.operationInfoSave(operationDTO);
         return ResponseEntity.ok(operationDTO);
     }
 }
