@@ -47,16 +47,29 @@ public class MrUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/mem/bm")
+    
+    @GetMapping("/mem/bm")  // 즐겨찾기 조회
     public ResponseEntity<List<BmGroupMemResponseDTO>> bmGroupMemGetAll(@RequestParam("mem_code") String mem_code) {
         List<BmGroupMemResponseDTO> result = service.bmGroupMemGetAll(mem_code);
         return  new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PatchMapping("/mem/bm")
+    @PatchMapping("/mem/bm") // 즐겨찾기 삭제
     public ResponseEntity<String> bmGroupMemDelete(@RequestBody Map<String, Object> requestBody) {
         List<String> deleteMemCodeList = (List<String>) requestBody.get("deleteMemCodeList");
         log.info(deleteMemCodeList);
         return ResponseEntity.ok("mem delete ");
+    }
+    
+    @PostMapping("/mem/bm") // 즐겨찾기 개별 멤버 등록
+    public  ResponseEntity<String> bmGroupMemSave(@RequestBody Map<String, String> requestBody) {
+        String master_code = requestBody.get("master");
+        String mem_code = requestBody.get("member");
+
+        log.info("+++++ 개별 멤버 컨트롤러 +++++");
+
+        service.bmGroupMemSave(master_code, mem_code);
+
+        return ResponseEntity.ok("mem save success");
     }
 }

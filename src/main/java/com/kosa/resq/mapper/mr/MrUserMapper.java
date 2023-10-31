@@ -19,4 +19,8 @@ public interface MrUserMapper {
     public List<MrResponseVO> mrRecommendGetAll(String rez_date, String rez_start_time, String rez_end_time);
 
     public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code);
+
+    public String bmGroupSave(String master_code, String bm_group_name);
+
+    public void bmGroupMemSave(String bm_group_code, String mem_code);
 }

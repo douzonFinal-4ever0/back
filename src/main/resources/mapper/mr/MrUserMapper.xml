@@ -104,6 +104,24 @@
         localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
     </insert>
 
+    <insert id="bmGroupSave" parameterType="String" >
+        <selectKey keyProperty="bm_group_code" order="BEFORE"
+                   resultType="String">
+            select 'BMG' || LPAD(TO_CHAR(MR_REZ_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+            INSERT INTO (BM_GROUP_CODE, MEM_CODE, BM_GROUP_NAME, CREATED_AT, UPDATED_AT, DELETED_AT)
+            VALUES (#{bm_group_code}, #{master_code}, #{bm_group_name}, localtimestamp, null, null)
+    </insert>
+
+    <insert id="bmGroupMemSave" parameterType="String">
+        <selectKey keyProperty="bm_code" order="BEFORE"
+                   resultType="String">
+            select 'BMM' || LPAD(TO_CHAR(MR_REZ_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO (BM_CODE, BM_GROUP_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT)
+            VALUES (#{bm_code}, #{bm_group_code}, #{mem_code}, localtimestamp, null, null)
+    </insert>
+
 
     <select id="memGetAll" resultType="com.kosa.resq.domain.vo.common.MemResponseVO" resultMap="memMap">
         <![CDATA[

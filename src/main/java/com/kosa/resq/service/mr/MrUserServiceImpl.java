@@ -107,4 +107,14 @@ public class MrUserServiceImpl implements MrUserService {
     public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code) {
         return mapper.bmGroupMemGetAll(mem_code);
     }
+
+    @Transactional
+    @Override
+    public void bmGroupMemSave(String master_code, String mem_code) {
+        log.info("+++++ 개별 멤버 서비스  +++++");
+        log.info(master_code);
+        log.info(mem_code);
+        String bm_group_code = mapper.bmGroupSave(master_code, null);
+        mapper.bmGroupMemSave(bm_group_code, mem_code);
+    }
 }
