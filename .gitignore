@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### aws 관련 git ignore 처리 ###
-application-aws.yaml
+src/main/resources/application-aws.yaml
 
 
