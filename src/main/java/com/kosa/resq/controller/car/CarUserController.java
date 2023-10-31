@@ -3,6 +3,7 @@ package com.kosa.resq.controller.car;
 import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.service.AddressService;
 import com.kosa.resq.service.car.CarUserService;
 import lombok.Getter;
 import oracle.jdbc.proxy.annotation.Post;
@@ -89,5 +90,18 @@ public class CarUserController {
         System.out.println("controller: "+operationDTO);
         service.operationInfoSave(operationDTO);
         return ResponseEntity.ok(operationDTO);
+    }
+    @GetMapping("/findRoute/{receipt_loc}/{return_loc}/{dest_loc}")
+    public RouteDTO routes(
+            @PathVariable String receipt_loc,@PathVariable String return_loc, @PathVariable String dest_loc
+    ){
+        RouteDTO routeDTO = new RouteDTO(
+                AddressService.findGeoPoint(receipt_loc),AddressService.findGeoPoint(return_loc),AddressService.findGeoPoint(dest_loc)
+        );
+//        AddressService.findGeoPoint(receipt_loc);
+//        AddressService.findGeoPoint(return_loc);
+//        AddressService.findGeoPoint(dest_loc);
+
+        return routeDTO;
     }
 }
