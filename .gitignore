@@ -35,4 +35,6 @@ build/
 ### aws 관련 git ignore 처리 ###
 src/main/resources/application-aws.yaml
 
+### oracleCloud 관련 git ignore 처리 ###
+src/main/resources/application.yaml
 
