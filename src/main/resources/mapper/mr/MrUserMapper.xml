@@ -104,21 +104,30 @@
         localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
     </insert>
 
-    <insert id="bmGroupSave" parameterType="String" >
-        <selectKey keyProperty="bm_group_code" order="BEFORE"
-                   resultType="String">
-            select 'BMG' || LPAD(TO_CHAR(MR_REZ_SEQ.NEXTVAL), 3, '0') from dual
-        </selectKey>
-            INSERT INTO (BM_GROUP_CODE, MEM_CODE, BM_GROUP_NAME, CREATED_AT, UPDATED_AT, DELETED_AT)
-            VALUES (#{bm_group_code}, #{master_code}, #{bm_group_name}, localtimestamp, null, null)
+    <insert id="bmGroupSave" parameterType="com.kosa.resq.domain.vo.mr.BmGroupVO">
+        INSERT INTO BM_GROUP (BM_GROUP_CODE, MEM_CODE, BM_GROUP_NAME, CREATED_AT, UPDATED_AT, DELETED_AT)
+        SELECT 'BMG' || LPAD(TO_CHAR(BM_GROUP_SEQ.NEXTVAL), 3, '0'), #{mem_code},
+               CASE WHEN #{bm_group_name} = '' THEN NULL ELSE #{bm_group_name} END,
+               localtimestamp, null, null
+        FROM dual
     </insert>
+
+    <select id="bmGroupGetOne" resultType="String">
+     <![CDATA[
+        SELECT bm_group_code
+        FROM BM_GROUP
+        WHERE MEM_CODE=#{mem_code}
+        ORDER BY CREATED_AT DESC
+        FETCH FIRST 1 ROWS ONLY
+    ]]>
+    </select>
 
     <insert id="bmGroupMemSave" parameterType="String">
         <selectKey keyProperty="bm_code" order="BEFORE"
                    resultType="String">
-            select 'BMM' || LPAD(TO_CHAR(MR_REZ_SEQ.NEXTVAL), 3, '0') from dual
+            select 'BMM' || LPAD(TO_CHAR(BM_GROUP_MEM_SEQ.NEXTVAL), 3, '0') from dual
         </selectKey>
-        INSERT INTO (BM_CODE, BM_GROUP_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT)
+        INSERT INTO BM_GROUP_MEM (BM_CODE, BM_GROUP_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT)
             VALUES (#{bm_code}, #{bm_group_code}, #{mem_code}, localtimestamp, null, null)
     </insert>
 
@@ -149,11 +158,11 @@
 
     <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
         <![CDATA[
-            SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
-            FROM mr m
-                     LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
-                     LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
-                     LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
+        FROM mr m
+                 LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
+                 LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+                 LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
             WHERE m.mr_code NOT IN (
                 SELECT DISTINCT mr_code
                 FROM mr_rez

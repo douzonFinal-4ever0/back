@@ -20,7 +20,9 @@ public interface MrUserMapper {
 
     public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code);
 
-    public String bmGroupSave(String master_code, String bm_group_name);
+    public void bmGroupSave(String bm_group_name, String mem_code);
+
+    public String bmGroupGetOne(String mem_code);
 
     public void bmGroupMemSave(String bm_group_code, String mem_code);
 }
