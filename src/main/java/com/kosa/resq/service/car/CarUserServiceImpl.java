@@ -304,6 +304,9 @@ public class CarUserServiceImpl implements CarUserService{
     public OperationDTO operationInfoSave(OperationDTO operationDTO) {
         //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
         operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
+        if(operationDTO.getMemo()==null){
+            operationDTO.setMemo("");
+        }
         System.out.println("service: "+ operationDTO);
         //메퍼 만들기
         ModelMapper mapper2 = new ModelMapper();
@@ -329,6 +332,7 @@ public class CarUserServiceImpl implements CarUserService{
 
         OperationRequestVO operationRequestVO = mapper2.map(operationDTO,OperationRequestVO.class);
 //        operationRequestVO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
+
         System.out.println("operationRequestVO: "+operationRequestVO);
         //운행 정보 저장
         mapper.operationSave(operationRequestVO);
