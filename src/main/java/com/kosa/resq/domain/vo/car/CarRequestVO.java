@@ -17,4 +17,5 @@ public class CarRequestVO {
     private int max_capacity;
     private Date buy_at;
     private String memo;
+    private String car_loc;
 }
