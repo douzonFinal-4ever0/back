@@ -178,10 +178,10 @@
               )
     </insert>
     <update id="carRezCompleteUpdate">
-        update car_rez set rez_status='3',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
+       update /*+ NO_PARALLEL(car_rez) */ car_rez set  rez_status='3',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
     </update>
     <update id="carDetailUpdate">
-        update car_detail set car_status='사용가능',accum_mileage=#{accum_mileage},
+        update /*+ NO_PARALLEL(car_detail) */ car_detail set car_status='사용가능',accum_mileage=#{accum_mileage},
                              car_latitude=#{car_latitude},car_longitude=#{car_longitude},car_address=#{car_address}
         where car_code=#{car_code}
     </update>
