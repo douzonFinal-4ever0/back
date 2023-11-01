@@ -29,9 +29,9 @@ public class CarAdminController {
         carDTO.getCarDetail().setCar_code(carDTO.getCar_code());
         carDTO.getCarDetail().setCar_status("사용가능");
 
-//        log.info(carDTO.toString());
-//        log.info(carDTO.getCarDetail().toString());
-//        log.info(carDTO.getCarUser().toString());
+        log.info(carDTO.toString());
+        log.info(carDTO.getCarDetail().toString());
+        log.info(carDTO.getCarUser().toString());
 
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -40,9 +40,9 @@ public class CarAdminController {
         CarDetailRequestVO carDetailRequestVO = mapper.map(carDTO.getCarDetail(), CarDetailRequestVO.class);
         CarUserRequestVO carUserRequestVO = mapper.map(carDTO.getCarUser(), CarUserRequestVO.class);
 
-//        log.info(carRequestVO.toString());
-//        log.info(carDetailRequestVO.toString());
-//        log.info(carUserRequestVO.toString());
+        log.info(carRequestVO.toString());
+        log.info(carDetailRequestVO.toString());
+        log.info(carUserRequestVO.toString());
 
         carAdminService.carSave(carRequestVO, carDetailRequestVO, carUserRequestVO);
     }

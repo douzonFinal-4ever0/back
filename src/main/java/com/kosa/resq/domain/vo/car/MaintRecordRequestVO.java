@@ -22,4 +22,5 @@ public class MaintRecordRequestVO {
     private int maint_cost;
     private String pay_method;
     private String memo;
+    private int mileage;
 }

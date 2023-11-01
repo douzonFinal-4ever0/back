@@ -4,6 +4,7 @@ import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.mapper.car.CarAdminMapper;
+import com.kosa.resq.service.AddressService;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Log
 @Service
@@ -20,11 +20,24 @@ public class CarAdminServiceImpl implements CarAdminService{
     @Autowired
     private CarAdminMapper carAdminMapper;
 
+    @Autowired
+    private AddressService addressService;
+
+
     @Transactional
     @Override
     public void carSave(CarRequestVO carVO, CarDetailRequestVO carDetailRequestVO, CarUserRequestVO carUserRequestVO) {
         log.info("carSave 서비스 탐");
-        log.info(carUserRequestVO.toString());
+        // carVO의 car_loc 값을 가지고 carDetailRequestVO에 위치 등을 저장
+        log.info(carDetailRequestVO.toString());
+
+        Float[] car_loc_list = addressService.findGeoPoint(carDetailRequestVO.getCar_address());
+        carDetailRequestVO.setCar_latitude(car_loc_list[1]);
+        carDetailRequestVO.setCar_longitude(car_loc_list[0]);
+
+
+        log.info(carDetailRequestVO.toString());
+
         if(carUserRequestVO.getMem_code() != null) {
             // 차량 지정자가 존재
             carAdminMapper.carSave(carVO);
@@ -95,6 +108,8 @@ public class CarAdminServiceImpl implements CarAdminService{
     public MaintRecordResponseVO maintRecordSave(MaintRecordRequestVO maintRecordRequestVO) {
         carAdminMapper.maintRecordSave(maintRecordRequestVO);
         maintRecordRequestVO.setMaint_code("MAINT" + maintRecordRequestVO.getMaint_code());
+
+
 
         // 차량 상태 '정비중'으로 변경
         carAdminMapper.updateCarStatus(maintRecordRequestVO.getCar_code(), "정비중");
