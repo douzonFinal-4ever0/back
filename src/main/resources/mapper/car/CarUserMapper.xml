@@ -107,8 +107,16 @@
         where authority='모두'and car_status='사용가능'
     </select>
     <select id="carGetAll2" resultMap="carDetailMap">
-        select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
+--         select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
+--         where authority='모두'and car_status='사용가능'
+        select c.car_code, c.car_name, d.car_address, c.memo
+        from car c join car_detail d on c.car_code=d.car_code join CAR_REZ r on c.CAR_CODE = r.CAR_CODE
         where authority='모두'and car_status='사용가능'
+        and #{start_at}>r.return_at and r.start_at >#{return_at}
+          and not(#{start_at} between r.start_at and r.return_at)
+          and not(#{return_at} between r.start_at and r.return_at)
+          and not (r.start_at between #{start_at} and #{return_at})
+          and not (r.return_at between #{start_at} and #{return_at})
     </select>
 
     <select id="carGetOne" resultMap="carDetailMap">
