@@ -2,6 +2,8 @@ package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.CarDTO;
 import com.kosa.resq.domain.dto.car.CarMaintItemDTO;
+import com.kosa.resq.domain.dto.car.SearchCar;
+import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -63,10 +65,11 @@ public class CarAdminController {
     }
 
     // 차량 조회 - 리스트
-    @GetMapping("/car/carList")
-    public List<CarListResponseVO> carGetAll() {
-        log.info("aaa");
-        return carAdminService.carGetAll();
+    @PostMapping("/car/carList")
+    public List<CarListResponseVO> carGetAll(@RequestBody SearchCar searchCar) {
+        log.info(searchCar.toString());
+
+        return carAdminService.carGetAll(searchCar);
     }
 
 
@@ -143,15 +146,14 @@ public class CarAdminController {
     }
 
     //차량 운행 내역 조회
-    @GetMapping("/car/operationList")
-    public List<OperationResponseVO> operationGetAll() {
-        log.info(carAdminService.operationGetAll().toString());
-        return carAdminService.operationGetAll();
+    @PostMapping("/car/operationList")
+    public List<OperationResponseVO> operationGetAll(@RequestBody SearchOperation searchOperation) {
+        log.info(searchOperation.toString());
+        return carAdminService.operationGetAll(searchOperation);
     }
 
     @GetMapping("/car/currentMaint")
     public List<CurrentMaintResponseVO> currentMaintGet(@RequestParam String car_code) {
-
         return carAdminService.currentMaintGet(car_code);
     }
 

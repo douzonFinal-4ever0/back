@@ -1,5 +1,7 @@
 package com.kosa.resq.service.car;
 
+import com.kosa.resq.domain.dto.car.SearchCar;
+import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -9,7 +11,7 @@ import java.util.List;
 public interface CarAdminService {
 
     public void carSave(CarRequestVO carVO, CarDetailRequestVO carDetailRequestVO, CarUserRequestVO carUserRequestVO);
-    public List<CarListResponseVO> carGetAll();
+    public List<CarListResponseVO> carGetAll(SearchCar searchCar);
     CarListResponseVO carListGetOne(String car_code);
     public List<MemResponseVO> memGetAll();
     public CarDetailResponseVO carGetOne(String car_code);
@@ -26,7 +28,7 @@ public interface CarAdminService {
     void maintEndAtUpdate(MaintModifyRequestVO maintModifyRequestVO);
     void maintRecordDelete(MaintModifyRequestVO maintModifyRequestVO);
     // 운행 내역 조회
-    List<OperationResponseVO> operationGetAll();
+    List<OperationResponseVO> operationGetAll(SearchOperation searchOperation);
     List<CurrentMaintResponseVO> currentMaintGet(String car_code);
 
 }

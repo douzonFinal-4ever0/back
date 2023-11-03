@@ -17,5 +17,11 @@ public class CarListResponseVO {
     private int accum_mileage;
     private String memo;
     private String car_status;
+    private String authority;
+    private String max_capacity;
+    private String mem_code;
+    private String position_name;
+    private String name;
+    private String dept_name;
 
 }
