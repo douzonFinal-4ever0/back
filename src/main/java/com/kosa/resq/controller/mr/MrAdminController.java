@@ -2,18 +2,28 @@ package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
+import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.mr.MrAdminService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/mr")
+@Log4j2
 public class MrAdminController {
     @Autowired
     private MrAdminService service;
+    @Autowired
+    private S3UploadService imgService;
+    private String mrCode;
 
     public MrAdminController(MrAdminService service) {
         this.service = service;
@@ -47,7 +57,7 @@ public class MrAdminController {
 
         // 먼저 MR 정보를 저장하고 mr_code를 가져옴
         service.mrSave(mr);
-        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
+        mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
 
         // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
         for (MrKeyWordDTO keywordDTO : keyword) {
@@ -62,40 +72,66 @@ public class MrAdminController {
     }
 
     @PatchMapping("/mrUpdate")
-    public void mrUpdate(@RequestBody MrDTO mr){
+    public void mrUpdate(@RequestBody MrDTO mr) {
         List<MrKeyWordDTO> keyword = mr.getMr_keyword();
         List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
         service.mrUpdate(mr);
+        String updateMrCode = mr.getMr_code();
 
-        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
+//        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
         // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
-        for (MrKeyWordDTO keywordDTO : keyword) {
-            keywordDTO.setMr_code(mrCode);
-            service.mrKeywordSave(keywordDTO);
-        }
-
-        for (MrOpDayDTO opDayDTO : mrOpDay) {
-            opDayDTO.setMr_code(mrCode);
-            service.mrAvailableDaySave(opDayDTO);
+//        for (MrKeyWordDTO keywordDTO : keyword) {
+//            keywordDTO.setMr_code(mrCode);
+//            service.mrKeywordSave(keywordDTO);
+//        }
+        log.info(mrOpDay);
+        log.info(updateMrCode);
+//
+        for (int i = 0; i < mrOpDay.size(); i++) {
+            MrOpDayDTO opDayDTO = mrOpDay.get(i);
+            opDayDTO.setMr_code(updateMrCode);
+            opDayDTO.setDay(i);
+            service.mrOpDayUpdate(opDayDTO);
         }
     }
 
     @PatchMapping("/mrDeactivate")
-    public void mrDeactivate(@RequestBody MrDTO mr){
+    public void mrDeactivate(@RequestBody MrDTO mr) {
         service.mrDeactivate(mr);
     }
 
     @GetMapping("/template")
-    public List<TemplateVO> templateGetAll(){
+    public List<TemplateVO> templateGetAll() {
         return service.templateGetAll();
     }
 
     @GetMapping("/notice/{notice_code}")
-    public NoticeDTO noticeGetOne(@PathVariable String notice_code){
+    public NoticeDTO noticeGetOne(@PathVariable String notice_code) {
         return service.noticeGetOne(notice_code);
     }
+
     @DeleteMapping("/notice/delete/{notice_code}")
-    public void noticeDelete(@PathVariable String notice_code){
+    public void noticeDelete(@PathVariable String notice_code) {
         service.noticeDelete(notice_code);
+    }
+
+    @PostMapping("/mrImg")
+    public ResponseEntity<Object> mrImgSave(@RequestParam("images") MultipartFile[] images) {
+        try {
+            for (int i = 0; i < images.length; i++) {
+                MultipartFile image = images[i];
+                MrImgDTO img = new MrImgDTO();
+                String url = imgService.saveFile(image, "mr");
+                img.setUrl(url);
+                System.out.println(mrCode);
+                log.info(mrCode);
+                img.setMr_code(mrCode);
+                service.mrImgSave(img);
+            }
+        } catch (IOException e) {
+            return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<Object>("Success", HttpStatus.OK);
+//        service.mrImgSave(img);
     }
 }
