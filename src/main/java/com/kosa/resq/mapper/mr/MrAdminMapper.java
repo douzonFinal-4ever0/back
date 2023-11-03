@@ -20,4 +20,6 @@ public interface MrAdminMapper {
     public List<TemplateVO> templateGetAll();
     public NoticeDTO noticeGetOne(String notice_code);
     public void noticeDelete(String notice_code);
+    public void mrImgSave(MrImgDTO img);
+    public void mrOpDayUpdate(MrOpDayDTO day);
 }
