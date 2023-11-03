@@ -7,6 +7,7 @@ import com.kosa.resq.config.security.filter.JwtAuthorizationFilter;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -42,8 +46,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 .formLogin()
                 .loginPage("/login")  // 로그인 페이지 URL
-                .defaultSuccessUrl("/dashboard") ; // 로그인 성공 후 이동할 페이지
-//                .and()
+                .defaultSuccessUrl("/dashboard")
+                .and()
+                .cors();
+
 //                .logout()
 //                .logoutUrl("/logout")  // 로그아웃 URL
 //                .logoutSuccessUrl("/login")  // 로그아웃 성공 후 이동할 페이지
@@ -138,5 +144,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     }
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 클라이언트 출처
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }

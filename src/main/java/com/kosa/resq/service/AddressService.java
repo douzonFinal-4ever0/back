@@ -1,7 +1,9 @@
 package com.kosa.resq.service;
 
+import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +14,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+@RequiredArgsConstructor
+@Service
 public class AddressService
 {
     static public Float[] findGeoPoint(String roadFullAddr) {
