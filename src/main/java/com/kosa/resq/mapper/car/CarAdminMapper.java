@@ -1,5 +1,6 @@
 package com.kosa.resq.mapper.car;
 
+import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface CarAdminMapper {
     void carUserSave(CarUserRequestVO carUserRequestVO);
     
     CarListResponseVO carListGetOne(String car_code);
-    List<CarListResponseVO> carGetAll();
+    List<CarListResponseVO> carGetAll(SearchCarVO searchCarVO);
     List<MemResponseVO> memGetAll();
     CarDetailResponseVO carGetOne(String car_code);
 
@@ -42,7 +43,7 @@ public interface CarAdminMapper {
 
     void maintRecordDelete(String maint_code);
     // 운행 내역 조회
-    List<OperationResponseVO> operationGetAll();
+    List<OperationResponseVO> operationGetAll(SearchOperationVO searchOperationVO);
     List<CurrentMaintResponseVO> currentMaintGet(String car_code);
 
     int accumeMileageGet(String car_code);

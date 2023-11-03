@@ -1,6 +1,7 @@
 package com.kosa.resq.service.car;
 
-import com.kosa.resq.domain.dto.common.MemDTO;
+import com.kosa.resq.domain.dto.car.SearchCar;
+import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.mapper.car.CarAdminMapper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Log
@@ -55,8 +57,18 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
-    public List<CarListResponseVO> carGetAll() {
-        return carAdminMapper.carGetAll();
+    public List<CarListResponseVO> carGetAll(SearchCar searchCar) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String sdate = null;
+        if (searchCar.getOperation_sdate() != null) {
+            sdate = sdf.format(searchCar.getOperation_sdate());
+        }
+        String edate = sdf.format(searchCar.getOperation_edate());
+
+        log.info(sdate);
+
+        SearchCarVO searchCarVO = new SearchCarVO(sdate, edate, searchCar.getAuthority(), searchCar.getMax_capacity(), searchCar.getSdistance(), searchCar.getEdistance());
+        return carAdminMapper.carGetAll(searchCarVO);
     }
 
 
@@ -155,8 +167,13 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
-    public List<OperationResponseVO> operationGetAll() {
-        return carAdminMapper.operationGetAll();
+    public List<OperationResponseVO> operationGetAll(SearchOperation searchOperation) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String sdate = sdf.format(searchOperation.getOperation_sdate());
+        String edate = sdf.format(searchOperation.getOperation_edate());
+        SearchOperationVO searchOperationVO = new SearchOperationVO(sdate, edate, searchOperation.getCar_type(), searchOperation.getDept_name(), searchOperation.getSdistance(), searchOperation.getEdistance());
+        log.info(searchOperationVO.toString());
+        return carAdminMapper.operationGetAll(searchOperationVO);
     }
 
     @Override
