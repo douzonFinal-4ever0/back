@@ -71,4 +71,14 @@ public class MrAdminServiceImpl implements MrAdminService {
         mapper.noticeDelete(notice_code);
     }
 
+    @Override
+    public void mrImgSave(MrImgDTO img) {
+        mapper.mrImgSave(img);
+    }
+
+    @Override
+    public void mrOpDayUpdate(MrOpDayDTO day) {
+        mapper.mrOpDayUpdate(day);
+    }
+
 }

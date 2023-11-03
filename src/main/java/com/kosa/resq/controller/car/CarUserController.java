@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -39,9 +41,13 @@ public class CarUserController {
 //    public List<CarDetailDTO2> availableCarGetAll(){
 //        return service.carGetAll();
 //    }
-    @GetMapping("/availableCars")
-    public List<AvailableCarResponseVO> availableCarGetAll(){
-        return service.carGetAll2();
+    @GetMapping("/availableCars/{start_at}/{return_at}")
+    public List<AvailableCarResponseVO> availableCarGetAll(@PathVariable Date start_at, @PathVariable Date return_at){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+        System.out.println("start_at:"+start_at.getClass().getName());
+        System.out.println("return_at:"+return_at);
+        return service.carGetAll2(start_at,return_at);
     }
 
     @GetMapping("/carDetail/{car_code}")
