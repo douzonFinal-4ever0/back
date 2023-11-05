@@ -94,7 +94,7 @@ public class CarUserController {
     @PostMapping("/operation")
     public ResponseEntity<OperationDTO> operationInfoSave(@RequestBody OperationDTO operationDTO){
         System.out.println("controller: "+operationDTO);
-        service.operationInfoSave(operationDTO);
+        service.operationInfoSave2(service.operationInfoSave(operationDTO));
         return ResponseEntity.ok(operationDTO);
     }
     @GetMapping("/findRoute/{receipt_loc}/{return_loc}/{dest_loc}")
@@ -109,5 +109,14 @@ public class CarUserController {
 //        AddressService.findGeoPoint(dest_loc);
 
         return routeDTO;
+    }
+
+    @GetMapping("/selectedCar/{car_code}")
+    public ResponseEntity<String> selectedCarUpdate(@PathVariable String car_code){
+        if(service.selectedCarUpdate(car_code)>0){
+            return ResponseEntity.ok(car_code);
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(car_code);
+        }
     }
 }
