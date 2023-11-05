@@ -30,4 +30,5 @@ public class MrResponseVO {
     private List<MrKeywordResponseVO> mr_keyword;
     private List<MrImgResponseVO> mr_img;
     private List<MrOpDayResponseVO> mr_op_day;
+    private int priority; // 우선순위
 }

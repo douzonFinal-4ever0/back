@@ -4,8 +4,7 @@ import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.common.MemResquestVO;
-import com.kosa.resq.domain.vo.mr.MrResponseVO;
-import com.kosa.resq.domain.vo.mr.MrRezRequestVO;
+import com.kosa.resq.domain.vo.mr.*;
 import com.kosa.resq.mapper.mr.MrUserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -90,9 +87,74 @@ public class MrUserServiceImpl implements MrUserService {
     @Override
     public List<MrResponseVO> mrRecommendGetAll(MrRecommendRequestDTO mrRecommendRequestDTO) {
         log.info("================= mrRecommendGetAll 서비스 =============================");
-        List<MrResponseVO> mr = mapper.mrRecommendGetAll(mrRecommendRequestDTO.getRez_date(),
-                mrRecommendRequestDTO.getRez_start_time(), mrRecommendRequestDTO.getRez_end_time());
-        return mr;
+
+        // *** 1차: 예약 가능한 회의실 조회
+        List<MrResponseVO> avlMr = mapper.mrRecommendGetAll(mrRecommendRequestDTO.getRez_date(),
+                mrRecommendRequestDTO.getRez_start_time(), mrRecommendRequestDTO.getRez_end_time(), Integer.valueOf(mrRecommendRequestDTO.getTot_pt_ctn()));
+
+        // *** 2차: 회의실 주제 조회 (+1점)
+        String mType = mrRecommendRequestDTO.getM_type();
+
+        for (MrResponseVO avlMrItem : avlMr) {
+            List<MrKeywordResponseVO> keywordList = avlMrItem.getMr_keyword();
+            for (MrKeywordResponseVO keyword : keywordList) {
+                String keywordName = keyword.getKeyword_name();
+                if(mType.equals(keywordName)) {
+                    avlMrItem.setPriority(avlMrItem.getPriority() + 1); // 1점 추가
+                }
+            }
+        }
+
+        // *** 2차: 즐겨찾기 회의실 조회 (+1000점)
+        List<BmMrVO> bmMr = mapper.bmMrGetAll(mrRecommendRequestDTO.getMem_code());
+
+        for (MrResponseVO avlMrItem : avlMr) {
+            for (BmMrVO bmMrItem : bmMr) {
+                if (avlMrItem.getMr_code().equals(bmMrItem.getMr_code())) {
+                    avlMrItem.setPriority(avlMrItem.getPriority() + 1000);
+                    break;
+                }
+            }
+        }
+
+        // *** 3차 : 최근 이용한 회의실 최대 5개 조회 (+100점)
+        List<MrResponseVO> recentMr = mapper.recentMrGetFive(mrRecommendRequestDTO.getMem_code());
+
+        // avlMr 리스트에 있는 회의실 중에서 recentMr 회의실 코드와 일치하는 것에 priority를 10 더하기
+        for (MrResponseVO avlMrItem : avlMr) {
+            for (MrResponseVO recentMrItem : recentMr) {
+                if (avlMrItem.getMr_code().equals(recentMrItem.getMr_code())) {
+                    avlMrItem.setPriority(avlMrItem.getPriority() + 100);
+                    break;
+                }
+            }
+        }
+
+        // *** 4차 : 가까운 회의실 조회 (+10점)
+        MemResponseVO mem = mapper.memGetOne(mrRecommendRequestDTO.getMem_code());
+        String location = mem.getDeptVO().getLocation();
+
+        for (MrResponseVO avlMrItem : avlMr) {
+            String avlMrLocation = avlMrItem.getLocation(); // avlMr 아이템의 location 값
+            // location 값의 일부를 잘라서 비교
+            if (location.substring(0, 5).equals(avlMrLocation.substring(0, 5))) {
+                avlMrItem.setPriority(avlMrItem.getPriority() + 10); // 10점 추가
+            }
+        }
+
+        // 여기서 우선순위 및 기타 기준에 따라 회의실을 선택하는 로직을 추가
+        avlMr.sort(Comparator.comparing(MrResponseVO::getPriority).reversed());
+
+        // 상위 10개 추출
+        List<MrResponseVO> topTenMr = avlMr.stream()
+                .limit(10)
+                .collect(Collectors.toList());
+
+        topTenMr.forEach(item -> log.info(item));
+
+
+
+        return topTenMr;
     }
 
     @Override
@@ -115,5 +177,10 @@ public class MrUserServiceImpl implements MrUserService {
         for (String mem_code: bmGroupRequestDTO.getMembers()) {
             mapper.bmGroupMemSave(bm_group_code, mem_code);
         }
+    }
+
+    @Override
+    public List<BmMrVO> bmMrGetAll(String mem_code) {
+        return mapper.bmMrGetAll(mem_code);
     }
 }
