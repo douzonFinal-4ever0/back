@@ -25,10 +25,9 @@ class CarUserMapperTest {
 //        System.out.println(mapper.carRezGetAll("MEM001"));
 //        System.out.println(mapper.filterCarRezGetAll("MEM001","0"));
 //        System.out.println(mapper.searchCarGetAll());
-        String dateString = "Sat Nov 04 2023 09:00:00 GMT+0900";
-        String dateString2 = "Sat Nov 05 2023 09:00:00 GMT+0900";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", java.util.Locale.ENGLISH);
-
+        String dateString = "2023-11-03 09:00:00";
+        String dateString2 = "2023-11-03 15:00:00";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             Date date = dateFormat.parse(dateString);
             Date date2 = dateFormat.parse(dateString2);

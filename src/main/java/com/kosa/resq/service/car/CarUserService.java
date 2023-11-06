@@ -1,10 +1,7 @@
 package com.kosa.resq.service.car;
 
 import com.kosa.resq.domain.dto.car.*;
-import com.kosa.resq.domain.vo.car.AvailableCarResponseVO;
-import com.kosa.resq.domain.vo.car.CarNameCodeResponseVO;
-import com.kosa.resq.domain.vo.car.CarRezInfoResponseVO;
-import com.kosa.resq.domain.vo.car.CarRezResponseVO;
+import com.kosa.resq.domain.vo.car.*;
 import org.modelmapper.ModelMapper;
 
 import java.util.Date;
@@ -24,5 +21,7 @@ public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at);
     public int carRezDelete(String car_rez_code);
     public CarRezDTO2 carRezInfoUpdate(CarRezDTO carRezDTO);
 //    public CarRezDTO2 getCarRezDTO2(CarRezDTO carRezDTO);
-    public OperationDTO operationInfoSave(OperationDTO operationDTO);
+    public OperationRequestVO operationInfoSave(OperationDTO operationDTO);
+    public boolean operationInfoSave2(OperationRequestVO operationRequestVO);
+    public int selectedCarUpdate(String car_code);
 }
