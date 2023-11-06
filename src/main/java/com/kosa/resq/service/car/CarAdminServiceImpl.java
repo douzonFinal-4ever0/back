@@ -52,8 +52,8 @@ public class CarAdminServiceImpl implements CarAdminService{
 
     }
     @Override
-    public CarListResponseVO carListGetOne(String car_code) {
-        return carAdminMapper.carListGetOne(car_code);
+    public CarUserResponseVO carListGetOne(String mem_code) {
+        return carAdminMapper.carListGetOne(mem_code);
     }
 
     @Override
@@ -184,6 +184,11 @@ public class CarAdminServiceImpl implements CarAdminService{
         });
 //        log.info(currentMaintResponseVOList.toString());
         return currentMaintResponseVOList;
+    }
+
+    @Override
+    public List<OperationResponseVO> operationGetOne(String car_code) {
+        return carAdminMapper.operationGetOne(car_code);
     }
 
 

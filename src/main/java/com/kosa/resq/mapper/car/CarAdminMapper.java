@@ -14,7 +14,7 @@ public interface CarAdminMapper {
     void carDetailSave(CarDetailRequestVO carDetailRequestVO);
     void carUserSave(CarUserRequestVO carUserRequestVO);
     
-    CarListResponseVO carListGetOne(String car_code);
+    CarUserResponseVO carListGetOne(String mem_code);
     List<CarListResponseVO> carGetAll(SearchCarVO searchCarVO);
     List<MemResponseVO> memGetAll();
     CarDetailResponseVO carGetOne(String car_code);
@@ -47,6 +47,8 @@ public interface CarAdminMapper {
     List<CurrentMaintResponseVO> currentMaintGet(String car_code);
 
     int accumeMileageGet(String car_code);
+
+    List<OperationResponseVO> operationGetOne(String car_code);
 
 
 }

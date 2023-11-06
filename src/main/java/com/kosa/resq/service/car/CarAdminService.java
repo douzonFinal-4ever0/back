@@ -12,7 +12,7 @@ public interface CarAdminService {
 
     public void carSave(CarRequestVO carVO, CarDetailRequestVO carDetailRequestVO, CarUserRequestVO carUserRequestVO);
     public List<CarListResponseVO> carGetAll(SearchCar searchCar);
-    CarListResponseVO carListGetOne(String car_code);
+    CarUserResponseVO carListGetOne(String mem_code);
     public List<MemResponseVO> memGetAll();
     public CarDetailResponseVO carGetOne(String car_code);
     // 차량 수정
@@ -30,5 +30,6 @@ public interface CarAdminService {
     // 운행 내역 조회
     List<OperationResponseVO> operationGetAll(SearchOperation searchOperation);
     List<CurrentMaintResponseVO> currentMaintGet(String car_code);
+    List<OperationResponseVO> operationGetOne(String car_code);
 
 }

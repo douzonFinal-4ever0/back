@@ -131,34 +131,38 @@
     </resultMap>
 
 
-
-
-
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
         INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at, max_capacity)
         VALUES (#{car_code}, #{car_name}, #{type}, #{fuel_type}, #{authority}, #{buy_at}, #{memo}, LOCALTIMESTAMP, #{max_capacity})
     </insert>
 
     <insert id="carDetailSave" parameterType="com.kosa.resq.domain.vo.car.CarDetailRequestVO">
-        INSERT INTO car_detail(car_code, fuel_effciency, accum_mileage, car_status, car_latitude, car_longitude, car_address)
-        VALUES (#{car_code}, #{fuel_effciency}, #{accum_mileage}, #{car_status}, #{car_latitude}, #{car_longitude}, #{car_address})
+        INSERT INTO car_detail(car_code, fuel_effciency, accum_mileage, car_status, car_latitude, car_longitude, car_address, is_selected)
+        VALUES (#{car_code}, #{fuel_effciency}, #{accum_mileage}, #{car_status}, #{car_latitude}, #{car_longitude}, #{car_address}, 0)
     </insert>
 
     <insert id="carUserSave" parameterType="com.kosa.resq.domain.vo.car.CarUserRequestVO">
         INSERT INTO car_user(car_code, mem_code, created_at) VALUES(#{car_code}, #{mem_code}, LOCALTIMESTAMP )
     </insert>
 
-    <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">
-        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo, c1.type
-        FROM car c1
-                 LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
-                 LEFT JOIN operation o ON o.car_code = c1.car_code
-                 LEFT JOIN (
-            SELECT car_code, MAX(created_at) AS max_created_at
-            FROM operation
-            GROUP BY car_code
-        ) latest_operation ON o.car_code = latest_operation.car_code AND o.created_at = latest_operation.max_created_at
-        WHERE c1.car_code = #{car_code}
+<!--    <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">-->
+<!--        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo, c1.type-->
+<!--        FROM car c1-->
+<!--                 LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code-->
+<!--                 LEFT JOIN operation o ON o.car_code = c1.car_code-->
+<!--                 LEFT JOIN (-->
+<!--            SELECT car_code, MAX(created_at) AS max_created_at-->
+<!--            FROM operation-->
+<!--            GROUP BY car_code-->
+<!--        ) latest_operation ON o.car_code = latest_operation.car_code AND o.created_at = latest_operation.max_created_at-->
+<!--        WHERE c1.car_code = #{car_code}-->
+<!--    </select>-->
+    <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarUserResponseVO">
+        SELECT m.mem_code, position_name, name, d.dept_code, dept_name
+        FROM mem m
+                 INNER JOIN dept d
+                 ON m.dept_code = d.dept_code
+                WHERE m.mem_code = #{mem_code}
     </select>
 
     <!--    차량 정보 리스트-->
@@ -393,6 +397,17 @@
         ) m ON o.mem_code = m.mem_code
         WHERE nomal_biz_mileage + commute_mileage BETWEEN #{sdistance} AND #{edistance}
         ]]>
+    </select>
+
+    <select id="operationGetOne" parameterType="String" resultMap="operationMap">
+        SELECT o.operation_code, c.car_name, c.car_code, o.created_at , m.dept_name, m.name, o.bef_mileage, o.aft_mileage, o.distance, o.commute_mileage, o.nomal_biz_mileage
+        FROM operation o
+                 LEFT JOIN car c
+                           ON o.car_code = c.car_code
+                 LEFT JOIN
+             (SELECT mem.mem_code, mem.name, dept.dept_name FROM mem INNER JOIN dept ON mem.dept_code=dept.dept_code) m
+             ON o.mem_code = m.mem_code
+        WHERE o.car_code=#{car_code}
     </select>
 
 </mapper>
