@@ -1,5 +1,6 @@
 package com.kosa.resq.service.mr;
 
+import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -21,12 +22,10 @@ public class MrUserServiceImpl implements MrUserService {
     @Autowired
     private MrUserMapper mapper;
 
-//    @Transactional
+    @Transactional
     @Override
     public void mrRezSave(MrRezRequestDTO mrRezRequestDTO) {
         try {
-            log.info("mrRezRequestDTO");
-            log.info(mrRezRequestDTO.getMr_pt_list());
             // ************[Start] 예약 시작 시간, 종료 시간 String => Date 변환 *****************
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -76,7 +75,18 @@ public class MrUserServiceImpl implements MrUserService {
             mrRezRequestVO.setTot_pt_ctn(mrRezRequestDTO.getTot_pt_ctn());
             mrRezRequestVO.setRez_type(mrRezRequestDTO.getRez_type());
 
+            // 회의실 예약 데이터 추가
             mapper.mrRezSave(mrRezRequestVO);
+
+            // 위의 생성된 회의실 예약 코드 가져오기
+            String mr_rez_code = mrRezRequestVO.getMr_rez_code();
+
+            // 회의 참석자 추가
+            List<MemDTO> pt_list = mrRezRequestDTO.getMr_pt_list();
+            for(MemDTO pt: pt_list) {
+                String mem_code = pt.getMem_code();
+                mapper.mrPtSave(mr_rez_code, mem_code);
+            }
 
         } catch(Exception e) {
             // 저장 실패 시 예외 처리
