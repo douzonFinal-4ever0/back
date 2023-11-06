@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class MrRecommendRequestDTO {
+    private String mem_code; // 사번
     private String m_type; // 회의 종류 (프로젝트회의, 화상회의 등..)
     private String rez_date; // 예약 일자 (년월일)
     private String rez_start_time; // 예약 시작 시간
