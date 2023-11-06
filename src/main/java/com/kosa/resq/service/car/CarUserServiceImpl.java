@@ -8,6 +8,7 @@ import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.mapper.car.CarUserMapper;
+import com.kosa.resq.service.S3UploadService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -33,7 +34,9 @@ import java.util.stream.Collectors;
 public class CarUserServiceImpl implements CarUserService{
     @Autowired
     private CarUserMapper mapper;
-
+    //사진 업로드 용
+    @Autowired
+    private S3UploadService imgService;
     //주소를 받으면 위도 경도를 출력해주는 메소드
     public Float[] findGeoPoint(String roadFullAddr) {
         Float[] coordinate = new Float[2];
@@ -157,6 +160,7 @@ public class CarUserServiceImpl implements CarUserService{
     @Override
     public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at) {
         List<AvailableCarResponseVO> carList=mapper.carGetAll2(start_at,return_at);
+        System.out.println("service: "+carList);
         return carList;
     }
 
@@ -302,7 +306,7 @@ public class CarUserServiceImpl implements CarUserService{
 
     @Transactional
     @Override
-    public OperationDTO operationInfoSave(OperationDTO operationDTO) {
+    public OperationRequestVO operationInfoSave(OperationDTO operationDTO) {
         //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
         operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
         if(operationDTO.getMemo()==null){
@@ -320,9 +324,15 @@ public class CarUserServiceImpl implements CarUserService{
                 expenditureDTO.setAccount("차량 정비");
                 expenditureDTO.setMem_code(operationDTO.getMem_code());
                 expenditureDTO.setStatus("미승인");
-                if(expenditureDTO.getUrl()==null){
+                if(expenditureDTO.getUrl()==null) {
                     expenditureDTO.setUrl("");
+                }else{
+                    //지출 영수증 이미지 저장 로직
+                    //버킷에 저장 -> url받아서 setUrl해주고 db에 저장
+//                    String url = imgService.saveFile();
                 }
+
+
 //                System.out.println("expDTO: "+expenditureDTO);
                 ExpenditureRequestVO expenditureRequestVO = mapper2.map(expenditureDTO,ExpenditureRequestVO.class);
                 //지출 정보 저장
@@ -338,6 +348,12 @@ public class CarUserServiceImpl implements CarUserService{
         //운행 정보 저장
         mapper.operationSave(operationRequestVO);
         //차량 예약 정보 업데이트
+
+        return operationRequestVO;
+    }
+    @Transactional
+    @Override
+    public boolean operationInfoSave2(OperationRequestVO operationRequestVO){
         mapper.carRezCompleteUpdate(operationRequestVO.getCar_rez_code());
         CarLocResponseVO carLocResponseVO = mapper.carLocReturnGetOne(operationRequestVO.getCar_rez_code());
         CarDetailRequestVO carDetailRequestVO = new CarDetailRequestVO(
@@ -346,6 +362,13 @@ public class CarUserServiceImpl implements CarUserService{
         );
         //차량 상세 정보 업데이트
         mapper.carDetailUpdate(carDetailRequestVO);
-        return operationDTO;
+        return true;
     }
+
+    @Override
+    public int selectedCarUpdate(String car_code) {
+        return mapper.selectedCarUpdate(car_code);
+    }
+
+
 }

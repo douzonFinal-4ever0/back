@@ -106,18 +106,18 @@
         select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
         where authority='모두'and car_status='사용가능'
     </select>
-    <select id="carGetAll2" resultMap="carDetailMap">
+    <select id="carGetAll2" resultType="com.kosa.resq.domain.vo.car.AvailableCarResponseVO">
 --         select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
 --         where authority='모두'and car_status='사용가능'
-        select c.car_code, c.car_name, d.car_address, c.memo
-        from car c join car_detail d on c.car_code=d.car_code join CAR_REZ r on c.CAR_CODE = r.CAR_CODE
-        where authority='모두'and car_status='사용가능'
-        and #{start_at}>r.return_at and r.start_at >#{return_at}
-          and not(#{start_at} between r.start_at and r.return_at)
-          and not(#{return_at} between r.start_at and r.return_at)
-          and not (r.start_at between #{start_at} and #{return_at})
-          and not (r.return_at between #{start_at} and #{return_at})
+        select c.car_code, c.car_name, d.car_address, c.memo, d.car_status
+            from car c join car_detail d on c.car_code=d.car_code
+            where
+                (authority='모두'and (car_status='사용가능' or car_status='선택됨')  and c.CAR_CODE not in (select CAR_CODE from CAR_REZ))
+                or ((car_status='사용가능' or car_status='선택됨') and  c.CAR_CODE in
+                        (select Distinct CAR_CODE from car_rez
+                            where #{start_at}>return_at or start_at>#{return_at}))
     </select>
+
 
     <select id="carGetOne" resultMap="carDetailMap">
         select c.car_name, c.car_code, d.accum_mileage, c.authority, c.fuel_type, d.fuel_effciency, d.car_address from car c join car_detail d on c.car_code=d.car_code
@@ -208,4 +208,8 @@
                     #{account},#{ac_detail},#{pay_method},#{mem_code}
             )
     </insert>
+
+    <update id="selectedCarUpdate">
+        update car_detail set car_status='선택됨' where car_code=#{car_code}
+    </update>
 </mapper>
