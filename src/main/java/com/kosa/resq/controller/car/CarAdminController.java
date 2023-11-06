@@ -51,9 +51,9 @@ public class CarAdminController {
 
     // 차량 조회 - 개별
     @GetMapping("/car/carListGetOne")
-    public CarListResponseVO carListGetOne(@RequestParam String car_code) {
-        log.info(car_code);
-        return carAdminService.carListGetOne(car_code);
+    public CarUserResponseVO carListGetOne(@RequestParam String mem_code) {
+        log.info(mem_code);
+        return carAdminService.carListGetOne(mem_code);
     }
 
     // 사용자 리스트 조회
@@ -155,6 +155,11 @@ public class CarAdminController {
     @GetMapping("/car/currentMaint")
     public List<CurrentMaintResponseVO> currentMaintGet(@RequestParam String car_code) {
         return carAdminService.currentMaintGet(car_code);
+    }
+
+    @GetMapping("/car/operationListOne")
+    public List<OperationResponseVO> operationGetOneCar(@RequestParam String car_code) {
+        return carAdminService.operationGetOne(car_code);
     }
 
 
