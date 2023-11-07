@@ -119,6 +119,15 @@
         localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
     </insert>
 
+    <insert id="mrPtSave">
+        <selectKey keyProperty="mr_pt_code" order="BEFORE"
+                   resultType="String">
+            select 'PT' || LPAD(TO_CHAR(MR_PT_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO MR_PT (mr_pt_code, mr_rez_code, mem_code, created_at, updated_at, deleted_at)
+        VALUES (#{mr_pt_code}, #{mr_rez_code}, #{mem_code}, localtimestamp, null, null)
+    </insert>
+
     <insert id="bmGroupSave" parameterType="com.kosa.resq.domain.vo.mr.BmGroupVO">
         INSERT INTO BM_GROUP (BM_GROUP_CODE, MEM_CODE, BM_GROUP_NAME, CREATED_AT, UPDATED_AT, DELETED_AT)
         SELECT 'BMG' || LPAD(TO_CHAR(BM_GROUP_SEQ.NEXTVAL), 3, '0'), #{mem_code},

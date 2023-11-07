@@ -12,6 +12,8 @@ import java.util.List;
 public interface MrUserMapper {
     public void mrRezSave(MrRezRequestVO mrRezRequestVO);
 
+    public void mrPtSave(String mr_rez_code, String mem_code);
+
     public List<MemResponseVO> memGetAll();
 
     public MemResponseVO memGetOne(String mem_code);
