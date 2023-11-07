@@ -31,5 +31,6 @@ public interface CarAdminService {
     List<OperationResponseVO> operationGetAll(SearchOperation searchOperation);
     List<CurrentMaintResponseVO> currentMaintGet(String car_code);
     List<OperationResponseVO> operationGetOne(String car_code);
+    List<CarVO> carListGetAll();
 
 }

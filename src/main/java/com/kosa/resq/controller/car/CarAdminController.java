@@ -162,6 +162,11 @@ public class CarAdminController {
         return carAdminService.operationGetOne(car_code);
     }
 
+    // 차량 목록 가져오기
+    @GetMapping("/car/carListGetAll")
+    public List<CarVO> carListGetAll() {
+        return carAdminService.carListGetAll();
+    }
 
 
 }
