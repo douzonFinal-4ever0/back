@@ -1,5 +1,6 @@
 package com.kosa.resq.mapper.car;
 
+import com.kosa.resq.domain.dto.car.CarDetailDTO;
 import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -50,5 +51,6 @@ public interface CarAdminMapper {
 
     List<OperationResponseVO> operationGetOne(String car_code);
 
+    List<CarVO> carListGetAll();
 
 }

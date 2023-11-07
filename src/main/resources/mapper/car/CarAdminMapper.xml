@@ -410,4 +410,8 @@
         WHERE o.car_code=#{car_code}
     </select>
 
+    <select id="carListGetAll" resultType="com.kosa.resq.domain.vo.car.CarVO">
+        SELECT car_code, car_name FROM car
+    </select>
+
 </mapper>

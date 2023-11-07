@@ -24,19 +24,19 @@
     <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.dto.mr.MrKeyWordDTO">
         <id property="keyword_code" column="keyword_code"/>
         <result property="keyword_name" column="keyword_name"/>
-        <result property="mr_code" column="mr_code"/>
+<!--        <result property="mr_code" column="mr_code"/>-->
     </resultMap>
     
     <resultMap id="mr_imgMap" type="com.kosa.resq.domain.dto.mr.MrImgDTO">
         <id property="img_code" column="img_code"/>
-        <result property="mr_code" column="mr_code"/>
+<!--        <result property="mr_code" column="mr_code"/>-->
         <result property="url" column="url"/>
     </resultMap>
     
     <resultMap id="mr_op_dayMap" type="com.kosa.resq.domain.dto.mr.MrOpDayDTO">
         <id property="op_day_code" column="op_day_code"/>
         <result property="day" column="day"/>
-        <result property="mr_code" column="mr_code"/>
+<!--        <result property="mr_code" column="mr_code"/>-->
         <result property="status" column="status"/>
     </resultMap>
     
@@ -79,8 +79,8 @@
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
         <![CDATA[
         select * from MR m
-            left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
             left join MR_IMG mi on m.MR_CODE = mi.MR_CODE
+            left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
         order by m.mr_code
         ]]>
