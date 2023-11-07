@@ -191,5 +191,10 @@ public class CarAdminServiceImpl implements CarAdminService{
         return carAdminMapper.operationGetOne(car_code);
     }
 
+    @Override
+    public List<CarVO> carListGetAll() {
+        return carAdminMapper.carListGetAll();
+    }
+
 
 }
