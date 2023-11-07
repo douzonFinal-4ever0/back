@@ -14,5 +14,4 @@ public class AvailableCarResponseVO {
     private String car_name;
     private String car_address;
     private String memo;
-    private String car_status;
 }
