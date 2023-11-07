@@ -20,6 +20,8 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @RestController
 @RequestMapping("/car_rez/*")
@@ -42,7 +44,10 @@ public class CarUserController {
 //        return service.carGetAll();
 //    }
     @GetMapping("/availableCars/{start_at}/{return_at}")
-    public List<AvailableCarResponseVO> availableCarGetAll(@PathVariable Date start_at, @PathVariable Date return_at){
+    public List<AvailableCarResponseVO> availableCarGetAll(
+            @PathVariable("start_at") @DateTimeFormat(iso = ISO.DATE_TIME) Date start_at,
+            @PathVariable("return_at") @DateTimeFormat(iso = ISO.DATE_TIME) Date return_at
+    ){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
         System.out.println("start_at:"+start_at.getClass().getName());
