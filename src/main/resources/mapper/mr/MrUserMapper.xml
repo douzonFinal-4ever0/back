@@ -108,6 +108,18 @@
           AND deleted_at IS NULL
     </select>
 
+    <select id="recentMrRezGetAll" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
+       <![CDATA[
+        SELECT m_name
+        FROM MR_REZ
+        WHERE MEM_CODE = #{mem_code}
+          AND CREATED_AT >= ADD_MONTHS(TRUNC(SYSDATE), -3)
+          AND m_name IS NOT NULL
+          AND ROWNUM <= 5
+        ORDER BY CREATED_AT DESC
+        ]]>
+    </select>
+
     <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
         <selectKey keyProperty="mr_rez_code" order="BEFORE"
                    resultType="String">

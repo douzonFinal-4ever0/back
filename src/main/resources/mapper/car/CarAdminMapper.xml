@@ -399,7 +399,8 @@
         ]]>
     </select>
 
-    <select id="operationGetOne" parameterType="String" resultMap="operationMap">
+    <select id="operationGetOne" resultMap="operationMap">
+        <![CDATA[
         SELECT o.operation_code, c.car_name, c.car_code, o.created_at , m.dept_name, m.name, o.bef_mileage, o.aft_mileage, o.distance, o.commute_mileage, o.nomal_biz_mileage
         FROM operation o
                  LEFT JOIN car c
@@ -407,11 +408,22 @@
                  LEFT JOIN
              (SELECT mem.mem_code, mem.name, dept.dept_name FROM mem INNER JOIN dept ON mem.dept_code=dept.dept_code) m
              ON o.mem_code = m.mem_code
-        WHERE o.car_code=#{car_code}
+        WHERE o.car_code=#{car_code} AND o.created_at >= TO_DATE(#{sdate}) AND o.created_at <= TO_DATE(#{edate})
+        ]]>
     </select>
 
     <select id="carListGetAll" resultType="com.kosa.resq.domain.vo.car.CarVO">
         SELECT car_code, car_name FROM car
+    </select>
+
+
+    <select id="carRezListGetAll" resultType="com.kosa.resq.domain.vo.car.CarRezInfoResponseVO">
+        SELECT r.car_rez_code,r.rez_status, r.start_at,r.return_at,m.name,
+               dept.dept_name,c.car_name,c.car_code,r.detail,c.type
+        FROM
+            car_rez r JOIN car c ON r.car_code= c.car_code JOIN car_detail d ON c.car_code=d.car_code
+                      JOIN mem m ON r.mem_code=m.mem_code JOIN dept ON m.dept_code=dept.dept_code
+        WHERE r.start_at BETWEEN TO_DATE('2023-11-01') AND TO_DATE('2023-11-30')
     </select>
 
 </mapper>

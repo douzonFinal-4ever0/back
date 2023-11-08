@@ -49,8 +49,10 @@ public interface CarAdminMapper {
 
     int accumeMileageGet(String car_code);
 
-    List<OperationResponseVO> operationGetOne(String car_code);
+    List<OperationResponseVO> operationGetOne(String car_code, String sdate, String edate);
 
     List<CarVO> carListGetAll();
+
+    List<CarRezInfoResponseVO> carRezListGetAll();
 
 }

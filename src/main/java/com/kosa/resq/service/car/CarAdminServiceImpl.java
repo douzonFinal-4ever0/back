@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class CarAdminServiceImpl implements CarAdminService{
 
         log.info(carDetailRequestVO.toString());
 
-        if(carUserRequestVO.getMem_code() != null) {
+        if(carVO.getAuthority().equals("지정")) {
             // 차량 지정자가 존재
             carAdminMapper.carSave(carVO);
             carAdminMapper.carDetailSave(carDetailRequestVO);
@@ -187,13 +188,21 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
-    public List<OperationResponseVO> operationGetOne(String car_code) {
-        return carAdminMapper.operationGetOne(car_code);
+    public List<OperationResponseVO> operationGetOne(String car_code, Date originSdate, Date originEdate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String sdate = sdf.format(originSdate);
+        String edate = sdf.format(originEdate);
+        return carAdminMapper.operationGetOne(car_code, sdate, edate);
     }
 
     @Override
     public List<CarVO> carListGetAll() {
         return carAdminMapper.carListGetAll();
+    }
+
+    @Override
+    public List<CarRezInfoResponseVO> carRezListGetAll() {
+        return carAdminMapper.carRezListGetAll();
     }
 
 
