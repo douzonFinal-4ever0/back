@@ -109,11 +109,11 @@
     <select id="carGetAll2" resultType="com.kosa.resq.domain.vo.car.AvailableCarResponseVO">
 --         select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
 --         where authority='모두'and car_status='사용가능'
-        select c.car_code, c.car_name, d.car_address, c.memo
+        select c.car_code, c.car_name, d.car_address, c.memo, c.type
             from car c join car_detail d on c.car_code=d.car_code
             where
-                (authority='모두'and (car_status='사용가능' or car_status='선택됨')  and c.CAR_CODE not in (select CAR_CODE from CAR_REZ))
-                or ((car_status='사용가능' or car_status='선택됨') and  c.CAR_CODE in
+                (authority='모두'and car_status='사용가능' and c.CAR_CODE not in (select CAR_CODE from CAR_REZ))
+                or (car_status='사용가능' and  c.CAR_CODE in
                         (select Distinct CAR_CODE from car_rez
                             where #{start_at}>return_at or start_at>#{return_at}))
     </select>
