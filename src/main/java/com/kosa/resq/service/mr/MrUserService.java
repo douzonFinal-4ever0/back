@@ -5,11 +5,14 @@ import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
+import com.kosa.resq.domain.vo.mr.MrRezResponseVO;
 
 import java.util.List;
 
 public interface MrUserService {
     public void mrRezSave(MrRezRequestDTO mrRezRequestDTO);
+
+    public List<MrRezResponseVO> recentMrRezGetAll(String mem_code);
 
     public List<MrResponseVO> mrRecommendGetAll(MrRecommendRequestDTO mrRecommendRequestDTO);
 

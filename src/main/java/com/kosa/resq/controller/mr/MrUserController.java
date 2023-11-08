@@ -5,6 +5,7 @@ import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
+import com.kosa.resq.domain.vo.mr.MrRezResponseVO;
 import com.kosa.resq.service.mr.MrUserService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.annotations.Param;
@@ -37,6 +38,14 @@ public class MrUserController {
     public ResponseEntity<String> mrRezSave(@RequestBody MrRezRequestDTO requestDTO) {
         service.mrRezSave(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("success");
+    }
+
+    @GetMapping("/rez/recent") // 회의실 최근 예역 조회
+    public ResponseEntity<List<MrRezResponseVO>> recentMrRezGetAll(String mem_code) {
+
+        List<MrRezResponseVO> result = service.recentMrRezGetAll(mem_code);
+        return  new ResponseEntity<>(result, HttpStatus.OK);
+
     }
 
     @GetMapping("/mem") // 멤버 전체 조회
@@ -72,5 +81,7 @@ public class MrUserController {
         List<BmMrVO> result = service.bmMrGetAll(mem_code);
         return  new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 
 }

@@ -95,6 +95,11 @@ public class MrUserServiceImpl implements MrUserService {
     }
 
     @Override
+    public List<MrRezResponseVO> recentMrRezGetAll(String mem_code) {
+        return mapper.recentMrRezGetAll(mem_code);
+    }
+
+    @Override
     public List<MrResponseVO> mrRecommendGetAll(MrRecommendRequestDTO mrRecommendRequestDTO) {
         log.info("================= mrRecommendGetAll 서비스 =============================");
 
