@@ -85,7 +85,17 @@
         order by m.mr_code
         ]]>
     </select>
-    
+    <select id="mrGetOne" resultMap="mrMap" resultType="com.kosa.resq.domain.dto.mr.MrDTO">
+                <![CDATA[
+        select *
+        from MR m
+                 left join MR_IMG mi on m.MR_CODE = mi.MR_CODE
+                 left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
+                 left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
+        where m.MR_CODE = #{mr_code}
+        order by m.mr_code
+        ]]>
+    </select>
     <select id="mrRezGetAll" resultType="com.kosa.resq.domain.dto.mr.MrRezDTO" resultMap="mr_rezMap">
         select *
         from MR_REZ mrz left outer join MR mr on mrz.MR_CODE = mr.MR_CODE
