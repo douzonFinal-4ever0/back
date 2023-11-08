@@ -15,6 +15,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 
 @Log
@@ -158,14 +159,20 @@ public class CarAdminController {
     }
 
     @GetMapping("/car/operationListOne")
-    public List<OperationResponseVO> operationGetOneCar(@RequestParam String car_code) {
-        return carAdminService.operationGetOne(car_code);
+    public List<OperationResponseVO> operationGetOneCar(@RequestParam String car_code, @RequestParam Date sdate, @RequestParam Date edate) {
+        return carAdminService.operationGetOne(car_code, sdate, edate);
     }
 
     // 차량 목록 가져오기
     @GetMapping("/car/carListGetAll")
     public List<CarVO> carListGetAll() {
         return carAdminService.carListGetAll();
+    }
+
+    // 예약 리스트 가져오기
+    @GetMapping("/car/rezListGetAll")
+    public List<CarRezInfoResponseVO> carRezListGetAll() {
+        return carAdminService.carRezListGetAll();
     }
 
 

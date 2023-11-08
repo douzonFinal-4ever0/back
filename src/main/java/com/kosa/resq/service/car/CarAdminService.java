@@ -6,6 +6,7 @@ import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface CarAdminService {
@@ -30,7 +31,9 @@ public interface CarAdminService {
     // 운행 내역 조회
     List<OperationResponseVO> operationGetAll(SearchOperation searchOperation);
     List<CurrentMaintResponseVO> currentMaintGet(String car_code);
-    List<OperationResponseVO> operationGetOne(String car_code);
+    List<OperationResponseVO> operationGetOne(String car_code, Date originSdate, Date originEdate);
     List<CarVO> carListGetAll();
+
+    List<CarRezInfoResponseVO> carRezListGetAll();
 
 }
