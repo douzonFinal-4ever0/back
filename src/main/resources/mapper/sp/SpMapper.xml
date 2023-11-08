@@ -7,4 +7,9 @@
         select *
         from SUPPLIES
     </select>
+
+    <insert id="suppliesSava">
+        insert into MR_SUPPLIES (MR_CODE, SUPPLIES_CODE, AMOUNT)
+        values (#{mr_code},SUPPLIES_SEQ.nextval,#{amount})
+    </insert>
 </mapper>
