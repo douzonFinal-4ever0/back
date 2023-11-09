@@ -43,16 +43,18 @@ public class CarUserController {
 //    public List<CarDetailDTO2> availableCarGetAll(){
 //        return service.carGetAll();
 //    }
-    @GetMapping("/availableCars/{start_at}/{return_at}")
+    @GetMapping("/availableCars/{mem_code}/{start_at}/{return_at}")
     public List<AvailableCarResponseVO> availableCarGetAll(
+            @PathVariable("mem_code") String mem_code,
             @PathVariable("start_at") @DateTimeFormat(iso = ISO.DATE_TIME) Date start_at,
             @PathVariable("return_at") @DateTimeFormat(iso = ISO.DATE_TIME) Date return_at
     ){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
+        System.out.println(mem_code);
         System.out.println("start_at:"+start_at.getClass().getName());
-        System.out.println("return_at:"+return_at);
-        return service.carGetAll2(start_at,return_at);
+//        System.out.println("return_at:"+return_at.getClass().getName());
+//        System.out.println("return_at:"+return_at);
+        return service.carGetAll2(start_at,return_at,mem_code);
     }
 
     @GetMapping("/carDetail/{car_code}")
