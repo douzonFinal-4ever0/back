@@ -70,9 +70,16 @@ public class CarUserController {
 //    public List<CarRezInfoResponseVO> carRezGetAll(@PathVariable String mem_code){
 //        return service.carRezGetAll(mem_code);
 //    }
-    @GetMapping("/rezList/{mem_code}/{rez_status}")
-    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(@PathVariable String mem_code,@PathVariable String rez_status){
-        return service.filterCarRezGetAll(mem_code,rez_status);
+    @GetMapping("/rezList/{mem_code}/{rez_status}/{dateRange}/{startAt}/{endAt}")
+    public List<CarRezInfoResponseVO> confirmedCarRezGetAll(
+            @PathVariable String mem_code,
+            @PathVariable String rez_status,
+            @PathVariable int dateRange,
+            @PathVariable("startAt") String startAt,
+            @PathVariable("endAt") String endAt
+    ){
+
+        return service.filterCarRezGetAll(mem_code,rez_status,dateRange,startAt,endAt);
     }
 
     @GetMapping("/searchCarList")

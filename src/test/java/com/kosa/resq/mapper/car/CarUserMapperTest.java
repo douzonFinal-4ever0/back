@@ -36,6 +36,7 @@ class CarUserMapperTest {
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
+//        System.out.println(mapper.filterCarRezGetAll("MEM001","1",0));
 
     }
 }
