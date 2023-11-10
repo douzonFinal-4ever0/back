@@ -130,6 +130,20 @@
         <result property="address" column="address"/>
     </resultMap>
 
+    <resultMap id="carRezMap" type="com.kosa.resq.domain.vo.car.CarRezResponseVO">
+        <id property="car_rez_code" column="car_rez_code"/>
+        <result property="car_rez_code" column="car_rez_code"/>
+        <result property="rez_at" column="rez_at"/>
+        <result property="detail" column="detail"/>
+        <result property="est_mileage" column="est_mileage"/>
+        <result property="rez_status" column="rez_status"/>
+        <result property="start_at" column="start_at"/>
+        <result property="return_at" column="return_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <collection property="memResponseVO" resultMap="memResultMap"/>
+        <collection property="carDetailResponseVO" resultMap="carDetailMap"/>
+    </resultMap>
+
 
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
         INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at, max_capacity)
@@ -423,7 +437,26 @@
         FROM
             car_rez r JOIN car c ON r.car_code= c.car_code JOIN car_detail d ON c.car_code=d.car_code
                       JOIN mem m ON r.mem_code=m.mem_code JOIN dept ON m.dept_code=dept.dept_code
-        WHERE r.start_at BETWEEN TO_DATE('2023-11-01') AND TO_DATE('2023-11-30')
+        WHERE r.start_at BETWEEN TO_DATE(#{sdate}) AND TO_DATE(#{edate})
+    </select>
+
+    <select id="carRezGetOne" parameterType="String" resultMap="carRezMap">
+        select * from car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
+                                join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
+        where r.car_rez_code = #{car_rez_code}
+    </select>
+
+    <select id="carLocInfoGetOne">
+        select * from car_loc where car_rez_code=#{car_rez_code}
+    </select>
+
+    <update id="carRezCancel" parameterType="String">
+        update car_rez set rez_status='4' where car_rez_code=#{car_rez_code}
+    </update>
+
+
+    <select id="isExistOperation" resultType="String">
+        select car_code FROM operation GROUP BY car_code
     </select>
 
 </mapper>
