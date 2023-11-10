@@ -19,6 +19,7 @@
         <collection property="mr_keyword" resultMap="mr_keywordMap"/>
         <collection property="mr_img" resultMap="mr_imgMap"/>
         <collection property="mr_op_day" resultMap="mr_op_dayMap"/>
+        <collection property="mr_supplies" resultMap="mr_suppliesMap"/>
     </resultMap>
     
     <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.dto.mr.MrKeyWordDTO">
@@ -75,6 +76,10 @@
 <!--        select *-->
 <!--        from mr-->
 <!--    </select>-->
+    <resultMap id="mr_suppliesMap" type="com.kosa.resq.domain.dto.mr.MrSuppliesDTO">
+        <id property="supplies_code" column="supplies_code"/>
+        <result property="amount" column="amount"/>
+    </resultMap>
 
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
         <![CDATA[
@@ -82,6 +87,7 @@
             left join MR_IMG mi on m.MR_CODE = mi.MR_CODE
             left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
+            left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
         order by m.mr_code
         ]]>
     </select>
@@ -211,4 +217,8 @@
         from TEMPLATE
     </select>
 
+    <insert id="mrSuppliesSave">
+        insert into MR_SUPPLIES (MR_CODE, SUPPLIES_CODE, AMOUNT)
+        values (#{mr_code},#{supplies_code},#{amount})
+    </insert>
 </mapper>

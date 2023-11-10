@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MrSupplies {
+public class MrSuppliesDTO {
     private String mr_code;
     private String supplies_code;
     private int amount;

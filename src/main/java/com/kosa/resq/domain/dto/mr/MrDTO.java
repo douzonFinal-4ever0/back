@@ -1,9 +1,7 @@
 package com.kosa.resq.domain.dto.mr;
 
-import com.kosa.resq.domain.vo.mr.MrOpDayVO;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -26,4 +24,5 @@ public class MrDTO {
     private List<MrKeyWordDTO> mr_keyword;
     private List<MrImgDTO> mr_img;
     private List<MrOpDayDTO> mr_op_day;
+    private List<MrSuppliesDTO> mr_supplies;
 }
