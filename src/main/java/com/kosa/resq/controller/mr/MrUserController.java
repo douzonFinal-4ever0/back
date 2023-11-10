@@ -34,16 +34,29 @@ public class MrUserController {
 
     }
 
+    @GetMapping("/rez") // 내가 예약한 회의실 내역 조회
+    public ResponseEntity<List<MrRezResponseVO>> mrRezGetAllByMem(String mem_code) {
+        List<MrRezResponseVO> result = service.mrRezGetAllByMem(mem_code);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/rez/pt") // 내가 참석자로 지정된 회의실 내역 조회
+    public ResponseEntity<List<MrRezResponseVO>> mrRezGetAllByPt(String mem_code) {
+        List<MrRezResponseVO> result = service.mrRezGetAllByPt(mem_code);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping("/rez") // 회의실 예약 등록
     public ResponseEntity<String> mrRezSave(@RequestBody MrRezRequestDTO requestDTO) {
         service.mrRezSave(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
-    @GetMapping("/rez/recent") // 회의실 최근 예역 조회
+    @GetMapping("/rez/recent") // 회의실 최근 예약 조회
     public ResponseEntity<List<MrRezResponseVO>> recentMrRezGetAll(String mem_code) {
 
         List<MrRezResponseVO> result = service.recentMrRezGetAll(mem_code);
+
         return  new ResponseEntity<>(result, HttpStatus.OK);
 
     }

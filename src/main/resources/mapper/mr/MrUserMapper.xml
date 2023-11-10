@@ -39,8 +39,19 @@
         <result property="mr_code" column="mr_code"/>
     </resultMap>
 
+    <resultMap id="mr_ptMap" type="com.kosa.resq.domain.vo.mr.MrPtVO">
+        <id property="mr_pt_code" column="mr_pt_code" />
+        <result property="mr_rez_code" column="mr_rez_code" />
+        <result property="mem_code" column="mem_code" />
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at" />
+        <result property="deleted_at" column="deleted_at" />
+        <collection property="memVO" resultMap="memMap" />
+    </resultMap>
+
     <resultMap id="mr_rezMap" type="com.kosa.resq.domain.vo.mr.MrRezResponseVO">
         <id property="mr_rez_code" column="mr_rez_code"/>
+        <result property="mem_code" column="mem_code"/>
         <result property="rez_start_time" column="rez_start_time"/>
         <result property="rez_end_time" column="rez_end_time"/>
         <result property="created_at" column="created_at"/>
@@ -52,6 +63,14 @@
         <result property="is_confirmed" column="is_confirmed"/>
         <result property="rez_type" column="rez_type"/>
         <collection property="mr" resultMap="mrMap"/>
+<!--        <collection property="mr_pt_list" ofType="com.kosa.resq.domain.vo.mem.MemResponseVO">-->
+<!--            &lt;!&ndash; mem 테이블에 대한 컬럼 매핑 &ndash;&gt;-->
+<!--            <result property="mem_code" column="mem_code"/>-->
+<!--            <result property="position_name" column="position_name"/>-->
+<!--            <result property="name" column="name"/>-->
+<!--            &lt;!&ndash; 나머지 컬럼들도 필요에 따라 추가 &ndash;&gt;-->
+<!--        </collection>-->
+        <collection property="mr_pt_list" resultMap="mr_ptMap"/>
     </resultMap>
 
     <resultMap id="deptMap" type="com.kosa.resq.domain.vo.common.DeptVO">
@@ -118,6 +137,99 @@
           AND ROWNUM <= 5
         ORDER BY CREATED_AT DESC
         ]]>
+    </select>
+
+    <!--  사용자 코드 - 사용자 회의실 예약 전체 조회  -->
+    <select id="mrRezGetAllByMem" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
+        SELECT
+            r.mr_rez_code,
+            r.mem_code,
+            r.rez_start_time,
+            r.rez_end_time,
+            r.created_at,
+            r.updated_at,
+            r.deleted_at,
+            r.rez_status,
+            r.m_name,
+            r.m_type,
+            r.is_confirmed,
+            r.rez_type,
+            m.mr_code,
+            m.mr_name,
+            m.maximum_capacity,
+            m.location,
+            p.mr_pt_code,
+            p.mem_code,
+            mem.mem_code AS pt_mem_code,
+            mem.position_name,
+            mem.name,
+            mem.email,
+            mem.profile_img_url,
+            dept.dept_code,
+            dept.dept_name,
+            mi.img_code,
+            mi.url,
+            mop.op_day_code,
+            mop.day,
+            mk.keyword_code,
+            mk.keyword_name
+        FROM MR_REZ r
+                 JOIN MR m ON r.mr_code = m.mr_code
+                 LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
+                 LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
+                 LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code
+                 LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
+                 LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
+        WHERE r.mem_code = #{mem_code}
+    </select>
+
+    <select id="mrRezGetAllByPt" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
+        SELECT
+            r.mr_rez_code,
+            r.mem_code,
+            r.rez_start_time,
+            r.rez_end_time,
+            r.created_at,
+            r.updated_at,
+            r.deleted_at,
+            r.rez_status,
+            r.m_name,
+            r.m_type,
+            r.is_confirmed,
+            r.rez_type,
+            m.mr_code,
+            m.mr_name,
+            m.maximum_capacity,
+            m.location,
+            p.mr_pt_code,
+            p.mem_code,
+            mem.mem_code AS pt_mem_code,
+            mem.position_name,
+            mem.name,
+            mem.email,
+            mem.profile_img_url,
+            dept.dept_code,
+            dept.dept_name,
+            mi.img_code,
+            mi.url,
+            mop.op_day_code,
+            mop.day,
+            mk.keyword_code,
+            mk.keyword_name
+        FROM MR_REZ r
+                 JOIN MR m ON r.mr_code = m.mr_code
+                 LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
+                 LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
+                 LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code
+                 LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
+                 LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
+        WHERE r.mr_rez_code = #{mr_rez_code}
+    </select>
+
+    <select id="mrRezByPt" >
+        select mr_rez_code from MR_PT where MEM_CODE=#{mem_code}
     </select>
 
     <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
