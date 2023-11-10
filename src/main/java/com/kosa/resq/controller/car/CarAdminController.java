@@ -171,8 +171,26 @@ public class CarAdminController {
 
     // 예약 리스트 가져오기
     @GetMapping("/car/rezListGetAll")
-    public List<CarRezInfoResponseVO> carRezListGetAll() {
-        return carAdminService.carRezListGetAll();
+    public List<CarRezInfoResponseVO> carRezListGetAll(@RequestParam String sdate, @RequestParam String edate) {
+        return carAdminService.carRezListGetAll(sdate, edate);
+    }
+
+    @GetMapping("/car/rezGetOne")
+
+    public CarRezDetailResponseVO carRezGetOne(@RequestParam String car_rez_code) {
+        return carAdminService.carRezGetOne(car_rez_code);
+    }
+
+    // 예약 취소
+    @PutMapping("/car/rezCancel/{car_rez_code}")
+    public void carRezCancel(@PathVariable String car_rez_code) {
+        log.info(car_rez_code);
+        carAdminService.carRezCancel(car_rez_code);
+    }
+
+    @GetMapping("/car/isExistOperaion")
+    public List<String> isExistOperaion() {
+        return carAdminService.isExistOperation();
     }
 
 

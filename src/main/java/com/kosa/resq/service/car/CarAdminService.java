@@ -34,6 +34,10 @@ public interface CarAdminService {
     List<OperationResponseVO> operationGetOne(String car_code, Date originSdate, Date originEdate);
     List<CarVO> carListGetAll();
 
-    List<CarRezInfoResponseVO> carRezListGetAll();
+    List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate);
+
+    CarRezDetailResponseVO carRezGetOne(String car_rez_code);
+    void carRezCancel(String car_rez_code);
+    List<String> isExistOperation();
 
 }

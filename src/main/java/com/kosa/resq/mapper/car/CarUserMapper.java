@@ -17,7 +17,7 @@ public interface CarUserMapper {
     public int carLocSave(CarLocRequestVO CarLocRequestVO);
     public int carLocSeq();
     public List<CarDetailResponseVO> carGetAll();
-    public List<AvailableCarResponseVO> carGetAll2(Date start_at, Date return_at);
+    public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, String mem_code);
     public CarDetailResponseVO carGetOne(String car_code);
     public CarRezResponseVO carRezGetOne(String car_rez_code);
     public List<CarLocResponseVO> carLocInfoGetAll(String car_rez_code);

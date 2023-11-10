@@ -11,7 +11,7 @@ public interface CarUserService {
     public CarRezDTO2 carRezInfoSave(CarRezDTO carRezDTO);
 
     public List<CarDetailDTO2> carGetAll();
-public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at);
+public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, String mem_code);
     public CarDetailDTO2 carGetOne(String car_code);
     public List<CarLocDTO> carLocInfoGetAll(String car_rez_code);
     public List<CarRezInfoResponseVO> carRezGetAll(String mem_code);

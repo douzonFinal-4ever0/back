@@ -16,6 +16,12 @@ public class MrAdminServiceImpl implements MrAdminService {
     public List<MrDTO> mrGetAll() {
         return mapper.mrGetAll();
     }
+
+    @Override
+    public MrDTO mrGetOne(String mr_code) {
+        return mapper.mrGetOne(mr_code);
+    }
+
     @Override
     public List<MrRezDTO> mrRezGetAll() {
         return mapper.mrRezGetAll();

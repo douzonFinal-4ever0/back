@@ -53,6 +53,11 @@ public interface CarAdminMapper {
 
     List<CarVO> carListGetAll();
 
-    List<CarRezInfoResponseVO> carRezListGetAll();
+    List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate);
+
+    CarRezResponseVO carRezGetOne(String car_rez_code);
+    List<CarLocVO> carLocInfoGetOne(String car_rez_code);
+    void carRezCancel(String car_rez_code);
+    List<String> isExistOperation();
 
 }

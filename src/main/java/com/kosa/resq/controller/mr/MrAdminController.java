@@ -34,6 +34,10 @@ public class MrAdminController {
         return service.mrGetAll();
     }
 
+    @GetMapping("/{mr_code}")
+    public MrDTO mrGetOne(@PathVariable String mr_code){
+        return service.mrGetOne(mr_code);
+    }
     @GetMapping("/mrRez")
     public List<MrRezDTO> mrRezGetAll() {
         return service.mrRezGetAll();

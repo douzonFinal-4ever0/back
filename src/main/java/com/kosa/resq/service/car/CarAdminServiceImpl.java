@@ -201,8 +201,26 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
-    public List<CarRezInfoResponseVO> carRezListGetAll() {
-        return carAdminMapper.carRezListGetAll();
+    public List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate) {
+        return carAdminMapper.carRezListGetAll(sdate.substring(0, 10), edate.substring(0,10));
+    }
+
+    @Transactional
+    @Override
+    public CarRezDetailResponseVO carRezGetOne(String car_rez_code) {
+        CarRezResponseVO carRezResponseVO = carAdminMapper.carRezGetOne(car_rez_code);
+        List<CarLocVO> carLocVOS = carAdminMapper.carLocInfoGetOne(car_rez_code);
+        return new CarRezDetailResponseVO(carRezResponseVO, carLocVOS);
+    }
+
+    @Override
+    public void carRezCancel(String car_rez_code) {
+        carAdminMapper.carRezCancel(car_rez_code);
+    }
+
+    @Override
+    public List<String> isExistOperation() {
+        return carAdminMapper.isExistOperation();
     }
 
 
