@@ -107,15 +107,14 @@
         where authority='모두'and car_status='사용가능'
     </select>
     <select id="carGetAll2" resultType="com.kosa.resq.domain.vo.car.AvailableCarResponseVO">
---         select c.car_code, c.car_name, d.car_address, c.memo from car c join car_detail d on c.car_code=d.car_code
---         where authority='모두'and car_status='사용가능'
-        select c.car_code, c.car_name, d.car_address, c.memo, c.type
-            from car c join car_detail d on c.car_code=d.car_code
-            where
-                (authority='모두'and car_status='사용가능' and c.CAR_CODE not in (select CAR_CODE from CAR_REZ))
-                or (car_status='사용가능' and  c.CAR_CODE in
-                        (select Distinct CAR_CODE from car_rez
-                            where #{start_at}>return_at or start_at>#{return_at}))
+    select c.car_code, c.car_name, d.car_address, c.memo, c.type, c.authority
+    from car c join car_detail d on c.car_code=d.car_code
+    where
+        (authority='모두'or (authority='지정' and c.car_code in(select car_code from car_user where mem_code=#{mem_code})))and
+                          ((d.car_status='사용가능' and c.CAR_CODE not in (select CAR_CODE from CAR_REZ))
+                            or (d.car_status='사용가능' and  c.CAR_CODE in
+                                (select Distinct CAR_CODE from car_rez
+                                   where #{start_at}>return_at or start_at>#{return_at})))
     </select>
 
 
@@ -186,7 +185,7 @@
               )
     </insert>
     <update id="carRezCompleteUpdate">
-       update /*+ NO_PARALLEL(car_rez) */ car_rez set  rez_status='3',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
+       update /*+ NO_PARALLEL(car_rez) */ car_rez set  rez_status='5',updated_at=localtimestamp where car_rez_code=#{car_rez_code}
     </update>
     <update id="carDetailUpdate">
         update /*+ NO_PARALLEL(car_detail) */ car_detail set car_status='사용가능',accum_mileage=#{accum_mileage},
