@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface MrAdminService {
     public List<MrDTO> mrGetAll();
+    public MrDTO mrGetOne(String mr_code);
     public List<MrRezDTO> mrRezGetAll();
     public List<NoticeDTO> noticeGetAll();
     public void noticeSave(NoticeDTO notice);

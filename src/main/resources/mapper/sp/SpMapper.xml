@@ -3,13 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.sp.SpMapper">
+
     <select id="suppliesGetAll">
         select *
         from SUPPLIES
     </select>
 
-    <insert id="suppliesSava">
-        insert into MR_SUPPLIES (MR_CODE, SUPPLIES_CODE, AMOUNT)
-        values (#{mr_code},SUPPLIES_SEQ.nextval,#{amount})
-    </insert>
+
 </mapper>

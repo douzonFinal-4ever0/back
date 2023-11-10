@@ -25,17 +25,17 @@ class CarUserMapperTest {
 //        System.out.println(mapper.carRezGetAll("MEM001"));
 //        System.out.println(mapper.filterCarRezGetAll("MEM001","0"));
 //        System.out.println(mapper.searchCarGetAll());
-        String dateString = "2023-11-03 09:00:00";
-        String dateString2 = "2023-11-03 15:00:00";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            Date date = dateFormat.parse(dateString);
-            Date date2 = dateFormat.parse(dateString2);
-            System.out.println(date);
-            System.out.println(mapper.carGetAll2(date,date2));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        String dateString = "2023-11-03 09:00:00";
+//        String dateString2 = "2023-11-03 15:00:00";
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        try {
+//            Date date = dateFormat.parse(dateString);
+//            Date date2 = dateFormat.parse(dateString2);
+//            System.out.println(date);
+//            System.out.println(mapper.carGetAll2(date,date2,"MEM001"));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
     }
 }

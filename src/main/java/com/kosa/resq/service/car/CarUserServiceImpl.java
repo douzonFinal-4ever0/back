@@ -100,7 +100,7 @@ public class CarUserServiceImpl implements CarUserService{
         mapper2.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         CarRezRequestVO carRezRequestVO = mapper2.map(carRezDTO,CarRezRequestVO.class);
         carRezRequestVO.setCar_code(carRezDTO.getCarDTO().getCar_code());
-        carRezRequestVO.setRez_status("2");
+        carRezRequestVO.setRez_status("3");
         System.out.println(carRezRequestVO);
 
         CarLocRequestVO[] carLocRequestVOs = new CarLocRequestVO[3];
@@ -158,8 +158,8 @@ public class CarUserServiceImpl implements CarUserService{
     }
 
     @Override
-    public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at) {
-        List<AvailableCarResponseVO> carList=mapper.carGetAll2(start_at,return_at);
+    public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, String mem_code) {
+        List<AvailableCarResponseVO> carList=mapper.carGetAll2(start_at,return_at,mem_code);
         System.out.println("service: "+carList);
         return carList;
     }
