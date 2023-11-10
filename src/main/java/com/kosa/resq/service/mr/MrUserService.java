@@ -12,6 +12,10 @@ import java.util.List;
 public interface MrUserService {
     public void mrRezSave(MrRezRequestDTO mrRezRequestDTO);
 
+    public List<MrRezResponseVO> mrRezGetAllByMem(String mem_code);
+
+    public List<MrRezResponseVO> mrRezGetAllByPt (String mem_code);
+
     public List<MrRezResponseVO> recentMrRezGetAll(String mem_code);
 
     public List<MrResponseVO> mrRecommendGetAll(MrRecommendRequestDTO mrRecommendRequestDTO);

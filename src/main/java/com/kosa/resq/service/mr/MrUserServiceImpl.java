@@ -95,6 +95,30 @@ public class MrUserServiceImpl implements MrUserService {
     }
 
     @Override
+    public List<MrRezResponseVO> mrRezGetAllByMem(String mem_code) {
+        log.info("************************");
+        log.info(mapper.mrRezGetAllByMem(mem_code));
+        return mapper.mrRezGetAllByMem(mem_code);
+    }
+
+    @Override
+    public List<MrRezResponseVO> mrRezGetAllByPt(String mem_code) {
+        List<String> rezList =  mapper.mrRezByPt(mem_code); // 내가 참석자로 지정된 회의실 예약 코드 모두 찾기
+        List<MrRezResponseVO> result = new ArrayList<>();
+
+
+        for (String mr_rez_code : rezList) {
+            List<MrRezResponseVO> rezResponseVOS = mapper.mrRezGetAllByPt(mr_rez_code);
+            for(MrRezResponseVO vo : rezResponseVOS) {
+                result.add(vo);
+            }
+
+        }
+
+        return result;
+    }
+
+    @Override
     public List<MrRezResponseVO> recentMrRezGetAll(String mem_code) {
         return mapper.recentMrRezGetAll(mem_code);
     }
