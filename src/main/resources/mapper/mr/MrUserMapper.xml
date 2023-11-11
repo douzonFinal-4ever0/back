@@ -42,7 +42,7 @@
     <resultMap id="mr_ptMap" type="com.kosa.resq.domain.vo.mr.MrPtVO">
         <id property="mr_pt_code" column="mr_pt_code" />
         <result property="mr_rez_code" column="mr_rez_code" />
-        <result property="mem_code" column="mem_code" />
+        <result property="mem_code" column="pt_mem_code" />
         <result property="created_at" column="created_at"/>
         <result property="updated_at" column="updated_at" />
         <result property="deleted_at" column="deleted_at" />
@@ -63,13 +63,6 @@
         <result property="is_confirmed" column="is_confirmed"/>
         <result property="rez_type" column="rez_type"/>
         <collection property="mr" resultMap="mrMap"/>
-<!--        <collection property="mr_pt_list" ofType="com.kosa.resq.domain.vo.mem.MemResponseVO">-->
-<!--            &lt;!&ndash; mem 테이블에 대한 컬럼 매핑 &ndash;&gt;-->
-<!--            <result property="mem_code" column="mem_code"/>-->
-<!--            <result property="position_name" column="position_name"/>-->
-<!--            <result property="name" column="name"/>-->
-<!--            &lt;!&ndash; 나머지 컬럼들도 필요에 따라 추가 &ndash;&gt;-->
-<!--        </collection>-->
         <collection property="mr_pt_list" resultMap="mr_ptMap"/>
     </resultMap>
 
@@ -228,6 +221,10 @@
         WHERE r.mr_rez_code = #{mr_rez_code}
     </select>
 
+    <select id="mrPtGetAllByRez" resultType="com.kosa.resq.domain.vo.mr.MrPtVO" resultMap="mr_ptMap">
+        SELECT * from mr_pt where mr_rez_code=#{mr_rez_code}
+    </select>
+
     <select id="mrRezByPt" >
         select mr_rez_code from MR_PT where MEM_CODE=#{mem_code}
     </select>
@@ -243,6 +240,23 @@
         localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
     </insert>
 
+    <update id="mrRezUpdate" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
+        UPDATE MR_REZ
+        SET
+            MEM_CODE = #{mem_code},
+            MR_CODE = #{mr_code},
+            REZ_START_TIME = #{rez_start_time},
+            REZ_END_TIME = #{rez_end_time},
+            UPDATED_AT = localtimestamp,
+            REZ_STATUS = '완료',
+            M_NAME = #{m_name},
+            M_TYPE = #{m_type},
+            IS_CONFIRMED = 0,
+            REZ_TYPE = 0,
+            TOT_PT_CTN = #{tot_pt_ctn}
+        WHERE MR_REZ_CODE = #{mr_rez_code}
+    </update>
+
     <insert id="mrPtSave">
         <selectKey keyProperty="mr_pt_code" order="BEFORE"
                    resultType="String">
@@ -251,6 +265,12 @@
         INSERT INTO MR_PT (mr_pt_code, mr_rez_code, mem_code, created_at, updated_at, deleted_at)
         VALUES (#{mr_pt_code}, #{mr_rez_code}, #{mem_code}, localtimestamp, null, null)
     </insert>
+
+    <update id="mrPtDelete">
+        update mr_pt
+        set deleted_at=localtimestamp
+        where mem_code=#{mem_code} AND mr_rez_code=#{mr_rez_code}
+    </update>
 
     <insert id="bmGroupSave" parameterType="com.kosa.resq.domain.vo.mr.BmGroupVO">
         INSERT INTO BM_GROUP (BM_GROUP_CODE, MEM_CODE, BM_GROUP_NAME, CREATED_AT, UPDATED_AT, DELETED_AT)

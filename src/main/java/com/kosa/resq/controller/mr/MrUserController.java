@@ -52,6 +52,15 @@ public class MrUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
+    @PutMapping("/rez") // 회의실 예약 수정
+    public ResponseEntity<String> mrRezUpdate(@RequestBody MrRezRequestDTO requestDTO) {
+        log.info("수정 컨트롤러 **************************");
+        log.info(requestDTO);
+        service.mrRezUpdate(requestDTO);
+        //return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        return ResponseEntity.status(HttpStatus.OK).body("success");
+    }
+
     @GetMapping("/rez/recent") // 회의실 최근 예약 조회
     public ResponseEntity<List<MrRezResponseVO>> recentMrRezGetAll(String mem_code) {
 

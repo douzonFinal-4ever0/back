@@ -12,6 +12,12 @@ import java.util.List;
 public interface MrUserMapper {
     public void mrRezSave(MrRezRequestVO mrRezRequestVO);
 
+    public void mrRezUpdate(MrRezRequestVO mrRezRequestVO);
+
+    public void mrPtDelete(String mr_rez_code, String mem_code);
+
+    public List<MrPtVO> mrPtGetAllByRez(String mr_rez_code);
+
     public List<MrRezResponseVO> mrRezGetAllByMem(String mem_code);
 
     public List<String> mrRezByPt (String mem_code);

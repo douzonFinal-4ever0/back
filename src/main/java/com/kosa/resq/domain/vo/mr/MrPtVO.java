@@ -17,5 +17,5 @@ public class MrPtVO {
     private Date created_at; // 등록일자
     private Date updated_at; // 변경일자
     private Date deleted_at; // 삭제일자
-    private MemResponseVO memVO; 
+    private MemResponseVO memVO;
 }
