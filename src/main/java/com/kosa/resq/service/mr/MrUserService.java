@@ -14,6 +14,8 @@ public interface MrUserService {
 
     public void mrRezUpdate(MrRezRequestDTO mrRezRequestDTO);
 
+    public void mrRezDelete(String mr_rez_code);
+
     public List<MrRezResponseVO> mrRezGetAllByMem(String mem_code);
 
     public List<MrRezResponseVO> mrRezGetAllByPt (String mem_code);

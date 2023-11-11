@@ -170,6 +170,8 @@ public class MrUserServiceImpl implements MrUserService {
             // 삭제해야 할 참석자 필터링하여 참석자 DB 삭제
             List<String> deletePts = new ArrayList<>(origins);
             deletePts.removeAll(news);
+            log.info("기존 삭제");
+            log.info(deletePts);
 
             if(!deletePts.isEmpty()) {
                 for(String pt: deletePts) {
@@ -181,6 +183,8 @@ public class MrUserServiceImpl implements MrUserService {
             // 추가해야 할 참석자 필터링하여 참석자 DB 추가
             List<String> addPts = new ArrayList<>(news);
             addPts.removeAll(origins);
+            log.info("기존 추가");
+            log.info(addPts);
 
             if(!addPts.isEmpty()) {
                 for(String pt: addPts) {
@@ -191,6 +195,24 @@ public class MrUserServiceImpl implements MrUserService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    @Transactional
+    @Override
+    public void mrRezDelete(String mr_rez_code) {
+
+        // 예약 삭제 -> deleted_at 업데이트
+        mapper.mrRezDelete(mr_rez_code);
+
+
+        // 참석자 삭제 -> deleted_at 업데이트
+        // 1. 해당 참석자 조회
+        List<MrPtVO> list =  mapper.mrPtGetAllByRez(mr_rez_code);
+        for(MrPtVO pt : list) {
+            // 2. 참석자 삭제
+            mapper.mrPtDelete(mr_rez_code, pt.getMemVO().getMem_code());
+        }
+
     }
 
     @Override

@@ -61,6 +61,15 @@ public class MrUserController {
         return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
+    @DeleteMapping("/rez") // 회의실 예약 삭제
+    public ResponseEntity<String> mrRezDelete(@RequestParam("mr_rez_code") String mr_rez_code) {
+        log.info("예약 삭제 컨트롤러 **************************");
+        log.info(mr_rez_code);
+        service.mrRezDelete(mr_rez_code);
+        return ResponseEntity.status(HttpStatus.OK).body("success");
+    }
+
+
     @GetMapping("/rez/recent") // 회의실 최근 예약 조회
     public ResponseEntity<List<MrRezResponseVO>> recentMrRezGetAll(String mem_code) {
 

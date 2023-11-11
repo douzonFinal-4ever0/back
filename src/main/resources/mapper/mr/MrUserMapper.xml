@@ -175,6 +175,7 @@
                  LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
                  LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
         WHERE r.mem_code = #{mem_code}
+          AND r.deleted_at IS NULL
     </select>
 
     <select id="mrRezGetAllByPt" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
@@ -219,10 +220,11 @@
                  LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
                  LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
         WHERE r.mr_rez_code = #{mr_rez_code}
+         AND r.deleted_at IS NULL
     </select>
 
     <select id="mrPtGetAllByRez" resultType="com.kosa.resq.domain.vo.mr.MrPtVO" resultMap="mr_ptMap">
-        SELECT * from mr_pt where mr_rez_code=#{mr_rez_code}
+        SELECT * from mr_pt where mr_rez_code=#{mr_rez_code} AND deleted_at IS NULL
     </select>
 
     <select id="mrRezByPt" >
@@ -270,6 +272,12 @@
         update mr_pt
         set deleted_at=localtimestamp
         where mem_code=#{mem_code} AND mr_rez_code=#{mr_rez_code}
+    </update>
+
+    <update id="mrRezDelete">
+        update mr_rez
+        set deleted_at=localtimestamp
+        where mr_rez_code=#{mr_rez_code}
     </update>
 
     <insert id="bmGroupSave" parameterType="com.kosa.resq.domain.vo.mr.BmGroupVO">
