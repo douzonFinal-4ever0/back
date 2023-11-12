@@ -6,6 +6,7 @@ import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRezResponseVO;
+import com.kosa.resq.exception.DuplicateReservationException;
 import com.kosa.resq.service.mr.MrUserService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.annotations.Param;
@@ -48,8 +49,16 @@ public class MrUserController {
 
     @PostMapping("/rez") // 회의실 예약 등록
     public ResponseEntity<String> mrRezSave(@RequestBody MrRezRequestDTO requestDTO) {
-        service.mrRezSave(requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        try {
+            service.mrRezSave(requestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        } catch (DuplicateReservationException e) {
+            // 중복 예약 예외 처리
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate reservation: " + e.getMessage());
+        } catch (Exception e) {
+            // 기타 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
     @PutMapping("/rez") // 회의실 예약 수정

@@ -113,6 +113,18 @@
         <result property="deleted_at" column="deleted_at"/>
     </resultMap>
 
+    <select id="getReservationsForMeetingRoom" resultType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
+         <![CDATA[
+        SELECT *
+        FROM mr_rez
+        WHERE mr_code = #{mr_code}
+          AND (
+                (#{rez_start_time} <= rez_end_time AND #{rez_end_time} >= rez_start_time)
+                OR (rez_start_time <= #{rez_end_time} AND rez_end_time >= #{rez_start_time})
+            )
+        ]]>
+    </select>
+
     <select id="bmMrGetAll" parameterType="String" resultType="com.kosa.resq.domain.vo.mr.BmMrVO" resultMap="BmMrMap">
         SELECT bm_mr_code, mem_code, mr_code, created_at, updated_at, deleted_at
         FROM bm_mr
@@ -278,7 +290,7 @@
 
     <update id="mrRezDelete">
         update mr_rez
-        set deleted_at=localtimestamp
+        set deleted_at=localtimestamp, rez_status='취소'
         where mr_rez_code=#{mr_rez_code}
     </update>
 
@@ -397,6 +409,7 @@
                 )
         ]]>
     </select>
+
 
     <select id="recentMrGetFive" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO">
         <![CDATA[ SELECT m.mr_code, m.mr_name, m.maximum_capacity, m.location, m.avl_start_time, m.avl_end_time, m.is_opened, m.is_used, m.mr_type, m.created_at, m.updated_at, m.deleted_at, mk.keyword_code, mk.keyword_name

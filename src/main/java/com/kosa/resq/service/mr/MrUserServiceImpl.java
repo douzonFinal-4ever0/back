@@ -6,6 +6,7 @@ import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.common.MemResquestVO;
 import com.kosa.resq.domain.vo.mr.*;
+import com.kosa.resq.exception.DuplicateReservationException;
 import com.kosa.resq.mapper.mr.MrUserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,18 @@ public class MrUserServiceImpl implements MrUserService {
             mrRezRequestVO.setTot_pt_ctn(mrRezRequestDTO.getTot_pt_ctn());
             mrRezRequestVO.setRez_type(mrRezRequestDTO.getRez_type());
 
+            // 중복 예약 확인
+            List<MrRezRequestVO> existingReservations = mapper.getReservationsForMeetingRoom(
+                    mrRezRequestVO.getMr_code(),
+                    mrRezRequestVO.getRez_start_time(),
+                    mrRezRequestVO.getRez_end_time()
+            );
+
+            // 예약이 중복되는 경우 예외 처리
+            if (!existingReservations.isEmpty()) {
+                throw new DuplicateReservationException("이미 예약 완료된 회의실입니다. 다른 회의실을 이용해주세요.");
+            }
+
             // 회의실 예약 데이터 추가
             mapper.mrRezSave(mrRezRequestVO);
 
@@ -90,11 +103,15 @@ public class MrUserServiceImpl implements MrUserService {
                 mapper.mrPtSave(mr_rez_code, mem_code);
             }
 
+        } catch (DuplicateReservationException e) {
+            throw e; // 예외를 다시 throw하여 상위 메서드에 전파
         } catch(Exception e) {
             // 저장 실패 시 예외 처리
             e.printStackTrace();
         }
     }
+
+
 
     @Transactional
     @Override
