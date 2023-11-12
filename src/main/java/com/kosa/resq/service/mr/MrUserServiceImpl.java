@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -152,50 +153,88 @@ public class MrUserServiceImpl implements MrUserService {
             // 회의실 예약 데이터 업데이트 (수정)
             mapper.mrRezUpdate(mrRezRequestVO);
 
-            log.info("수정 서비스 **************************");
+            // 삭제 및 추가 로직을 별도의 메서드로 분리
+            manageParticipants(mrRezRequestVO, mrRezRequestDTO.getMr_pt_list());
+
+        } catch (ParseException e) {
+            // 롤백이 필요한 경우 처리
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void manageParticipants(MrRezRequestVO mrRezRequestVO, List<MemDTO> newParticipants) {
+        try {
+            // ************[Start] 참석자 관리 로직 *****************
+
             // 기존 회의 참석자 조회 후 사번 추출
             List<MrPtVO> originPtList = mapper.mrPtGetAllByRez(mrRezRequestVO.getMr_rez_code());
-            List<String > origins = new ArrayList<>();
-            for(MrPtVO pt: originPtList) {
-                String pt_mem_code =  pt.getMemVO().getMem_code();
-                origins.add(pt_mem_code);
-            }
+            List<String> origins = originPtList.stream()
+                    .map(pt -> pt.getMemVO().getMem_code())
+                    .collect(Collectors.toList());
 
             // 새롭게 전달받은 회의 참석자 사번 추출
-            List<String> news = new ArrayList<>();
-            for(MemDTO pt: mrRezRequestDTO.getMr_pt_list()) {
-                news.add(pt.getMem_code());
-            }
+            List<String> news = newParticipants.stream()
+                    .map(MemDTO::getMem_code)
+                    .collect(Collectors.toList());
 
             // 삭제해야 할 참석자 필터링하여 참석자 DB 삭제
             List<String> deletePts = new ArrayList<>(origins);
             deletePts.removeAll(news);
-            log.info("기존 삭제");
-            log.info(deletePts);
-
-            if(!deletePts.isEmpty()) {
-                for(String pt: deletePts) {
-                    mapper.mrPtDelete(mrRezRequestVO.getMr_rez_code(), pt);
-                }
-            }
-
+            deleteParticipants(deletePts, mrRezRequestVO.getMr_rez_code());
 
             // 추가해야 할 참석자 필터링하여 참석자 DB 추가
             List<String> addPts = new ArrayList<>(news);
             addPts.removeAll(origins);
-            log.info("기존 추가");
-            log.info(addPts);
+            addParticipants(addPts, mrRezRequestVO.getMr_rez_code());
 
-            if(!addPts.isEmpty()) {
-                for(String pt: addPts) {
-                    mapper.mrPtSave(mrRezRequestVO.getMr_rez_code(), pt);
-                }
-            }
+            // ************[End] 참석자 관리 로직 *****************
 
-        } catch (ParseException e) {
+        } catch (Exception e) {
+            // 롤백이 필요한 경우 처리
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             e.printStackTrace();
         }
     }
+
+    @Transactional
+    public void deleteParticipants(List<String> deletePts, String mrRezCode) {
+        try {
+            log.info("기존 삭제");
+            log.info(deletePts);
+
+            if (!deletePts.isEmpty()) {
+                for (String pt : deletePts) {
+                    mapper.mrPtDelete(mrRezCode, pt);
+                }
+            }
+        } catch (Exception e) {
+            // 롤백이 필요한 경우 처리
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void addParticipants(List<String> addPts, String mrRezCode) {
+        try {
+            log.info("새롭게 추가");
+            log.info(addPts);
+
+            if (!addPts.isEmpty()) {
+                for (String pt : addPts) {
+                    mapper.mrPtSave(mrRezCode, pt);
+                }
+            }
+        } catch (Exception e) {
+            // 롤백이 필요한 경우 처리
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+        }
+    }
+
+
 
     @Transactional
     @Override

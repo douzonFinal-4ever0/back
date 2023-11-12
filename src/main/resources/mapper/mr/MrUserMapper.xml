@@ -176,6 +176,7 @@
                  LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
         WHERE r.mem_code = #{mem_code}
           AND r.deleted_at IS NULL
+          AND p.deleted_at IS NULL
     </select>
 
     <select id="mrRezGetAllByPt" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
@@ -221,6 +222,7 @@
                  LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
         WHERE r.mr_rez_code = #{mr_rez_code}
          AND r.deleted_at IS NULL
+          AND p.deleted_at IS NULL
     </select>
 
     <select id="mrPtGetAllByRez" resultType="com.kosa.resq.domain.vo.mr.MrPtVO" resultMap="mr_ptMap">
@@ -269,7 +271,7 @@
     </insert>
 
     <update id="mrPtDelete">
-        update mr_pt
+        update /*+ NO_PARALLEL(mr_pt) */ mr_pt
         set deleted_at=localtimestamp
         where mem_code=#{mem_code} AND mr_rez_code=#{mr_rez_code}
     </update>
