@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,4 +28,5 @@ public class MaintRecordResponseVO {
     private String memo;
     private Date created_at;
     private Date updated_at;
+    private List<String> url;
 }

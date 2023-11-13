@@ -107,6 +107,13 @@
         from MR_REZ mrz left outer join MR mr on mrz.MR_CODE = mr.MR_CODE
     </select>
 
+    <select id="mrRezRank" resultType="com.kosa.resq.domain.dto.mr.MrRezRankDTO">
+        SELECT MR_CODE, COUNT(*) AS REZ_CNT
+        FROM MR_rez
+        GROUP BY MR_CODE
+        ORDER BY REZ_CNT desc
+    </select>
+    
     <select id="noticeGetAll" resultType="com.kosa.resq.domain.dto.mr.NoticeDTO" resultMap="noticeMap">
         select *
         from NOTICE n
@@ -181,7 +188,11 @@
             (select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual)
         </if>, #{keyword_name})
     </insert>
-
+    <delete id="mrKeyWordDelete">
+        delete
+        from MR_KEYWORD
+        where KEYWORD_CODE=${keyword_code}
+    </delete>
     <insert id="mrImgSave">
         insert into MR_IMG (IMG_CODE, URL, MR_CODE)
         values ('IMG' || LPAD(TO_CHAR(IMG_CODE_SEQ.NEXTVAL), 3, '0'),#{url},#{mr_code})
@@ -217,8 +228,12 @@
         from TEMPLATE
     </select>
 
-    <insert id="mrSuppliesSave">
-        insert into MR_SUPPLIES (MR_CODE, SUPPLIES_CODE, AMOUNT)
-        values (#{mr_code},#{supplies_code},#{amount})
-    </insert>
+    <delete id="mrImgDelete">
+        delete
+        from MR_IMG
+        where IMG_CODE=#{img_code}
+    </delete>
+
+
+
 </mapper>
