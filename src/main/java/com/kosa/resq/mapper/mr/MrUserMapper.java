@@ -6,11 +6,22 @@ import com.kosa.resq.domain.vo.mr.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
 public interface MrUserMapper {
+
+    public List<MrRezRequestVO> getReservationsForMeetingRoom(String mr_code, Date rez_start_time, Date rez_end_time);
     public void mrRezSave(MrRezRequestVO mrRezRequestVO);
+
+    public void mrRezUpdate(MrRezRequestVO mrRezRequestVO);
+
+    public void mrPtDelete(String mr_rez_code, String mem_code);
+
+    public void mrRezDelete(String mr_rez_code);
+
+    public List<MrPtVO> mrPtGetAllByRez(String mr_rez_code);
 
     public List<MrRezResponseVO> mrRezGetAllByMem(String mem_code);
 
