@@ -9,6 +9,7 @@ public interface MrAdminService {
     public List<MrDTO> mrGetAll();
     public MrDTO mrGetOne(String mr_code);
     public List<MrRezDTO> mrRezGetAll();
+    public List<MrRezDTO> mrRezRank();
     public List<NoticeDTO> noticeGetAll();
     public void noticeSave(NoticeDTO notice);
     public void mrSave(MrDTO mr);
@@ -21,4 +22,5 @@ public interface MrAdminService {
     public void noticeDelete(String notice_code);
     public void mrImgSave(MrImgDTO img);
     public void mrOpDayUpdate(MrOpDayDTO day);
+    public void mrImgDelete(String img_code);
 }

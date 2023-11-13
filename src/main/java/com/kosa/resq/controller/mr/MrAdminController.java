@@ -4,6 +4,7 @@ import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.mr.MrAdminService;
+import com.kosa.resq.service.sp.SpService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,10 @@ public class MrAdminController {
     private MrAdminService service;
     @Autowired
     private S3UploadService imgService;
+    @Autowired
+    private SpService spService;
     private String mrCode;
+
 
     public MrAdminController(MrAdminService service) {
         this.service = service;
@@ -43,6 +47,11 @@ public class MrAdminController {
         return service.mrRezGetAll();
     }
 
+    @GetMapping("/mrRezRank")
+    public List<MrRezDTO> mrRezRank(){
+        return service.mrRezRank();
+    }
+
     @GetMapping("/notice")
     public List<NoticeDTO> noticeGetAll() {
         return service.noticeGetAll();
@@ -58,6 +67,7 @@ public class MrAdminController {
     public void mrSave(@RequestBody MrDTO mr) {
         List<MrKeyWordDTO> keyword = mr.getMr_keyword();
         List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
+        List<MrSuppliesDTO> supplies = mr.getMr_supplies();
 
         // 먼저 MR 정보를 저장하고 mr_code를 가져옴
         service.mrSave(mr);
@@ -77,7 +87,12 @@ public class MrAdminController {
                 service.mrAvailableDaySave(opDayDTO);
             }
         }
-
+//        if(!supplies.isEmpty()){
+//            for(MrSuppliesDTO suppliesDTO: supplies){
+//                suppliesDTO.setMr_code(mrCode);
+//                spService.mrSuppliesSave(suppliesDTO);
+//            }
+//        }
     }
 
     @PatchMapping("/mrUpdate")
@@ -85,7 +100,7 @@ public class MrAdminController {
         List<MrKeyWordDTO> keyword = mr.getMr_keyword();
         List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
         service.mrUpdate(mr);
-        String updateMrCode = mr.getMr_code();
+        mrCode = mr.getMr_code();
 
 //        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
         // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
@@ -94,12 +109,12 @@ public class MrAdminController {
 //            service.mrKeywordSave(keywordDTO);
 //        }
         log.info(mrOpDay);
-        log.info(updateMrCode);
+        log.info(mrCode);
 //
         if(!mrOpDay.isEmpty()){
             for (int i = 0; i < mrOpDay.size(); i++) {
                 MrOpDayDTO opDayDTO = mrOpDay.get(i);
-                opDayDTO.setMr_code(updateMrCode);
+                opDayDTO.setMr_code(mrCode);
                 opDayDTO.setDay(i);
                 service.mrOpDayUpdate(opDayDTO);
             }
@@ -130,10 +145,10 @@ public class MrAdminController {
     @PostMapping("/mrImg")
     public ResponseEntity<Object> mrImgSave(@RequestParam("images") MultipartFile[] images) {
         try {
-            for (int i = 0; i < images.length; i++) {
-                MultipartFile image = images[i];
+            for (MultipartFile image : images) {
                 MrImgDTO img = new MrImgDTO();
                 String url = imgService.saveFile(image, "mr");
+                log.info(url);
                 img.setUrl(url);
                 System.out.println(mrCode);
                 log.info(mrCode);
@@ -145,5 +160,9 @@ public class MrAdminController {
         }
         return new ResponseEntity<Object>("Success", HttpStatus.OK);
 //        service.mrImgSave(img);
+    }
+    @DeleteMapping("/mrImg/{img_code}")
+    public void mrImgDelete(@PathVariable String img_code){
+        service.mrImgDelete(img_code);
     }
 }
