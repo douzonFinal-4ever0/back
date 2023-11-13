@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class MrRezRequestDTO {
+    private String mr_rez_code; // 회의실 예약 번호
     private String mr_code; // 회의실 번호
     private String mem_code; // 사번
     private String m_name; // 회의명
