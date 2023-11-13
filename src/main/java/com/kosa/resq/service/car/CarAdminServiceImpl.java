@@ -118,16 +118,17 @@ public class CarAdminServiceImpl implements CarAdminService{
 
     @Transactional
     @Override
-    public MaintRecordResponseVO maintRecordSave(MaintRecordRequestVO maintRecordRequestVO) {
+    public MaintRecordResponseVO maintRecordSave(List<String> maintImages, MaintRecordRequestVO maintRecordRequestVO) {
         carAdminMapper.maintRecordSave(maintRecordRequestVO);
         maintRecordRequestVO.setMaint_code("MAINT" + maintRecordRequestVO.getMaint_code());
-
-
 
         // 차량 상태 '정비중'으로 변경
         carAdminMapper.updateCarStatus(maintRecordRequestVO.getCar_code(), "정비중");
 
         log.info(maintRecordRequestVO.getMaint_code());
+        for (String url : maintImages) {
+            carAdminMapper.maintImageSave(maintRecordRequestVO.getMaint_code(), url);
+        }
         return carAdminMapper.maintRecordGetOne(maintRecordRequestVO.getMaint_code());
     }
 

@@ -34,10 +34,10 @@ public class S3UploadService {
     }
 
 
-//    public byte[] downloadImage(String originalFilename) throws IOException {
-//        S3Object s3Object = amazonS3.getObject(bucket, originalFilename);
-//        S3ObjectInputStream s3ObjectContent = s3Object.getObjectContent();
-//        return IOUtils.toByteArray(s3ObjectContent);
-//    }
+    public byte[] downloadImage(String originalFilename) throws IOException {
+        S3Object s3Object = amazonS3.getObject(bucket, originalFilename);
+        S3ObjectInputStream s3ObjectContent = s3Object.getObjectContent();
+        return IOUtils.toByteArray(s3ObjectContent);
+    }
 
 }

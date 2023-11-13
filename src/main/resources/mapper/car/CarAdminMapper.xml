@@ -75,6 +75,9 @@
         <association property="carMaintResponseVO" resultMap="carMaintMap"/>
         <association property="maintComResponseVO" resultMap="maintComMap"/>
         <association property="memResponseVO" resultMap="memResultMap"/>
+        <collection property="url" ofType="string">
+            <result property="url" column="url"/>
+        </collection>
     </resultMap>
 
     <resultMap id="carMaintMap" type="com.kosa.resq.domain.vo.car.CarMaintResponseVO">
@@ -299,6 +302,10 @@
         </selectKey>
     </insert>
 
+    <insert id="maintImageSave" parameterType="String">
+        INSERT INTO maint_img (img_code, maint_code, url) VALUES (maint_img_seq.nextval, #{maint_code}, #{url})
+    </insert>
+
 <!--    차량 상태 업데이트-->
     <update id="updateCarStatus">
         update car_detail set car_status=#{status} where car_code=#{car_code}
@@ -309,7 +316,7 @@
 <!--    차량 하나에 대한 정비 내역 불러오기-->
     <select id="maintOneCarRecordGetAll" parameterType="String" resultMap="maintRecordMap">
         SELECT r.maint_code, r.car_code, r.maint_item_code, r.mc_code, r.mem_code, r.maint_start_at, r.maint_end_at, r.maint_cost, r.pay_method, r.memo, r.created_at, r.updated_at,  m.maint_name, m.cycle, m.type, c.mc_name, c.mc_tell, c.mc_category,
-               md.name, md.position_name, md.dept_code, md.dept_name
+               md.name, md.position_name, md.dept_code, md.dept_name, i.url
         from maint_record r
                  LEFT JOIN car_maint m
                            ON r.maint_item_code = m.maint_item_code
@@ -317,6 +324,8 @@
                            ON r.mc_code = c.mc_code
                  LEFT JOIN (SELECT mem.mem_code, mem.name, mem.position_name, dept.dept_code, dept.dept_name FROM mem LEFT JOIN dept ON mem.dept_code = dept.dept_code) md
                            ON r.mem_code = md.mem_code
+                 LEFT JOIN maint_img i
+                           ON r.maint_code=i.maint_code
         WHERE r.car_code = #{car_code}
     </select>
 
