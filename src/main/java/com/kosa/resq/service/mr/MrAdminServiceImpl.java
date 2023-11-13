@@ -28,6 +28,11 @@ public class MrAdminServiceImpl implements MrAdminService {
     }
 
     @Override
+    public List<MrRezDTO> mrRezRank() {
+        return mapper.mrRezRank();
+    }
+
+    @Override
     public List<NoticeDTO> noticeGetAll() {
         return mapper.noticeGetAll();
     }
@@ -85,6 +90,11 @@ public class MrAdminServiceImpl implements MrAdminService {
     @Override
     public void mrOpDayUpdate(MrOpDayDTO day) {
         mapper.mrOpDayUpdate(day);
+    }
+
+    @Override
+    public void mrImgDelete(String img_code) {
+        mapper.mrImgDelete(img_code);
     }
 
 }
