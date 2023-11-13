@@ -141,11 +141,11 @@
         FROM dual
     </select>
     <select id="mrRezType" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO">
-        SELECT m.MR_TYPE, COUNT(*) AS REZ_CNT
-        FROM MR_rez mrz
-                 left join MR m on mrz.MR_CODE = m.MR_CODE
+        SELECT m.MR_TYPE, COUNT(mrz.MR_CODE) AS REZ_CNT
+        FROM MR m
+                 LEFT JOIN MR_rez mrz ON m.MR_CODE = mrz.MR_CODE
         GROUP BY MR_TYPE
-        ORDER BY REZ_CNT desc
+        ORDER BY REZ_CNT DESC
     </select>
 
     <select id="noticeGetAll" resultType="com.kosa.resq.domain.dto.mr.NoticeDTO" resultMap="noticeMap">

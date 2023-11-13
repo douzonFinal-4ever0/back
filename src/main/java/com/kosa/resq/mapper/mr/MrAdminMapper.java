@@ -30,5 +30,5 @@ public interface MrAdminMapper {
     public void mrImgDelete(String img_code);
     public List<MrRezTimeDTO> mrRezTime();
     public MrRezRowDTO mrRezRow();
-    public MrRezTypeDTO mrRezType();
+    public List<MrRezTypeDTO> mrRezType();
 }

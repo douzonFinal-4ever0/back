@@ -111,7 +111,7 @@ public class MrAdminServiceImpl implements MrAdminService {
     }
 
     @Override
-    public MrRezTypeDTO mrRezType() {
+    public List<MrRezTypeDTO> mrRezType() {
         return mapper.mrRezType();
     }
 

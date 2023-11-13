@@ -63,7 +63,7 @@ public class MrAdminController {
         return service.mrRezRow();
     }
     @GetMapping("/mrTypeRow")
-    public MrRezTypeDTO mrRezType(){
+    public List<MrRezTypeDTO> mrRezType(){
         return service.mrRezType();
     }
     @GetMapping("/notice")
