@@ -110,11 +110,12 @@
     select c.car_code, c.car_name, d.car_address, c.memo, c.type, c.authority
     from car c join car_detail d on c.car_code=d.car_code
     where
-        (authority='모두'or (authority='지정' and c.car_code in(select car_code from car_user where mem_code=#{mem_code})))and
-                          ((d.car_status='사용가능' and c.CAR_CODE not in (select CAR_CODE from CAR_REZ))
-                            or (d.car_status='사용가능' and  c.CAR_CODE in
+        (authority='모두'or (authority='지정' and c.car_code in(select car_code from car_user where mem_code=#{mem_code})))and --지정 사용자 또는 모두 사용가능 한 차
+                          ((d.car_status='사용가능' and c.CAR_CODE not in (select CAR_CODE from CAR_REZ)) --예약을 한번도 안한 사용 가능한 차량
+                            or (d.car_status='사용가능' and  c.CAR_CODE in --차량이 사용 가능하고 예약중에 겹치는게 업는 차량
                                 (select Distinct CAR_CODE from car_rez
                                    where #{start_at}>return_at or start_at>#{return_at})))
+                            or c.car_code in (select car_code from car_rez where rez_status='2') --취소된 차량
     </select>
 
 
@@ -149,7 +150,62 @@
         from
             car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
                       join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
-        where m.mem_code = #{mem_code} and r.rez_status=#{rez_status}
+        where m.mem_code = #{mem_code}
+        <if test="rez_status!= 0">
+          and r.rez_status=#{rez_status}
+        </if>
+--         오늘 날짜 필터링 1 : 오늘, 2 : 일주일전부터 오늘까지 3 : 한달전부터 오늘까지
+--         4: 설정한 기간
+        <if test="dateRange!= 0">
+<!--        <trim prefix="and">-->
+            <choose>
+                <when test="dateRange== 1">
+                    and trunc(r.start_at)=trunc(localtimestamp)
+                </when>
+                <when test="dateRange== 2">
+                    and trunc(r.start_at)>=trunc(localtimestamp)-7
+                    and trunc(localtimestamp)+1>trunc(r.start_at)
+                </when>
+                <when test="dateRange== 3">
+                    and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                    and trunc(localtimestamp)+1>trunc(r.start_at)
+                </when>
+            </choose>
+<!--        </trim>-->
+        </if>
+        order by r.rez_status,r.rez_at desc
+    </select>
+    <select id="filterCarRezGetAll2" resultType="com.kosa.resq.domain.vo.car.CarRezInfoResponseVO">
+        select r.car_rez_code,r.rez_status, r.start_at,r.return_at,m.name,
+        dept.dept_name,c.car_name,c.car_code,r.detail,c.type
+        from
+        car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
+        join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
+        where m.mem_code = #{mem_code}
+        <if test="rez_status!= 0">
+            and r.rez_status=#{rez_status}
+        </if>
+        --         오늘 날짜 필터링 1 : 오늘, 2 : 일주일전부터 오늘까지 3 : 한달전부터 오늘까지
+        --         4: 설정한 기간
+        <if test="dateRange!= 0">
+            <!--        <trim prefix="and">-->
+            <choose>
+                <when test="dateRange== 1">
+                    and trunc(r.start_at)=trunc(localtimestamp)
+                </when>
+                <when test="dateRange== 2">
+                    and trunc(r.start_at)>=trunc(localtimestamp)-7
+                    and trunc(localtimestamp)+1>trunc(r.start_at)
+                </when>
+                <when test="dateRange== 3">
+                    and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                    and trunc(localtimestamp)+1>trunc(r.start_at)
+                </when>
+            </choose>
+            <!--        </trim>-->
+        </if>
+        and trunc(r.start_at)>=trunc(#{startDate})
+        and trunc(#{endDate})+1>trunc(r.start_at)
         order by r.rez_status,r.rez_at desc
     </select>
     <select id="searchCarGetAll" resultType="com.kosa.resq.domain.vo.car.CarNameCodeResponseVO">

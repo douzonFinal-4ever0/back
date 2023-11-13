@@ -25,6 +25,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -206,13 +209,35 @@ public class CarUserServiceImpl implements CarUserService{
     }
 
     @Override
-    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code, String rez_status) {
-        String  status;
-        if(rez_status.equals("0")){
-            return mapper.carRezGetAll(mem_code);
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(
+            String mem_code, String rez_status,int dateRange,String startAt,String endAt
+    ) {
+//        String  status;
+//        if(rez_status.equals("0")){
+//            System.out.println("init");
+//            return mapper.carRezGetAll(mem_code);
+//        }else{
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        if(startAt.equals("0")&&endAt.equals("0")){
+            System.out.println("0");
+            return mapper.filterCarRezGetAll(mem_code,rez_status,dateRange);
         }else{
-            return mapper.filterCarRezGetAll(mem_code,rez_status);
+            System.out.println("0X");
+            Date startDate;
+            Date endDate;
+            try {
+                // parse 메서드를 사용하여 문자열을 Date 객체로 변환
+                startDate= dateFormat.parse(startAt);
+                endDate= dateFormat.parse(endAt);
+                return mapper.filterCarRezGetAll2(mem_code,rez_status,dateRange,startDate,endDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+//
+//            System.out.println(mapper.filterCarRezGetAll(mem_code,rez_status,dateRange,startDate,endDate));
+//            return mapper.filterCarRezGetAll(mem_code,rez_status,dateRange,startDate,endDate);
+        return null;
     }
 
     @Override

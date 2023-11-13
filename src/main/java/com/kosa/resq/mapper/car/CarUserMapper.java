@@ -22,7 +22,12 @@ public interface CarUserMapper {
     public CarRezResponseVO carRezGetOne(String car_rez_code);
     public List<CarLocResponseVO> carLocInfoGetAll(String car_rez_code);
     public List<CarRezInfoResponseVO> carRezGetAll(String mem_code);
-    public List<CarRezInfoResponseVO> filterCarRezGetAll(String mem_code,String rez_status);
+    public List<CarRezInfoResponseVO> filterCarRezGetAll(
+            String mem_code,String rez_status,int dateRange
+    );
+    public List<CarRezInfoResponseVO> filterCarRezGetAll2(
+            String mem_code,String rez_status,int dateRange,Date startDate,Date endDate
+    );
     public List<CarNameCodeResponseVO> searchCarGetAll ();
     public int carRezDelete(String car_rez_code);
     public int carRezUpdate(CarRezRequestVO carRezRequestVO);
