@@ -80,6 +80,9 @@
         <id property="supplies_code" column="supplies_code"/>
         <result property="amount" column="amount"/>
     </resultMap>
+    
+
+    
 
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
         <![CDATA[
@@ -107,13 +110,44 @@
         from MR_REZ mrz left outer join MR mr on mrz.MR_CODE = mr.MR_CODE
     </select>
 
-    <select id="mrRezRank" resultType="com.kosa.resq.domain.dto.mr.MrRezRankDTO">
-        SELECT MR_CODE, COUNT(*) AS REZ_CNT
-        FROM MR_rez
-        GROUP BY MR_CODE
+    <select id="mrRezRank" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
+        SELECT mr.MR_CODE, m.MR_NAME,COUNT(*) AS REZ_CNT
+        FROM MR_rez mr left join Mr m on mr.MR_CODE = m.MR_CODE
+        GROUP BY mr.MR_CODE, m.MR_NAME
         ORDER BY REZ_CNT desc
     </select>
-    
+
+    <select id="mrRezTime" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO">
+        SELECT
+            CASE
+                WHEN TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30) * 30 = 0
+                    THEN 30
+                ELSE TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30) * 30
+                END AS minutes,
+            COUNT(*) AS REZ_CNT
+        FROM
+            MR_REZ
+        GROUP BY
+            TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30)
+        ORDER BY
+            minutes
+    </select>
+
+    <select id="mrRezRow" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO">
+        SELECT (SELECT COUNT(*) FROM mr) AS total,
+               (SELECT COUNT(*)
+                FROM (SELECT DISTINCT mr_code
+                      FROM mr_rez))      AS rez_row_count
+        FROM dual
+    </select>
+    <select id="mrRezType" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO">
+        SELECT m.MR_TYPE, COUNT(*) AS REZ_CNT
+        FROM MR_rez mrz
+                 left join MR m on mrz.MR_CODE = m.MR_CODE
+        GROUP BY MR_TYPE
+        ORDER BY REZ_CNT desc
+    </select>
+
     <select id="noticeGetAll" resultType="com.kosa.resq.domain.dto.mr.NoticeDTO" resultMap="noticeMap">
         select *
         from NOTICE n

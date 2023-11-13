@@ -1,6 +1,9 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
 
 import java.util.List;
@@ -23,4 +26,7 @@ public interface MrAdminService {
     public void mrImgSave(MrImgDTO img);
     public void mrOpDayUpdate(MrOpDayDTO day);
     public void mrImgDelete(String img_code);
+    public List<MrRezTimeDTO> mrRezTime();
+    public MrRezRowDTO mrRezRow();
+    public MrRezTypeDTO mrRezType();
 }

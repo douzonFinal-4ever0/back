@@ -1,6 +1,9 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.mapper.mr.MrAdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +98,21 @@ public class MrAdminServiceImpl implements MrAdminService {
     @Override
     public void mrImgDelete(String img_code) {
         mapper.mrImgDelete(img_code);
+    }
+
+    @Override
+    public List<MrRezTimeDTO> mrRezTime() {
+        return mapper.mrRezTime();
+    }
+
+    @Override
+    public MrRezRowDTO mrRezRow() {
+        return mapper.mrRezRow();
+    }
+
+    @Override
+    public MrRezTypeDTO mrRezType() {
+        return mapper.mrRezType();
     }
 
 }

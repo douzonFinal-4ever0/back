@@ -9,11 +9,11 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yaml")
 class MrAdminMapperTest {
-//    @Autowired
-//    private CarAdminMapper mapper;
-//
-//    @Test
-//    public void test(){
-//        System.out.println(mapper.test());
-//    }
+    @Autowired
+    private MrAdminMapper mapper;
+
+    @Test
+    public void test(){
+        System.out.println(mapper.mrRezType());
+    }
 }
