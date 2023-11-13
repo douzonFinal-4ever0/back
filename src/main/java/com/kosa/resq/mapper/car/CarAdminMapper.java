@@ -60,4 +60,6 @@ public interface CarAdminMapper {
     void carRezCancel(String car_rez_code);
     List<String> isExistOperation();
 
+    void maintImageSave(String maint_code, String url);
+
 }

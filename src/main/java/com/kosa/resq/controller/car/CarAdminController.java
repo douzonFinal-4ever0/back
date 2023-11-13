@@ -1,21 +1,31 @@
 package com.kosa.resq.controller.car;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosa.resq.domain.dto.car.CarDTO;
 import com.kosa.resq.domain.dto.car.CarMaintItemDTO;
 import com.kosa.resq.domain.dto.car.SearchCar;
 import com.kosa.resq.domain.dto.car.SearchOperation;
-import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
+import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.car.CarAdminService;
 import lombok.extern.java.Log;
-import org.apache.ibatis.annotations.Delete;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log
@@ -25,6 +35,9 @@ public class CarAdminController {
 
     @Autowired
     private CarAdminService carAdminService;
+
+    @Autowired
+    private S3UploadService s3UploadService;
 
     // 차량 등록
     @PostMapping("/car/carRegister")
@@ -115,13 +128,32 @@ public class CarAdminController {
     }
 
     // 정비 등록
+//    @PostMapping("/car/maintRecordRegister")
+//    public MaintRecordResponseVO maintRecordSave(@RequestPart("file") MultipartFile file) {
+//        log.info(file.getOriginalFilename());
+////        log.info(carMaintItemDTO.toString());
+////        ModelMapper mapper = new ModelMapper();
+////        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+////        MaintRecordRequestVO maintRecordRequestVO = mapper.map(carMaintItemDTO, MaintRecordRequestVO.class);
+//
+////        return carAdminService.maintRecordSave(maintRecordRequestVO);
+//        return null;
+//    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/car/maintRecordRegister")
-    public MaintRecordResponseVO maintRecordSave(@RequestBody CarMaintItemDTO carMaintItemDTO) {
+    public MaintRecordResponseVO maintRecordSave(@RequestParam("file") MultipartFile[] files, @RequestParam("maintRegisterData") String maintRegisterData ) throws IOException {
+
+        List<String> maintImages = new ArrayList<>();
+        for (MultipartFile file : files) {
+            maintImages.add(s3UploadService.saveFile(file, "MAINT"));
+        }
+
+        CarMaintItemDTO carMaintItemDTO = new ObjectMapper().readValue(maintRegisterData, CarMaintItemDTO.class);
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MaintRecordRequestVO maintRecordRequestVO = mapper.map(carMaintItemDTO, MaintRecordRequestVO.class);
-
-        return carAdminService.maintRecordSave(maintRecordRequestVO);
+        return carAdminService.maintRecordSave(maintImages, maintRecordRequestVO);
     }
 
     // 차량 하나의 정비 리스트 불러오기
@@ -144,6 +176,41 @@ public class CarAdminController {
         log.info(maintModifyRequestVO.getCar_code());
         log.info(maintModifyRequestVO.getMaint_codes().toString());
         carAdminService.maintRecordDelete(maintModifyRequestVO);
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> download(@RequestParam String originalFileName) throws IOException {
+
+        log.info(originalFileName);
+        int startIndex = originalFileName.indexOf("amazonaws.com/") + "amazonaws.com/".length();
+        String extractedString = originalFileName.substring(startIndex);
+
+        log.info(extractedString);
+        byte[] bytes = s3UploadService.downloadImage(extractedString);
+
+        log.info(bytes.length + "");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(contentType(extractedString));
+        httpHeaders.setContentLength(bytes.length);
+        String[] arr = originalFileName.split("/");
+        String type = arr[arr.length -1];
+        String fileName = URLEncoder.encode(type, "UTF-8").replaceAll("\\+", "%20");
+        httpHeaders.setContentDispositionFormData("attachment", fileName);
+
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    }
+
+    private MediaType contentType(String keyname) {
+        String[] arr = keyname.split("\\.");
+        String type = arr[arr.length -1];
+        switch (type) {
+            case "png":
+                return MediaType.IMAGE_PNG;
+            case "jpg":
+                return MediaType.IMAGE_JPEG;
+            default:
+                return MediaType.APPLICATION_OCTET_STREAM;
+        }
     }
 
     //차량 운행 내역 조회
