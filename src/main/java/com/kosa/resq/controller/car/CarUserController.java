@@ -4,6 +4,7 @@ import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.service.AddressService;
+import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.car.CarUserService;
 import lombok.Getter;
 import oracle.jdbc.proxy.annotation.Post;
@@ -14,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +32,8 @@ public class CarUserController {
 
     @Autowired
     private CarUserService service;
+    @Autowired
+    private S3UploadService imgService;
 
     @PostMapping("/rezSave")
     public ResponseEntity<CarRezDTO2> carRezInfoSave(@RequestBody CarRezDTO carRezDTO){
@@ -132,5 +137,13 @@ public class CarUserController {
         }else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(car_code);
         }
+    }
+    @PostMapping("/receiptImg")
+    public ResponseEntity<Object> receiptImgSave(@RequestParam("img") MultipartFile[] images){
+
+        if(!service.receiptImgSave(images)){
+            return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<Object>("Success", HttpStatus.OK);
     }
 }
