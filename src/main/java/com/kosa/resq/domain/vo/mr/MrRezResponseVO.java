@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MrRezResponseVO {
+    private String mr_code;
     private String mr_rez_code;
     private String mem_code;
     private String rez_start_time;

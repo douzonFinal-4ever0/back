@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,8 @@ public class MrUserController {
 
         List<MrRezResponseVO> result = service.recentMrRezGetAll(mem_code);
 
+        log.info("뭐가 문제일까...........................................");
+        log.info(result);
         return  new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -123,5 +126,11 @@ public class MrUserController {
     }
 
 
+    @GetMapping("/statistics") // 대시보드 회의실 통계
+    public ResponseEntity<List<MrRezResponseVO>> mrRezGetAll(@RequestParam("date") String date) throws ParseException {
+        log.info("**************** 회의실 통계 ****************");
+        List<MrRezResponseVO> result =  service.mrRezGetAllByDate(date);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 }
