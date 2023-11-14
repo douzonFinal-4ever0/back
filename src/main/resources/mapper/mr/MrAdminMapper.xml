@@ -80,9 +80,13 @@
         <id property="supplies_code" column="supplies_code"/>
         <result property="amount" column="amount"/>
     </resultMap>
-    
 
-    
+    <resultMap id="mrRezRankMap" type="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
+        <id property="mr_code" column="mr_code"/>
+        <result property="mr_name" column="mr_name"/>
+        <result property="rez_cnt" column="rez_cnt"/>
+        <collection property="img_url" ofType="java.lang.String" resultMap="mr_imgMap" />
+    </resultMap>
 
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
         <![CDATA[
@@ -111,10 +115,19 @@
     </select>
 
     <select id="mrRezRankGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
-        SELECT mr.MR_CODE, m.MR_NAME,COUNT(*) AS REZ_CNT
-        FROM MR_rez mr left join Mr m on mr.MR_CODE = m.MR_CODE
-        GROUP BY mr.MR_CODE, m.MR_NAME
-        ORDER BY REZ_CNT desc
+        SELECT
+            mr.MR_CODE,
+            m.MR_NAME,
+            COUNT(*) AS REZ_CNT,
+            mi.URL AS IMG_URL
+        FROM MR_REZ mr
+                 LEFT JOIN MR m ON mr.MR_CODE = m.MR_CODE
+                 LEFT JOIN MR_IMG mi ON mr.MR_CODE = mi.MR_CODE
+        GROUP BY
+            mr.MR_CODE,
+            m.MR_NAME,
+            mi.URL
+        ORDER BY REZ_CNT DESC
     </select>
 
     <select id="mrRezTimeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO">
@@ -154,10 +167,10 @@
         ORDER BY TRUNC(REZ_START_TIME)
     </select>
     <select id="mrRezFavTimeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO">
-        select TO_CHAR(REZ_START_TIME, 'HH24:MI:SS') AS rez_time, COUNT(*) AS REZ_CNT
+        select TO_CHAR(REZ_START_TIME, 'HH24:MI') AS rez_time, COUNT(*) AS REZ_CNT
         from MR_REZ
-        group by TO_CHAR(REZ_START_TIME, 'HH24:MI:SS')
-        ORDER BY TO_CHAR(REZ_START_TIME, 'HH24:MI:SS')
+        group by TO_CHAR(REZ_START_TIME, 'HH24:MI')
+        ORDER BY TO_CHAR(REZ_START_TIME, 'HH24:MI')
     </select>
 
     <select id="noticeGetAll" resultType="com.kosa.resq.domain.dto.mr.NoticeDTO" resultMap="noticeMap">
