@@ -39,4 +39,5 @@ public interface CarUserMapper {
     public CarLocResponseVO carLocReturnGetOne(String car_rez_code);
     public int expenditureSave(ExpenditureRequestVO expenditureRequestVO);
     public int selectedCarUpdate(String car_code);
+    public int expImgUpdate(String url,String exp_code);
 }

@@ -267,4 +267,7 @@
     <update id="selectedCarUpdate">
         update car_detail set car_status='선택됨' where car_code=#{car_code}
     </update>
+    <update id="expImgUpdate">
+        update expenditure set url=#{url} where exp_code=#{exp_code}
+    </update>
 </mapper>
