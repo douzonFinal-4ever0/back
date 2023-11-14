@@ -110,14 +110,14 @@
         from MR_REZ mrz left outer join MR mr on mrz.MR_CODE = mr.MR_CODE
     </select>
 
-    <select id="mrRezRank" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
+    <select id="mrRezRankGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
         SELECT mr.MR_CODE, m.MR_NAME,COUNT(*) AS REZ_CNT
         FROM MR_rez mr left join Mr m on mr.MR_CODE = m.MR_CODE
         GROUP BY mr.MR_CODE, m.MR_NAME
         ORDER BY REZ_CNT desc
     </select>
 
-    <select id="mrRezTime" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO">
+    <select id="mrRezTimeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO">
         SELECT
             CASE
                 WHEN TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30) * 30 = 0
@@ -133,19 +133,31 @@
             minutes
     </select>
 
-    <select id="mrRezRow" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO">
+    <select id="mrRezRowGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO">
         SELECT (SELECT COUNT(*) FROM mr) AS total,
                (SELECT COUNT(*)
                 FROM (SELECT DISTINCT mr_code
                       FROM mr_rez))      AS rez_row_count
         FROM dual
     </select>
-    <select id="mrRezType" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO">
+    <select id="mrRezTypeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO">
         SELECT m.MR_TYPE, COUNT(mrz.MR_CODE) AS REZ_CNT
         FROM MR m
                  LEFT JOIN MR_rez mrz ON m.MR_CODE = mrz.MR_CODE
         GROUP BY MR_TYPE
         ORDER BY REZ_CNT DESC
+    </select>
+    <select id="mrRezDateGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezDateDTO">
+        SELECT TRUNC(REZ_START_TIME) AS REZ_DATE, COUNT(*) AS CNT
+        FROM MR_REZ
+        GROUP BY TRUNC(REZ_START_TIME)
+        ORDER BY TRUNC(REZ_START_TIME)
+    </select>
+    <select id="mrRezFavTimeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO">
+        select TO_CHAR(REZ_START_TIME, 'HH24:MI:SS') AS rez_time, COUNT(*) AS REZ_CNT
+        from MR_REZ
+        group by TO_CHAR(REZ_START_TIME, 'HH24:MI:SS')
+        ORDER BY TO_CHAR(REZ_START_TIME, 'HH24:MI:SS')
     </select>
 
     <select id="noticeGetAll" resultType="com.kosa.resq.domain.dto.mr.NoticeDTO" resultMap="noticeMap">

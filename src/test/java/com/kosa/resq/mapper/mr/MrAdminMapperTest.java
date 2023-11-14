@@ -14,6 +14,6 @@ class MrAdminMapperTest {
 
     @Test
     public void test(){
-        System.out.println(mapper.mrRezType());
+        System.out.println(mapper.mrRezTypeGetAll());
     }
 }

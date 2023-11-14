@@ -1,9 +1,7 @@
 package com.kosa.resq.service.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
-import com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO;
-import com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO;
-import com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.*;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.mapper.mr.MrAdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,8 @@ public class MrAdminServiceImpl implements MrAdminService {
     }
 
     @Override
-    public List<MrRezDTO> mrRezRank() {
-        return mapper.mrRezRank();
+    public List<MrRezDTO> mrRezRankGetAll() {
+        return mapper.mrRezRankGetAll();
     }
 
     @Override
@@ -101,18 +99,28 @@ public class MrAdminServiceImpl implements MrAdminService {
     }
 
     @Override
-    public List<MrRezTimeDTO> mrRezTime() {
-        return mapper.mrRezTime();
+    public List<MrRezTimeDTO> mrRezTimeGetAll() {
+        return mapper.mrRezTimeGetAll();
     }
 
     @Override
-    public MrRezRowDTO mrRezRow() {
-        return mapper.mrRezRow();
+    public MrRezRowDTO mrRezRowGetAll() {
+        return mapper.mrRezRowGetAll();
     }
 
     @Override
-    public List<MrRezTypeDTO> mrRezType() {
-        return mapper.mrRezType();
+    public List<MrRezTypeDTO> mrRezTypeGetAll() {
+        return mapper.mrRezTypeGetAll();
+    }
+
+    @Override
+    public List<MrRezDateDTO> mrRezDateGetAll() {
+        return mapper.mrRezDateGetAll();
+    }
+
+    @Override
+    public List<MrRezFavTimeDTO> mrRezFavTimeGetAll() {
+        return mapper.mrRezFavTimeGetAll();
     }
 
 }
