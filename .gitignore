@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### aws 관련 git ignore 처리 ###
+src/main/resources/application-aws.yaml
+
+### oracleCloud 관련 git ignore 처리 ###
+src/main/resources/application-oracle.yaml
+src/main/resources/OracleCloud/Wallet_ResQ.zip
+src/main/resources/OracleCloud/Wallet_ResQ

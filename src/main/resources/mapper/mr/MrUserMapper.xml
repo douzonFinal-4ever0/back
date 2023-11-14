@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.resq.mapper.mr.MrUserMapper">
+
+    <resultMap id="mrMap" type="com.kosa.resq.domain.vo.mr.MrResponseVO">
+        <id property="mr_code" column="mr_code"/>
+        <result property="mr_name" column="mr_name"/>
+        <result property="maximum_capacity" column="maximum_capacity"/>
+        <result property="location" column="location"/>
+        <result property="avl_start_time" column="avl_start_time"/>
+        <result property="avl_end_time" column="avl_end_time"/>
+        <result property="is_opened" column="is_opened"/>
+        <result property="is_used" column="is_used"/>
+        <result property="mr_type" column="mr_type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+        <collection property="mr_keyword" resultMap="mr_keywordMap"/>
+        <collection property="mr_img" resultMap="mr_imgMap"/>
+        <collection property="mr_op_day" resultMap="mr_op_dayMap"/>
+    </resultMap>
+
+    <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.vo.mr.MrKeywordResponseVO">
+        <id property="keyword_code" column="keyword_code"/>
+        <result property="keyword_name" column="keyword_name"/>
+        <result property="mr_code" column="mr_code"/>
+    </resultMap>
+
+    <resultMap id="mr_imgMap" type="com.kosa.resq.domain.vo.mr.MrImgResponseVO">
+        <id property="img_code" column="img_code"/>
+        <result property="url" column="url"/>
+    </resultMap>
+
+    <resultMap id="mr_op_dayMap" type="com.kosa.resq.domain.vo.mr.MrOpDayResponseVO">
+        <id property="op_day_code" column="op_day_code"/>
+        <result property="day" column="day"/>
+        <result property="mr_code" column="mr_code"/>
+    </resultMap>
+
+    <resultMap id="mr_ptMap" type="com.kosa.resq.domain.vo.mr.MrPtVO">
+        <id property="mr_pt_code" column="mr_pt_code" />
+        <result property="mr_rez_code" column="mr_rez_code" />
+        <result property="mem_code" column="pt_mem_code" />
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at" />
+        <result property="deleted_at" column="deleted_at" />
+        <collection property="memVO" resultMap="memMap" />
+    </resultMap>
+
+    <resultMap id="mr_rezMap" type="com.kosa.resq.domain.vo.mr.MrRezResponseVO">
+        <id property="mr_rez_code" column="mr_rez_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="rez_start_time" column="rez_start_time"/>
+        <result property="rez_end_time" column="rez_end_time"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+        <result property="rez_status" column="rez_status"/>
+        <result property="m_name" column="m_name"/>
+        <result property="m_type" column="m_type"/>
+        <result property="is_confirmed" column="is_confirmed"/>
+        <result property="rez_type" column="rez_type"/>
+        <collection property="mr" resultMap="mrMap"/>
+        <collection property="mr_pt_list" resultMap="mr_ptMap"/>
+    </resultMap>
+
+    <resultMap id="deptMap" type="com.kosa.resq.domain.vo.common.DeptVO">
+        <id property="dept_code" column="dept_code"/>
+        <result property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="dept_tel" column="dept_tel"/>
+        <result property="dept_head_code" column="dept_head_code"/>
+        <result property="location" column="location"/>
+    </resultMap>
+
+    <resultMap id="memMap" type="com.kosa.resq.domain.vo.common.MemResponseVO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="hired_at" column="hired_at"/>
+        <result property="created_at" column="created_at"/>
+        <result property="address" column="address"/>
+        <result property="tel" column="tel"/>
+        <result property="is_worked" column="is_worked"/>
+        <result property="profile_img_url" column="profile_img_url"/>
+        <collection property="deptVO" resultMap="deptMap"/>
+    </resultMap>
+
+    <resultMap id="bmGroupMap" type="com.kosa.resq.domain.vo.mr.BmGroupVO">
+        <id property="bm_group_code" column="bm_group_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="bm_group_name" column="bm_group_name"/>
+    </resultMap>
+
+    <resultMap id="bmGroupMemMap" type="com.kosa.resq.domain.vo.mr.BmGroupMemVO">
+        <id property="bm_code" column="bm_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="bm_group_code" column="bm_group_code"/>
+    </resultMap>
+
+    <resultMap id="BmMrMap" type="com.kosa.resq.domain.vo.mr.BmMrVO">
+        <id property="bm_mr_code" column="bm_mr_code"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="mr_code" column="mr_code"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+    </resultMap>
+
+    <select id="getReservationsForMeetingRoom" resultType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
+         <![CDATA[
+        SELECT *
+        FROM mr_rez
+        WHERE mr_code = #{mr_code}
+          AND (
+                (#{rez_start_time} <= rez_end_time AND #{rez_end_time} >= rez_start_time)
+                OR (rez_start_time <= #{rez_end_time} AND rez_end_time >= #{rez_start_time})
+            )
+        ]]>
+    </select>
+
+    <select id="bmMrGetAll" parameterType="String" resultType="com.kosa.resq.domain.vo.mr.BmMrVO" resultMap="BmMrMap">
+        SELECT bm_mr_code, mem_code, mr_code, created_at, updated_at, deleted_at
+        FROM bm_mr
+        WHERE mem_code = #{mem_code}
+          AND deleted_at IS NULL
+    </select>
+
+    <select id="recentMrRezGetAll" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
+       <![CDATA[
+        SELECT m_name
+        FROM MR_REZ
+        WHERE MEM_CODE = #{mem_code}
+          AND CREATED_AT >= ADD_MONTHS(TRUNC(SYSDATE), -3)
+          AND m_name IS NOT NULL
+          AND ROWNUM <= 5
+        ORDER BY CREATED_AT DESC
+        ]]>
+    </select>
+
+    <!--  사용자 코드 - 사용자 회의실 예약 전체 조회  -->
+    <select id="mrRezGetAllByMem" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
+        SELECT
+            r.mr_rez_code,
+            r.mem_code,
+            r.rez_start_time,
+            r.rez_end_time,
+            r.created_at,
+            r.updated_at,
+            r.deleted_at,
+            r.rez_status,
+            r.m_name,
+            r.m_type,
+            r.is_confirmed,
+            r.rez_type,
+            m.mr_code,
+            m.mr_name,
+            m.maximum_capacity,
+            m.location,
+            p.mr_pt_code,
+            p.mem_code,
+            mem.mem_code AS pt_mem_code,
+            mem.position_name,
+            mem.name,
+            mem.email,
+            mem.profile_img_url,
+            dept.dept_code,
+            dept.dept_name,
+            mi.img_code,
+            mi.url,
+            mop.op_day_code,
+            mop.day,
+            mk.keyword_code,
+            mk.keyword_name
+        FROM MR_REZ r
+                 JOIN MR m ON r.mr_code = m.mr_code
+                 LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
+                 LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
+                 LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code
+                 LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
+                 LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
+        WHERE r.mem_code = #{mem_code}
+          AND r.deleted_at IS NULL
+          AND p.deleted_at IS NULL
+    </select>
+
+    <select id="mrRezGetAllByPt" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
+        SELECT
+            r.mr_rez_code,
+            r.mem_code,
+            r.rez_start_time,
+            r.rez_end_time,
+            r.created_at,
+            r.updated_at,
+            r.deleted_at,
+            r.rez_status,
+            r.m_name,
+            r.m_type,
+            r.is_confirmed,
+            r.rez_type,
+            m.mr_code,
+            m.mr_name,
+            m.maximum_capacity,
+            m.location,
+            p.mr_pt_code,
+            p.mem_code,
+            mem.mem_code AS pt_mem_code,
+            mem.position_name,
+            mem.name,
+            mem.email,
+            mem.profile_img_url,
+            dept.dept_code,
+            dept.dept_name,
+            mi.img_code,
+            mi.url,
+            mop.op_day_code,
+            mop.day,
+            mk.keyword_code,
+            mk.keyword_name
+        FROM MR_REZ r
+                 JOIN MR m ON r.mr_code = m.mr_code
+                 LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
+                 LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
+                 LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code
+                 LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
+                 LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
+        WHERE r.mr_rez_code = #{mr_rez_code}
+         AND r.deleted_at IS NULL
+          AND p.deleted_at IS NULL
+    </select>
+
+    <select id="mrPtGetAllByRez" resultType="com.kosa.resq.domain.vo.mr.MrPtVO" resultMap="mr_ptMap">
+        SELECT * from mr_pt where mr_rez_code=#{mr_rez_code} AND deleted_at IS NULL
+    </select>
+
+    <select id="mrRezByPt" >
+        select mr_rez_code from MR_PT where MEM_CODE=#{mem_code}
+    </select>
+
+    <insert id="mrRezSave" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
+        <selectKey keyProperty="mr_rez_code" order="BEFORE"
+                   resultType="String">
+            select 'REZ' || LPAD(TO_CHAR(MR_REZ_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO MR_REZ (MR_REZ_CODE, MEM_CODE, MR_CODE, REZ_START_TIME, REZ_END_TIME, CREATED_AT, UPDATED_AT,
+        DELETED_AT, REZ_STATUS, M_NAME, M_TYPE, IS_CONFIRMED, REZ_TYPE, TOT_PT_CTN)
+        VALUES (#{mr_rez_code}, #{mem_code}, #{mr_code}, #{rez_start_time}, #{rez_end_time},
+        localtimestamp, null, null, '완료', #{m_name}, #{m_type}, 0, 0, #{tot_pt_ctn})
+    </insert>
+
+    <update id="mrRezUpdate" parameterType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
+        UPDATE MR_REZ
+        SET
+            MEM_CODE = #{mem_code},
+            MR_CODE = #{mr_code},
+            REZ_START_TIME = #{rez_start_time},
+            REZ_END_TIME = #{rez_end_time},
+            UPDATED_AT = localtimestamp,
+            REZ_STATUS = '완료',
+            M_NAME = #{m_name},
+            M_TYPE = #{m_type},
+            IS_CONFIRMED = 0,
+            REZ_TYPE = 0,
+            TOT_PT_CTN = #{tot_pt_ctn}
+        WHERE MR_REZ_CODE = #{mr_rez_code}
+    </update>
+
+    <insert id="mrPtSave">
+        <selectKey keyProperty="mr_pt_code" order="BEFORE"
+                   resultType="String">
+            select 'PT' || LPAD(TO_CHAR(MR_PT_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO MR_PT (mr_pt_code, mr_rez_code, mem_code, created_at, updated_at, deleted_at)
+        VALUES (#{mr_pt_code}, #{mr_rez_code}, #{mem_code}, localtimestamp, null, null)
+    </insert>
+
+    <update id="mrPtDelete">
+        update /*+ NO_PARALLEL(mr_pt) */ mr_pt
+        set deleted_at=localtimestamp
+        where mem_code=#{mem_code} AND mr_rez_code=#{mr_rez_code}
+    </update>
+
+    <update id="mrRezDelete">
+        update mr_rez
+        set deleted_at=localtimestamp, rez_status='취소'
+        where mr_rez_code=#{mr_rez_code}
+    </update>
+
+    <insert id="bmGroupSave" parameterType="com.kosa.resq.domain.vo.mr.BmGroupVO">
+        INSERT INTO BM_GROUP (BM_GROUP_CODE, MEM_CODE, BM_GROUP_NAME, CREATED_AT, UPDATED_AT, DELETED_AT)
+        SELECT 'BMG' || LPAD(TO_CHAR(BM_GROUP_SEQ.NEXTVAL), 3, '0'), #{mem_code},
+               CASE WHEN #{bm_group_name} = '' THEN NULL ELSE #{bm_group_name} END,
+               localtimestamp, null, null
+        FROM dual
+    </insert>
+
+    <select id="bmGroupGetOne" resultType="String">
+     <![CDATA[
+        SELECT bm_group_code
+        FROM BM_GROUP
+        WHERE MEM_CODE=#{mem_code}
+        ORDER BY CREATED_AT DESC
+        FETCH FIRST 1 ROWS ONLY
+    ]]>
+    </select>
+
+    <insert id="bmGroupMemSave" parameterType="String">
+        <selectKey keyProperty="bm_code" order="BEFORE"
+                   resultType="String">
+            select 'BMM' || LPAD(TO_CHAR(BM_GROUP_MEM_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO BM_GROUP_MEM (BM_CODE, BM_GROUP_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT)
+            VALUES (#{bm_code}, #{bm_group_code}, #{mem_code}, localtimestamp, null, null)
+    </insert>
+
+    <select id="memGetOne" resultType="com.kosa.resq.domain.vo.common.MemResponseVO" resultMap="memMap">
+       <![CDATA[
+        SELECT
+            M.mem_code,
+            M.dept_code,
+            M.position_name,
+            M.name,
+            M.email,
+            M.role,
+            M.profile_img_url,
+            M.hired_at,
+            M.created_at,
+            M.address,
+            M.tel,
+            M.is_worked,
+            D.dept_name,
+            D.dept_tel,
+            D.dept_head_code,
+            D.location AS location
+        FROM MEM M
+                 INNER JOIN DEPT D ON M.dept_code = D.dept_code
+        WHERE M.mem_code = #{mem_code}
+        ]]>
+    </select>
+
+    <select id="memGetAll" resultType="com.kosa.resq.domain.vo.common.MemResponseVO" resultMap="memMap">
+        <![CDATA[
+        SELECT
+            M.mem_code,
+            M.dept_code,
+            M.position_name,
+            M.name,
+            M.email,
+            M.role,
+            M.profile_img_url,
+            M.hired_at,
+            M.created_at,
+            M.address,
+            M.tel,
+            M.is_worked,
+            D.dept_name,
+            D.dept_tel ,
+            D.dept_head_code,
+            D.location AS
+        FROM MEM M
+                 INNER JOIN DEPT D ON M.dept_code = D.dept_code
+        ]]>
+    </select>
+
+
+
+    <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
+        <![CDATA[
+        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
+        FROM mr m
+                 LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
+                 LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+                 LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
+            WHERE m.mr_code NOT IN (
+                SELECT DISTINCT mr_code
+                FROM mr_rez
+                WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                  AND (
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                        OR
+                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    )
+                )
+              AND (
+                -- 여기에서 tot_pt_cnt와 maximum_capacity를 비교
+                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '소회의실')
+                    OR
+                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '중회의실')
+                    OR
+                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '대회의실')
+                )
+        ]]>
+    </select>
+
+
+    <select id="recentMrGetFive" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO">
+        <![CDATA[ SELECT m.mr_code, m.mr_name, m.maximum_capacity, m.location, m.avl_start_time, m.avl_end_time, m.is_opened, m.is_used, m.mr_type, m.created_at, m.updated_at, m.deleted_at, mk.keyword_code, mk.keyword_name
+        FROM MR m
+        LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+        WHERE m.mr_code IN (
+        SELECT DISTINCT r.mr_code
+        FROM (
+        SELECT * FROM MR_REZ WHERE MEM_CODE = #{MEM_CODE} ORDER BY REZ_START_TIME DESC
+        ) r
+        WHERE ROWNUM <= 5
+        )
+        ]]>
+    </select>
+
+
+    <select id="bmGroupMemGetAll" resultType="com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO">
+        <![CDATA[
+        SELECT BMG.bm_group_code, BMG.bm_group_name, M.mem_code, M.name, M.POSITION_NAME, M.email, M.profile_img_url, M.TEL, D.dept_name
+        FROM BM_GROUP BMG
+                 JOIN BM_GROUP_MEM GM ON BMG.bm_group_code = GM.bm_group_code
+                 JOIN MEM M ON GM.mem_code = M.mem_code
+                 JOIN DEPT D ON M.dept_code = D.dept_code
+        WHERE BMG.mem_code = #{mem_code}
+        ]]>
+    </select>
+
+</mapper>
+
+

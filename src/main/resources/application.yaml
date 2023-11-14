@@ -7,13 +7,27 @@ mvc:
 
 
 spring:
-  datasource:
-    driver-class-name: oracle.jdbc.driver.OracleDriver
-    url: jdbc:oracle:thin:@ownit_high?TNS_ADMIN=./src/main/resources/OracleCloud/Wallet_OwnIt
-    username: admin
-    password: Ownit1234567
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  profiles:
+    include:
+      - aws
+      - oracle
 
 mybatis:
-  type-aliases-package: com.kosa.ownit
+#  type-aliases-package: com.kosa.resq
   mapper-locations:  classpath:mapper/*/*.xml
 
+cloud:
+  aws:
+    s3:
+      bucket: heejinawsbucket1
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+    credentials:
+      instance-profile: true

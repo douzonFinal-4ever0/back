@@ -3,8 +3,469 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.resq.mapper.car.CarAdminMapper">
-    <select id="test">
-        select sysdate
-        from dual
+
+
+    <resultMap id="carDetailMap" type="com.kosa.resq.domain.vo.car.CarDetailResponseVO">
+        <result property="fuel_effciency" column="fuel_effciency"/>
+        <result property="accum_mileage" column="accum_mileage"/>
+        <result property="car_status" column="car_status"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="car_latitude" column="car_latitude"/>
+        <result property="car_longitude" column="car_longitude"/>
+        <result property="car_address" column="car_address"/>
+        <association property="carVO" resultMap="carMap"/>
+        <association property="carUser" resultMap="carUserMap"/>
+    </resultMap>
+
+    <resultMap id="carMap" type="com.kosa.resq.domain.vo.car.CarVO">
+        <id property="car_code" column="car_code"/>
+        <result property="car_code" column="car_code"/>
+        <result property="car_name" column="car_name"/>
+        <result property="type" column="type"/>
+        <result property="fuel_type" column="fuel_type"/>
+        <result property="authority" column="authority"/>
+        <result property="buy_at" column="buy_at"/>
+        <result property="memo" column="memo"/>
+        <result property="created_at" column="created_at"/>
+        <result property="max_capacity" column="max_capacity"/>
+    </resultMap>
+
+    <resultMap id="carUserMap" type="com.kosa.resq.domain.vo.car.CarUserResponseVO">
+        <result property="mem_code" column="mem_code"/>
+        <result property="dept_code" column="dept_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="dept_name" column="dept_name"/>
+    </resultMap>
+
+    <resultMap id="memResultMap" type="com.kosa.resq.domain.vo.common.MemResponseVO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="hired_at" column="hired_at"/>
+        <result property="created_at" column="created_at"/>
+        <result property="address" column="address"/>
+        <result property="tel" column="tel"/>
+        <result property="is_worked" column="is_worked"/>
+        <result property="profile_img_url" column="profile_img_url"/>
+        <association property="deptVO" resultMap="deptMap"/>
+    </resultMap>
+
+    <resultMap id="deptMap" type="com.kosa.resq.domain.vo.common.DeptVO">
+        <result property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="dept_tel" column="dept_tel"/>
+        <result property="dept_head_code" column="dept_head_code"/>
+        <result property="location" column="location"/>
+    </resultMap>
+
+
+    <resultMap id="maintRecordMap" type="com.kosa.resq.domain.vo.car.MaintRecordResponseVO">
+        <id property="maint_code" column="maint_code"/>
+        <result property="car_code" column="car_code"/>
+        <result property="maint_start_at" column="maint_start_at"/>
+        <result property="maint_end_at" column="maint_end_at"/>
+        <result property="maint_cost" column="maint_cost"/>
+        <result property="pay_method" column="pay_method"/>
+        <result property="memo" column="memo"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <association property="carMaintResponseVO" resultMap="carMaintMap"/>
+        <association property="maintComResponseVO" resultMap="maintComMap"/>
+        <association property="memResponseVO" resultMap="memResultMap"/>
+        <collection property="url" ofType="string">
+            <result property="url" column="url"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="carMaintMap" type="com.kosa.resq.domain.vo.car.CarMaintResponseVO">
+        <id property="maint_item_code" column="maint_item_code"/>
+        <result property="maint_name" column="maint_name"/>
+        <result property="cycle" column="cycle"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <resultMap id="maintComMap" type="com.kosa.resq.domain.vo.car.MaintComResponseVO">
+        <id property="mc_code" column="mc_code"/>
+        <result property="mc_name" column="mc_name"/>
+        <result property="mc_tell" column="mc_tell"/>
+        <result property="mc_category" column="mc_category"/>
+    </resultMap>
+
+<!--    운행 목록 result Map-->
+
+    <resultMap id="operationMap" type="com.kosa.resq.domain.vo.car.OperationResponseVO">
+        <id property="operation_code" column="operation_code"/>
+        <result property="memo" column="memo"/>
+        <result property="bef_mileage" column="bef_mileage"/>
+        <result property="aft_mileage" column="aft_mileage"/>
+        <result property="distance" column="distance"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="nomal_biz_mileage" column="nomal_biz_mileage"/>
+        <result property="commute_mileage" column="commute_mileage"/>
+        <result property="detail" column="detail"/>
+        <result property="start_at" column="start_at"/>
+        <result property="return_at" column="return_at"/>
+        <result property="car_code" column="car_code"/>
+        <result property="car_name" column="car_name"/>
+        <result property="type" column="type"/>
+        <result property="accum_mileage" column="accum_mileage"/>
+        <result property="car_status" column="car_status"/>
+        <result property="mem_code" column="mem_code"/>
+        <result property="name" column="name"/>
+        <result property="position_name" column="position_name"/>
+        <result property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="car_rez_code" column="o_code"/>
+        <collection property="carLocList" resultMap="carLocMap"/>
+    </resultMap>
+
+
+    <resultMap id="carLocMap" type="com.kosa.resq.domain.vo.car.CarLocVO">
+        <result property="loc_code" column="loc_code"/>
+        <result property="car_rez_code" column="r_code"/>
+        <result property="loc_type" column="loc_type"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="address" column="address"/>
+    </resultMap>
+
+    <resultMap id="carRezMap" type="com.kosa.resq.domain.vo.car.CarRezResponseVO">
+        <id property="car_rez_code" column="car_rez_code"/>
+        <result property="car_rez_code" column="car_rez_code"/>
+        <result property="rez_at" column="rez_at"/>
+        <result property="detail" column="detail"/>
+        <result property="est_mileage" column="est_mileage"/>
+        <result property="rez_status" column="rez_status"/>
+        <result property="start_at" column="start_at"/>
+        <result property="return_at" column="return_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <collection property="memResponseVO" resultMap="memResultMap"/>
+        <collection property="carDetailResponseVO" resultMap="carDetailMap"/>
+    </resultMap>
+
+
+    <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
+        INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at, max_capacity)
+        VALUES (#{car_code}, #{car_name}, #{type}, #{fuel_type}, #{authority}, #{buy_at}, #{memo}, LOCALTIMESTAMP, #{max_capacity})
+    </insert>
+
+    <insert id="carDetailSave" parameterType="com.kosa.resq.domain.vo.car.CarDetailRequestVO">
+        INSERT INTO car_detail(car_code, fuel_effciency, accum_mileage, car_status, car_latitude, car_longitude, car_address, is_selected)
+        VALUES (#{car_code}, #{fuel_effciency}, #{accum_mileage}, #{car_status}, #{car_latitude}, #{car_longitude}, #{car_address}, 0)
+    </insert>
+
+    <insert id="carUserSave" parameterType="com.kosa.resq.domain.vo.car.CarUserRequestVO">
+        INSERT INTO car_user(car_code, mem_code, created_at) VALUES(#{car_code}, #{mem_code}, LOCALTIMESTAMP )
+    </insert>
+
+<!--    <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO">-->
+<!--        SELECT c1.car_code, c1.car_name, o.created_at, c2.accum_mileage, c1.memo, c1.type-->
+<!--        FROM car c1-->
+<!--                 LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code-->
+<!--                 LEFT JOIN operation o ON o.car_code = c1.car_code-->
+<!--                 LEFT JOIN (-->
+<!--            SELECT car_code, MAX(created_at) AS max_created_at-->
+<!--            FROM operation-->
+<!--            GROUP BY car_code-->
+<!--        ) latest_operation ON o.car_code = latest_operation.car_code AND o.created_at = latest_operation.max_created_at-->
+<!--        WHERE c1.car_code = #{car_code}-->
+<!--    </select>-->
+    <select id="carListGetOne" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CarUserResponseVO">
+        SELECT m.mem_code, position_name, name, d.dept_code, dept_name
+        FROM mem m
+                 INNER JOIN dept d
+                 ON m.dept_code = d.dept_code
+                WHERE m.mem_code = #{mem_code}
     </select>
+
+    <!--    차량 정보 리스트-->
+    <select id="carGetAll" resultType="com.kosa.resq.domain.vo.car.CarListResponseVO"
+            parameterType="com.kosa.resq.domain.vo.car.SearchCarVO">
+        SELECT
+        c1.type AS type,
+        c1.car_code AS car_code,
+        c1.car_name AS car_name,
+        latest_operation.created_at AS created_at,
+        c2.accum_mileage AS accum_mileage,
+        c2.car_status AS car_status,
+        c1.memo AS memo,
+        c1.authority AS authority,
+        c1.max_capacity AS max_capacity,
+        u.mem_code AS mem_code,
+        u.position_name AS position_name,
+        u.name AS name,
+        u.dept_name AS dept_name
+        FROM car c1
+        LEFT JOIN car_detail c2 ON c1.car_code = c2.car_code
+        LEFT JOIN (
+        SELECT car_code, MAX(created_at) AS created_at
+        FROM operation
+        GROUP BY car_code
+        ) latest_operation ON c1.car_code = latest_operation.car_code
+        LEFT JOIN (
+        SELECT car_user.car_code, m.mem_code, m.position_name, m.name, m.dept_name
+        FROM car_user
+        INNER JOIN (
+        SELECT mem.mem_code, dept.dept_code, position_name, name, dept_name
+        FROM mem
+        INNER JOIN dept ON mem.dept_code = dept.dept_code
+        ) m ON car_user.mem_code = m.mem_code
+        ) u ON c1.car_code = u.car_code
+        WHERE c2.accum_mileage BETWEEN #{sdistance} AND #{edistance}
+        <choose>
+            <when test="authority == '모두'">
+                AND c1.authority = '모두'
+            </when>
+            <when test="authority == '지정'">
+                AND c1.authority = '지정'
+            </when>
+        </choose>
+        <if test="max_capacity != null">
+            <choose>
+                <when test="max_capacity == 1">
+        <![CDATA[
+                    AND c1.max_capacity <= 5
+        ]]>
+                </when>
+                <when test="max_capacity == 2">
+                    AND c1.max_capacity > 5
+                </when>
+            </choose>
+        </if>
+        <choose>
+            <when test="operation_sdate == null and operation_edate != null">
+        <![CDATA[
+                AND (latest_operation.created_at <= TO_DATE(#{operation_edate}) OR latest_operation.created_at IS NULL)
+        ]]>
+            </when>
+            <when test="operation_sdate != null and operation_edate != null">
+                AND latest_operation.created_at BETWEEN TO_DATE(#{operation_sdate}) AND TO_DATE(#{operation_edate})
+            </when>
+        </choose>
+    </select>
+
+    <select id="memGetAll" resultMap="memResultMap">
+        SELECT m.mem_code, position_name, name, email, role, hired_at, created_at, address, tel, is_worked, profile_img_url, d.dept_code, dept_name ,dept_tel, dept_head_code, location
+        FROM mem m
+        INNER JOIN dept d
+        ON m.dept_code = d.dept_code
+    </select>
+
+    <select id="carGetOne" parameterType="String" resultMap="carDetailMap">
+        SELECT c.car_name, c.car_code, c.type, c.authority, c.fuel_type, c.buy_at, c.memo, c.created_at, c.max_capacity,
+               d.accum_mileage, d.fuel_effciency, d.car_status, d.updated_at, d.car_address, d.car_latitude, d.car_longitude,
+               u.mem_code, u.name, u.dept_code, u.position_name, u.dept_name
+        FROM car c INNER JOIN car_detail d ON c.car_code=d.car_code
+                   LEFT JOIN (select u.car_code, u.mem_code, m.name, m.dept_code, m.position_name, m.dept_name from
+            (select mem.mem_code, dept.dept_code, position_name, name, dept_name from mem inner join dept ON mem.dept_code = dept.dept_code) m
+                INNER JOIN car_user u
+                           ON m.mem_code = u.mem_code) u ON c.car_code = u.car_code
+        WHERE c.car_code=#{car_code}
+    </select>
+
+<!--    차량 수정 -->
+    <update id="carModify" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
+        UPDATE car SET car_name=#{car_name}, memo=#{memo}, authority=#{authority} WHERE car_code=#{car_code}
+    </update>
+
+    <update id="carDetailModify" parameterType="com.kosa.resq.domain.vo.car.CarDetailRequestVO">
+        UPDATE car_detail SET fuel_effciency=#{fuel_effciency},updated_at=LOCALTIMESTAMP, accum_mileage=#{accum_mileage} WHERE car_code=#{car_code}
+    </update>
+
+    <update id="carUserModify" parameterType="com.kosa.resq.domain.vo.car.CarUserRequestVO">
+        UPDATE car_user SET mem_code=#{mem_code}, updated_at=LOCALTIMESTAMP WHERE car_code=#{car_code}
+    </update>
+
+    <delete id="carUserDelete" parameterType="String">
+        DELETE car_user WHERE car_code=#{car_code}
+    </delete>
+
+<!--    차량 정비 항목들 조회-->
+    <select id="getCarMaintItemList" resultType="com.kosa.resq.domain.vo.car.CarMaintResponseVO">
+        SELECT maint_item_code, maint_name, cycle, type FROM car_maint
+    </select>
+
+    <select id="getMaintComList" resultType="com.kosa.resq.domain.vo.car.MaintComResponseVO">
+        SELECT mc_code, mc_name, mc_tell, mc_category FROM maint_com
+    </select>
+
+<!--    차량 정비 등록하기-->
+    <insert id="maintRecordSave" parameterType="com.kosa.resq.domain.vo.car.MaintRecordRequestVO">
+        INSERT INTO maint_record (maint_code, car_code, maint_item_code, mc_code, mem_code, maint_start_at, maint_cost, pay_method, memo, created_at, mileage)
+        VALUES ( 'MAINT' || TO_CHAR(maint_record_seq.nextval) , #{car_code}, #{maint_item_code}, #{mc_code}, #{mem_code},#{maint_start_at}, #{maint_cost}, #{pay_method}, #{memo}, LOCALTIMESTAMP, #{mileage})
+        <selectKey resultType="String" keyProperty="maint_code" order="AFTER">
+            SELECT maint_record_seq.CURRVAL FROM dual
+        </selectKey>
+    </insert>
+
+    <insert id="maintImageSave" parameterType="String">
+        INSERT INTO maint_img (img_code, maint_code, url) VALUES (maint_img_seq.nextval, #{maint_code}, #{url})
+    </insert>
+
+<!--    차량 상태 업데이트-->
+    <update id="updateCarStatus">
+        update car_detail set car_status=#{status} where car_code=#{car_code}
+    </update>
+
+
+
+<!--    차량 하나에 대한 정비 내역 불러오기-->
+    <select id="maintOneCarRecordGetAll" parameterType="String" resultMap="maintRecordMap">
+        SELECT r.maint_code, r.car_code, r.maint_item_code, r.mc_code, r.mem_code, r.maint_start_at, r.maint_end_at, r.maint_cost, r.pay_method, r.memo, r.created_at, r.updated_at,  m.maint_name, m.cycle, m.type, c.mc_name, c.mc_tell, c.mc_category,
+               md.name, md.position_name, md.dept_code, md.dept_name, i.url
+        from maint_record r
+                 LEFT JOIN car_maint m
+                           ON r.maint_item_code = m.maint_item_code
+                 LEFT JOIN maint_com c
+                           ON r.mc_code = c.mc_code
+                 LEFT JOIN (SELECT mem.mem_code, mem.name, mem.position_name, dept.dept_code, dept.dept_name FROM mem LEFT JOIN dept ON mem.dept_code = dept.dept_code) md
+                           ON r.mem_code = md.mem_code
+                 LEFT JOIN maint_img i
+                           ON r.maint_code=i.maint_code
+        WHERE r.car_code = #{car_code}
+    </select>
+
+<!--    정비 등록 후 정비 하나에 대한 정보 불러오기 -->
+    <select id="maintRecordGetOne" parameterType="String" resultMap="maintRecordMap">
+        SELECT r.maint_code, r.car_code, r.maint_item_code, r.mc_code, r.mem_code, r.maint_start_at, r.maint_end_at, r.maint_cost, r.pay_method, r.memo, r.created_at, r.updated_at,  m.maint_name, m.cycle, m.type, c.mc_name, c.mc_tell, c.mc_category,
+               md.name, md.position_name, md.dept_code, md.dept_name
+        from maint_record r
+                 LEFT JOIN car_maint m
+                           ON r.maint_item_code = m.maint_item_code
+                 LEFT JOIN maint_com c
+                           ON r.mc_code = c.mc_code
+                 LEFT JOIN (SELECT mem.mem_code, mem.name, mem.position_name, dept.dept_code, dept.dept_name FROM mem LEFT JOIN dept ON mem.dept_code = dept.dept_code) md
+                           ON r.mem_code = md.mem_code
+        WHERE r.maint_code = #{maint_code}
+    </select>
+
+    <update id="maintEndAtUpdate" parameterType="String">
+        UPDATE maint_record SET maint_end_at=LOCALTIMESTAMP WHERE maint_code=#{maint_code}
+    </update>
+
+<!--    등록 처리가 되지 않은 정비가 있는지 확인하는 쿼리-->
+    <select id="maintEndCheck" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM maint_record WHERE car_code=#{car_code} AND maint_end_at IS NULL
+    </select>
+
+<!--    선택한 정비 삭제-->
+    <delete id="maintRecordDelete" parameterType="String">
+        DELETE FROM maint_record where maint_code=#{maint_code}
+    </delete>
+
+    <!--    정비 현황 조회-->
+    <select id="currentMaintGet" parameterType="String" resultType="com.kosa.resq.domain.vo.car.CurrentMaintResponseVO">
+    <![CDATA[
+        SELECT cm.*,
+               mr.car_code,
+               mr.mileage,
+               mr.maint_start_at,
+               mr.accum_mileage
+        FROM car_maint cm
+                 LEFT JOIN (SELECT maint_item_code,
+                                   c.car_code,
+                                   maint_start_at,
+                                   mileage,
+                                   c.accum_mileage,
+                                   ROW_NUMBER() OVER (PARTITION BY maint_item_code ORDER BY maint_start_at DESC) AS rn
+                            FROM maint_record
+                                     LEFT JOIN car_detail c
+                                               ON maint_record.car_code = c.car_code
+                            WHERE c.car_code = #{car_code}
+                               OR c.car_code IS NULL) mr
+                           ON cm.maint_item_code = mr.maint_item_code
+                               AND mr.rn = 1
+        WHERE cm.type = 1
+        ]]>
+    </select>
+
+    <select id="accumeMileageGet" parameterType="String" resultType="int">
+        select accum_mileage from car_detail where car_code=#{car_code}
+    </select>
+
+
+    <!--    운행 내역 전체 조회-->
+    <select id="operationGetAll" resultMap="operationMap" parameterType="com.kosa.resq.domain.vo.car.SearchOperationVO">
+        <![CDATA[
+        SELECT operation_code, memo, bef_mileage, aft_mileage, distance, created_at, updated_at, nomal_biz_mileage, commute_mileage,
+               o.car_rez_code o_code, r.car_rez_code r_code, detail, start_at, return_at, loc_type, latitude, longitude, address,
+               c.car_code, car_name, type, accum_mileage, car_status, car_latitude, car_longitude, car_address,
+               m.mem_code, name, position_name, dept_code, dept_name
+        FROM operation o
+                 JOIN (
+            SELECT car_rez.car_rez_code, detail, start_at, return_at, loc_type, latitude, longitude, address
+            FROM car_rez
+                     LEFT JOIN car_loc ON car_rez.car_rez_code = car_loc.car_rez_code
+            WHERE start_at BETWEEN TO_DATE(#{operation_sdate}) AND TO_DATE(#{operation_edate})
+        ) r ON o.car_rez_code = r.car_rez_code
+                 JOIN (
+            SELECT car.car_code, car_name, type, accum_mileage, car_status, car_latitude, car_longitude, car_address
+            FROM car
+                     LEFT JOIN car_detail ON car.car_code = car_detail.car_code
+            WHERE
+                (car.type = '승용차' AND #{car_type} = '승용차') OR
+                (car.type = '화물차' AND #{car_type} = '화물차') OR
+                #{car_type} = '전체'
+        ) c ON o.car_code = c.car_code
+                 JOIN (
+            SELECT mem_code, name, position_name, dept.dept_code, dept_name
+            FROM mem
+                     INNER JOIN dept ON mem.dept_code = dept.dept_code
+            WHERE
+                (dept_name = #{dept_name} OR #{dept_name} = '전체') -- 부서명이 일치하거나 비어있을 때 조건을 추가
+        ) m ON o.mem_code = m.mem_code
+        WHERE nomal_biz_mileage + commute_mileage BETWEEN #{sdistance} AND #{edistance}
+        ]]>
+    </select>
+
+    <select id="operationGetOne" resultMap="operationMap">
+        <![CDATA[
+        SELECT o.operation_code, c.car_name, c.car_code, o.created_at , m.dept_name, m.name, o.bef_mileage, o.aft_mileage, o.distance, o.commute_mileage, o.nomal_biz_mileage
+        FROM operation o
+                 LEFT JOIN car c
+                           ON o.car_code = c.car_code
+                 LEFT JOIN
+             (SELECT mem.mem_code, mem.name, dept.dept_name FROM mem INNER JOIN dept ON mem.dept_code=dept.dept_code) m
+             ON o.mem_code = m.mem_code
+        WHERE o.car_code=#{car_code} AND o.created_at >= TO_DATE(#{sdate}) AND o.created_at <= TO_DATE(#{edate})
+        ]]>
+    </select>
+
+    <select id="carListGetAll" resultType="com.kosa.resq.domain.vo.car.CarVO">
+        SELECT car_code, car_name FROM car
+    </select>
+
+
+    <select id="carRezListGetAll" resultType="com.kosa.resq.domain.vo.car.CarRezInfoResponseVO">
+        SELECT r.car_rez_code,r.rez_status, r.start_at,r.return_at,m.name,
+               dept.dept_name,c.car_name,c.car_code,r.detail,c.type
+        FROM
+            car_rez r JOIN car c ON r.car_code= c.car_code JOIN car_detail d ON c.car_code=d.car_code
+                      JOIN mem m ON r.mem_code=m.mem_code JOIN dept ON m.dept_code=dept.dept_code
+        WHERE r.start_at BETWEEN TO_DATE(#{sdate}) AND TO_DATE(#{edate})
+    </select>
+
+    <select id="carRezGetOne" parameterType="String" resultMap="carRezMap">
+        select * from car_rez r join car c on r.car_code= c.car_code join car_detail d on c.car_code=d.car_code
+                                join mem m on r.mem_code=m.mem_code join dept on m.dept_code=dept.dept_code
+        where r.car_rez_code = #{car_rez_code}
+    </select>
+
+    <select id="carLocInfoGetOne">
+        select * from car_loc where car_rez_code=#{car_rez_code}
+    </select>
+
+    <update id="carRezCancel" parameterType="String">
+        update car_rez set rez_status='4' where car_rez_code=#{car_rez_code}
+    </update>
+
+
+    <select id="isExistOperation" resultType="String">
+        select car_code FROM operation GROUP BY car_code
+    </select>
+
 </mapper>

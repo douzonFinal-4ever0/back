@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.resq.mapper.sercurity.UserMapper">
+
+    <resultMap id="mem_map" type="com.kosa.resq.domain.dto.common.MemDTO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="position_name" column="position_name"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="hired_at" column="hired_at"/>
+        <result property="created_at" column="created_at"/>
+        <result property="address" column="address"/>
+        <result property="tel" column="tel"/>
+        <result property="is_worked" column="is_worked"/>
+        <result property="profile_img_url" column="profile_img_url"/>
+        <association property="deptDTO" resultMap="dept_map"/>
+    </resultMap>
+
+    <resultMap id="dept_map" type="com.kosa.resq.domain.dto.common.DeptDTO">
+        <id property="dept_code" column="dept_code"/>
+        <result property="dept_name" column="dept_name"/>
+        <result property="dept_tel" column="dept_tel"/>
+        <result property="dept_head_name" column="dept_head_name"/>
+        <result property="location" column="location"/>
+    </resultMap>
+
+    <select id="login" resultType="com.kosa.resq.domain.dto.common.MemDTO" resultMap="mem_map">
+        select *
+        from MEM m
+                 left outer join DEPT d
+                                 on m.DEPT_CODE = d.DEPT_CODE
+        where EMAIL = #{email}
+    </select>
+</mapper>

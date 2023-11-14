@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.resq.mapper.sp.SpMapper">
+
+    <resultMap id="suppliesMap" type="com.kosa.resq.domain.dto.mr.SuppliesDTO">
+        <id property="supplies_code" column="supplies_code"/>
+        <result property="supplies_name" column="supplies_name"/>
+        <result property="stock_amount" column="stock_amount"/>
+        <result property="unit" column="unit"/>
+        <result property="type" column="type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+    </resultMap>
+
+    <resultMap id="Mr_SuppliesMap" type="com.kosa.resq.domain.dto.mr.MrSuppliesDTO">
+        <id property="mr_code" column="mr_code"/>
+        <id property="supplies_code" column="supplies_code"/>
+        <result property="amount" column="amount"/>
+        <association property="supplies" resultMap="suppliesMap"/>
+    </resultMap>
+
+    <select id="suppliesGetAll">
+        select *
+        from SUPPLIES
+    </select>
+
+    <insert id="mrSuppliesSave">
+        insert into MR_SUPPLIES (MR_CODE, SUPPLIES_CODE, AMOUNT)
+        values (#{mr_code},#{supplies_code},1)
+    </insert>
+
+</mapper>
