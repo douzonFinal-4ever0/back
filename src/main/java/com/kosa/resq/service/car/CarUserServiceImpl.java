@@ -337,6 +337,7 @@ public class CarUserServiceImpl implements CarUserService{
     @Transactional
     @Override
     public OperationRequestVO operationInfoSave(OperationDTO operationDTO) {
+
         //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
         operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
         if(operationDTO.getMemo()==null){
@@ -406,18 +407,27 @@ public class CarUserServiceImpl implements CarUserService{
 
     @Override
     public boolean receiptImgSave(MultipartFile[] images) {
+        System.out.println("이미지 서비스");
+        System.out.println(expCodes);
         try{
-            int i=0;
-            for(MultipartFile image : images ){
-                String url = imgService.saveFile(image, "exp");
+//            int i=0;
+            for(int i =0 ;i<images.length;i++){
+                String url = imgService.saveFile(images[i], "exp");
                 System.out.println(url);
+                System.out.println(expCodes.get(i));
                 mapper.expImgUpdate(url,expCodes.get(i));
-                i++;
             }
+//            for(MultipartFile image : images ){
+//                String url = imgService.saveFile(image, "exp");
+//                System.out.println(url);
+//                System.out.println(expCodes.get(i));
+//                mapper.expImgUpdate(url,expCodes.get(i));
+//                i++;
+//            }
         }catch (IOException e){
             return false;
         }finally {
-            expCodes= Collections.emptyList();
+            expCodes= new ArrayList<String>();
         }
         return true;
     }

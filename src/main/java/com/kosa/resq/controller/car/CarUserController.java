@@ -139,8 +139,9 @@ public class CarUserController {
         }
     }
     @PostMapping("/receiptImg")
-    public ResponseEntity<Object> receiptImgSave(@RequestParam("img") MultipartFile[] images){
-
+    public ResponseEntity<Object> receiptImgSave(@RequestParam("images") MultipartFile[] images){
+        System.out.println("이미지 controller");
+        System.out.println(images);
         if(!service.receiptImgSave(images)){
             return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
         }
