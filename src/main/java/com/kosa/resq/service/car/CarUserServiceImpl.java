@@ -14,8 +14,11 @@ import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,6 +32,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +44,7 @@ public class CarUserServiceImpl implements CarUserService{
     //사진 업로드 용
     @Autowired
     private S3UploadService imgService;
+    private List<String> expCodes =new ArrayList<String>();
     //주소를 받으면 위도 경도를 출력해주는 메소드
     public Float[] findGeoPoint(String roadFullAddr) {
         Float[] coordinate = new Float[2];
@@ -332,6 +337,7 @@ public class CarUserServiceImpl implements CarUserService{
     @Transactional
     @Override
     public OperationRequestVO operationInfoSave(OperationDTO operationDTO) {
+
         //입력 받은 후계기판을 이용해서 실제 주행거리 구하기
         operationDTO.setDistance(operationDTO.getAft_mileage()-operationDTO.getBef_mileage());
         if(operationDTO.getMemo()==null){
@@ -361,8 +367,12 @@ public class CarUserServiceImpl implements CarUserService{
 //                System.out.println("expDTO: "+expenditureDTO);
                 ExpenditureRequestVO expenditureRequestVO = mapper2.map(expenditureDTO,ExpenditureRequestVO.class);
                 //지출 정보 저장
-                System.out.println("expVO: "+expenditureRequestVO);
+
                 mapper.expenditureSave(expenditureRequestVO);
+                System.out.println("expVO: "+expenditureRequestVO);
+                System.out.println(expenditureRequestVO.getExp_code());
+                expCodes.add(expenditureRequestVO.getExp_code());
+                System.out.println(expCodes);
             }
         }
 
@@ -393,6 +403,33 @@ public class CarUserServiceImpl implements CarUserService{
     @Override
     public int selectedCarUpdate(String car_code) {
         return mapper.selectedCarUpdate(car_code);
+    }
+
+    @Override
+    public boolean receiptImgSave(MultipartFile[] images) {
+        System.out.println("이미지 서비스");
+        System.out.println(expCodes);
+        try{
+//            int i=0;
+            for(int i =0 ;i<images.length;i++){
+                String url = imgService.saveFile(images[i], "exp");
+                System.out.println(url);
+                System.out.println(expCodes.get(i));
+                mapper.expImgUpdate(url,expCodes.get(i));
+            }
+//            for(MultipartFile image : images ){
+//                String url = imgService.saveFile(image, "exp");
+//                System.out.println(url);
+//                System.out.println(expCodes.get(i));
+//                mapper.expImgUpdate(url,expCodes.get(i));
+//                i++;
+//            }
+        }catch (IOException e){
+            return false;
+        }finally {
+            expCodes= new ArrayList<String>();
+        }
+        return true;
     }
 
 
