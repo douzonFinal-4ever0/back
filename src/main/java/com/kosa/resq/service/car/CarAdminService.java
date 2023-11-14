@@ -1,5 +1,6 @@
 package com.kosa.resq.service.car;
 
+import com.kosa.resq.domain.dto.car.CarStatisticsDTO;
 import com.kosa.resq.domain.dto.car.SearchCar;
 import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.dto.common.MemDTO;
@@ -39,5 +40,10 @@ public interface CarAdminService {
     CarRezDetailResponseVO carRezGetOne(String car_rez_code);
     void carRezCancel(String car_rez_code);
     List<String> isExistOperation();
+
+//    CarStatisticsDTO getCarStatistics(Date sdate, Date edate);
+    CarStatisticsDTO getCarStatistics();
+
+
 
 }
