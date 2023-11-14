@@ -12,6 +12,8 @@ import java.util.List;
 @Mapper
 public interface MrUserMapper {
 
+    public List<MrRezResponseVO> mrRezGetAllByDate(String today);
+
     public List<MrRezRequestVO> getReservationsForMeetingRoom(String mr_code, Date rez_start_time, Date rez_end_time);
     public void mrRezSave(MrRezRequestVO mrRezRequestVO);
 

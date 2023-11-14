@@ -7,6 +7,7 @@ import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRezResponseVO;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface MrUserService {
@@ -15,6 +16,8 @@ public interface MrUserService {
     public void mrRezUpdate(MrRezRequestDTO mrRezRequestDTO);
 
     public void mrRezDelete(String mr_rez_code);
+
+    public List<MrRezResponseVO> mrRezGetAllByDate(String date);
 
     public List<MrRezResponseVO> mrRezGetAllByMem(String mem_code);
 

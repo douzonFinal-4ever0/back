@@ -251,14 +251,13 @@ public class MrUserServiceImpl implements MrUserService {
         }
     }
 
-
-
-    @Transactional
     @Override
     public void mrRezDelete(String mr_rez_code) {
-
+        log.info("예약 삭제 서비스 ******************************");
+        log.info(mr_rez_code);
         // 예약 삭제 -> deleted_at 업데이트
         mapper.mrRezDelete(mr_rez_code);
+
 
 
         // 참석자 삭제 -> deleted_at 업데이트
@@ -269,6 +268,12 @@ public class MrUserServiceImpl implements MrUserService {
             mapper.mrPtDelete(mr_rez_code, pt.getMemVO().getMem_code());
         }
 
+    }
+
+    @Override
+    public List<MrRezResponseVO> mrRezGetAllByDate(String today) {
+        List<MrRezResponseVO> result =  mapper.mrRezGetAllByDate(today);
+        return result;
     }
 
     @Override
