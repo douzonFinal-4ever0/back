@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.*;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.mr.MrAdminService;
@@ -49,9 +50,28 @@ public class MrAdminController {
 
     @GetMapping("/mrRezRank")
     public List<MrRezDTO> mrRezRank(){
-        return service.mrRezRank();
+        return service.mrRezRankGetAll();
     }
-
+    @GetMapping("/mrRezTime")
+    public List<MrRezTimeDTO> mrRezTime(){
+        return service.mrRezTimeGetAll();
+    }
+    @GetMapping("/mrRezRow")
+    public MrRezRowDTO mrRezRow(){
+        return service.mrRezRowGetAll();
+    }
+    @GetMapping("/mrTypeRow")
+    public List<MrRezTypeDTO> mrRezType(){
+        return service.mrRezTypeGetAll();
+    }
+    @GetMapping("/mrRezDate")
+    public List<MrRezDateDTO>mrRezDateGetAll(){
+        return service.mrRezDateGetAll();
+    }
+    @GetMapping("/mrRezFavTime")
+    public List<MrRezFavTimeDTO>mrRezFavTimeGetAll(){
+        return service.mrRezFavTimeGetAll();
+    }
     @GetMapping("/notice")
     public List<NoticeDTO> noticeGetAll() {
         return service.noticeGetAll();
