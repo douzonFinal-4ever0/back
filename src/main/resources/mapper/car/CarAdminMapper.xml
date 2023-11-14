@@ -468,4 +468,32 @@
         select car_code FROM operation GROUP BY car_code
     </select>
 
+<!--    통계 axios 요청 시작-->
+
+<!--    전체 차량 수-->
+    <select id="getTotalCarCount" resultType="int">
+        select count(*) from car
+    </select>
+
+<!--    운행 차량 수-->
+    <select id="getOperationCarCount" resultType="int">
+        <![CDATA[
+        select count(count(*)) from operation o JOIN car_rez r ON o.car_rez_code=r.car_rez_code WHERE r.start_at > TO_DATE('2023-10-30') AND r.start_at < TO_DATE('2023-11-03') GROUP BY o.car_code
+        ]]>
+    </select>
+
+<!--    가장 많이 운행된 차량 3-->
+    <select id="getMaxOperCar" resultType="com.kosa.resq.domain.vo.car.CarStatisticsVO">
+     <![CDATA[
+        SELECT COUNT(o.car_code) AS count, o.car_code, c.car_name
+        FROM operation o
+        JOIN car_rez r ON o.car_rez_code=r.car_rez_code
+        JOIN car c ON c.car_code = o.car_code
+        WHERE r.start_at > TO_DATE('2023-10-30') AND r.start_at < TO_DATE('2023-11-03')
+        GROUP BY o.car_code, c.car_name
+        ORDER BY COUNT(o.car_code) DESC
+        FETCH FIRST 3 ROWS ONLY
+        ]]>
+    </select>
+
 </mapper>

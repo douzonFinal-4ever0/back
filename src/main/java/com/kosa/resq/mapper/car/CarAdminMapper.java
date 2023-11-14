@@ -62,4 +62,7 @@ public interface CarAdminMapper {
 
     void maintImageSave(String maint_code, String url);
 
+    int getTotalCarCount();
+    int getOperationCarCount(String sdate, String edata);
+    List<CarStatisticsVO> getMaxOperCar(String sdate, String edate);
 }

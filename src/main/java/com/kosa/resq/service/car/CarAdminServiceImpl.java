@@ -1,5 +1,6 @@
 package com.kosa.resq.service.car;
 
+import com.kosa.resq.domain.dto.car.CarStatisticsDTO;
 import com.kosa.resq.domain.dto.car.SearchCar;
 import com.kosa.resq.domain.dto.car.SearchOperation;
 import com.kosa.resq.domain.vo.car.*;
@@ -222,6 +223,15 @@ public class CarAdminServiceImpl implements CarAdminService{
     @Override
     public List<String> isExistOperation() {
         return carAdminMapper.isExistOperation();
+    }
+
+    @Override
+    public CarStatisticsDTO getCarStatistics() {
+        CarStatisticsDTO carStatisticsDTO = new CarStatisticsDTO();
+        carStatisticsDTO.setTotalCount(carAdminMapper.getTotalCarCount());
+        carStatisticsDTO.setOperationCarCount(carAdminMapper.getOperationCarCount("", ""));
+        carStatisticsDTO.setMaxOperCar(carAdminMapper.getMaxOperCar("", ""));
+        return carStatisticsDTO;
     }
 
 

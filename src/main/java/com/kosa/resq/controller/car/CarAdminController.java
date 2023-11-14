@@ -2,10 +2,7 @@ package com.kosa.resq.controller.car;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kosa.resq.domain.dto.car.CarDTO;
-import com.kosa.resq.domain.dto.car.CarMaintItemDTO;
-import com.kosa.resq.domain.dto.car.SearchCar;
-import com.kosa.resq.domain.dto.car.SearchOperation;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.service.S3UploadService;
@@ -258,6 +255,11 @@ public class CarAdminController {
     @GetMapping("/car/isExistOperaion")
     public List<String> isExistOperaion() {
         return carAdminService.isExistOperation();
+    }
+
+    @GetMapping("/car/operationStatis")
+    public CarStatisticsDTO getOperationStatis() {
+        return carAdminService.getCarStatistics();
     }
 
 
