@@ -123,4 +123,9 @@ public class MrAdminServiceImpl implements MrAdminService {
         return mapper.mrRezFavTimeGetAll();
     }
 
+    @Override
+    public void mrCheckIn(String mr_code) {
+        mapper.mrCheckIn(mr_code);
+    }
+
 }

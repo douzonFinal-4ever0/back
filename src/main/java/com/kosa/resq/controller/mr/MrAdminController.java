@@ -141,6 +141,10 @@ public class MrAdminController {
         }
 
     }
+    @PatchMapping("/mrCheckIn/{mr_code}")
+    public void mrCheckIn(@PathVariable String mr_code) {
+        service.mrCheckIn(mr_code);
+    }
 
     @PatchMapping("/mrDeactivate")
     public void mrDeactivate(@RequestBody MrDTO mr) {
