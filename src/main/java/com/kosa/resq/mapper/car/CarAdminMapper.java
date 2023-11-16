@@ -2,6 +2,7 @@ package com.kosa.resq.mapper.car;
 
 import com.kosa.resq.domain.dto.car.CarDetailDTO;
 import com.kosa.resq.domain.dto.car.SearchOperation;
+import com.kosa.resq.domain.dto.car.SearchRez;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -53,7 +54,7 @@ public interface CarAdminMapper {
 
     List<CarVO> carListGetAll();
 
-    List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate);
+    List<CarRezInfoResponseVO> carRezListGetAll(SearchRez searchRez);
 
     CarRezResponseVO carRezGetOne(String car_rez_code);
     List<CarLocVO> carLocInfoGetOne(String car_rez_code);
@@ -65,4 +66,8 @@ public interface CarAdminMapper {
     int getTotalCarCount();
     int getOperationCarCount(String sdate, String edata);
     List<CarStatisticsVO> getMaxOperCar(String sdate, String edate);
+//    운행 관련 통계
+    int getTotalOperation();
+    List<WeekOfOperationVO> weekOfOperation();
+    int getLastTotalOperation();
 }
