@@ -152,6 +152,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         CorsConfiguration config = new CorsConfiguration();
         config.applyPermitDefaultValues();
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 클라이언트 출처
+        config.setAllowedOrigins(Arrays.asList("http://192.168.0.177:3000")); // 클라이언트 출처
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

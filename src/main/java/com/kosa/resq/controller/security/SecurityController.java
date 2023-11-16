@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/test")
+@RequestMapping("/api/v1")
 public class SecurityController {
-    @PostMapping("/generateToken")
+    @PostMapping("/api/v1/user/login")
+    public void login(){
+    }
+    @PostMapping("/test/generateToken")
     public ResponseEntity<ApiResponse> selectCodeList(@RequestBody MemDTO mem) {
 
         String resultToken = TokenUtil.generateJwtToken(mem);
