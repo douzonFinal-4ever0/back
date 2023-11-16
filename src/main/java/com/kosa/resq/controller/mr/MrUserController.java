@@ -82,10 +82,7 @@ public class MrUserController {
 
     @GetMapping("/rez/recent") // 회의실 최근 예약 조회
     public ResponseEntity<List<MrRezResponseVO>> recentMrRezGetAll(String mem_code) {
-
         List<MrRezResponseVO> result = service.recentMrRezGetAll(mem_code);
-
-        log.info("뭐가 문제일까...........................................");
         log.info(result);
         return  new ResponseEntity<>(result, HttpStatus.OK);
 
@@ -97,6 +94,14 @@ public class MrUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/mem/bm") // 즐겨찾기 그룹 멤버 등록
+    public ResponseEntity<String> bmGroupSave(@RequestBody BmGroupRequestDTO requestBody) {
+        log.info("==================즐겨찾기 그룹 컨트롤러==================");
+        log.info(requestBody);
+
+        service.bmGroupMemSave(requestBody);
+        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+    }
     
     @GetMapping("/mem/bm")  // 즐겨찾기 조회
     public ResponseEntity<List<BmGroupMemResponseDTO>> bmGroupMemGetAll(@RequestParam("mem_code") String mem_code) {
@@ -110,13 +115,7 @@ public class MrUserController {
         return ResponseEntity.ok("mem delete ");
     }
 
-    @PostMapping("/mem/bm") // 즐겨찾기 그룹 멤버 등록
-    public ResponseEntity<String> bmGroupSave(@RequestBody BmGroupRequestDTO requestBody) {
-        log.info("==================즐겨찾기 그룹 컨트롤러==================");
-        log.info(requestBody);
-        service.bmGroupMemSave(requestBody);
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
-    }
+
 
     @GetMapping("/bm") // 즐겨찾기 회의실 조회
     public ResponseEntity<List<BmMrVO>> bmMrGetAll(@RequestParam("mem_code") String mem_code) {
