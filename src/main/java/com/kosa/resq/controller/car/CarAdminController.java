@@ -137,9 +137,9 @@ public class CarAdminController {
 //        return null;
 //    }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/car/maintRecordRegister")
     public MaintRecordResponseVO maintRecordSave(@RequestParam("file") MultipartFile[] files, @RequestParam("maintRegisterData") String maintRegisterData ) throws IOException {
+        log.info(maintRegisterData);
 
         List<String> maintImages = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -234,10 +234,12 @@ public class CarAdminController {
     }
 
     // 예약 리스트 가져오기
-    @GetMapping("/car/rezListGetAll")
-    public List<CarRezInfoResponseVO> carRezListGetAll(@RequestParam String sdate, @RequestParam String edate) {
-        return carAdminService.carRezListGetAll(sdate, edate);
+    @PostMapping("/car/rezListGetAll")
+    public List<CarRezInfoResponseVO> carRezListGetAll(@RequestBody SearchRez searchRez) {
+        log.info(searchRez.toString());
+        return carAdminService.carRezListGetAll(searchRez);
     }
+
 
     @GetMapping("/car/rezGetOne")
 
@@ -262,5 +264,9 @@ public class CarAdminController {
         return carAdminService.getCarStatistics();
     }
 
+    @GetMapping("/car/weekOperationStatistics")
+    public OperationStatisticsDTO getWeekOperationStatistics() {
+        return carAdminService.getOperationStatistics();
+    }
 
 }

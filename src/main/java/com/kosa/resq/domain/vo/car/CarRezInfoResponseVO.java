@@ -22,4 +22,6 @@ public class CarRezInfoResponseVO {
     private String car_code;
     private String detail;
     private String type;
+    private Date rez_at;
+    private double est_mileage;
 }
