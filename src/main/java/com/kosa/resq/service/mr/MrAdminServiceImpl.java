@@ -128,4 +128,14 @@ public class MrAdminServiceImpl implements MrAdminService {
         mapper.mrCheckIn(mr_code);
     }
 
+    @Override
+    public void mrCheckOut(String mr_code) {
+        mapper.mrCheckOut(mr_code);
+    }
+
+    @Override
+    public MrRezForQRDTO mrRezGetOne(String mr_rez_code) {
+        return mapper.mrRezGetOne(mr_rez_code);
+    }
+
 }

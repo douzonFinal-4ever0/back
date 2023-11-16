@@ -32,5 +32,7 @@ public interface MrAdminMapper {
     public List<MrRezDateDTO>mrRezDateGetAll();
     public List<MrRezFavTimeDTO>mrRezFavTimeGetAll();
     public void mrCheckIn(String mr_code);
+    public void mrCheckOut(String mr_code);
+    public MrRezForQRDTO mrRezGetOne(String mr_rez_code);
 
 }

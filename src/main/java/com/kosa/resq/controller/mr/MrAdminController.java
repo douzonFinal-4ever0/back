@@ -48,6 +48,10 @@ public class MrAdminController {
         return service.mrRezGetAll();
     }
 
+    @GetMapping("/mrRez/{mr_rez_code}")
+    public MrRezForQRDTO mrRezGetOne(@PathVariable String mr_rez_code){
+        return service.mrRezGetOne(mr_rez_code);
+    }
     @GetMapping("/mrRezRank")
     public List<MrRezDTO> mrRezRank(){
         return service.mrRezRankGetAll();
@@ -144,6 +148,10 @@ public class MrAdminController {
     @PatchMapping("/mrCheckIn/{mr_code}")
     public void mrCheckIn(@PathVariable String mr_code) {
         service.mrCheckIn(mr_code);
+    }
+    @PatchMapping("/mrCheckOut/{mr_code}")
+    public void mrCheckOut(@PathVariable String mr_code) {
+        service.mrCheckOut(mr_code);
     }
 
     @PatchMapping("/mrDeactivate")
