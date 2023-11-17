@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.*;
+import com.kosa.resq.domain.dto.common.AlertDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.service.AddressService;
@@ -146,5 +147,14 @@ public class CarUserController {
             return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
         }
         return new ResponseEntity<Object>("Success", HttpStatus.OK);
+    }
+
+    @PostMapping("/alarmSave")
+    public ResponseEntity<String> alarmSave(@RequestBody AlertDTO alertDTO){
+        if(service.alarmSave(alertDTO)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 }

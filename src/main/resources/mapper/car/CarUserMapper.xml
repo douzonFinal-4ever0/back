@@ -270,4 +270,12 @@
     <update id="expImgUpdate">
         update expenditure set url=#{url} where exp_code=#{exp_code}
     </update>
+    <insert id="alarmSave">
+-- 0이면 안읽은거 1이면 읽은거
+        <selectKey keyProperty="alert_code" order="BEFORE" resultType="String">
+            select 'ALE'||alert_seq.nextval from dual
+        </selectKey>
+        insert into alert (alert_code,mem_code,alert_at,is_read,contents)
+        values (#{alert_code},#{mem_code},localtimestamp,#{is_read},#{contents})
+    </insert>
 </mapper>
