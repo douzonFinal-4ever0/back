@@ -1,8 +1,6 @@
 package com.kosa.resq.service.car;
 
-import com.kosa.resq.domain.dto.car.CarStatisticsDTO;
-import com.kosa.resq.domain.dto.car.SearchCar;
-import com.kosa.resq.domain.dto.car.SearchOperation;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.mapper.car.CarAdminMapper;
@@ -126,6 +124,7 @@ public class CarAdminServiceImpl implements CarAdminService{
         // 차량 상태 '정비중'으로 변경
         carAdminMapper.updateCarStatus(maintRecordRequestVO.getCar_code(), "정비중");
 
+        // 이미지 등록
         log.info(maintRecordRequestVO.getMaint_code());
         for (String url : maintImages) {
             carAdminMapper.maintImageSave(maintRecordRequestVO.getMaint_code(), url);
@@ -203,8 +202,8 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
-    public List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate) {
-        return carAdminMapper.carRezListGetAll(sdate.substring(0, 10), edate.substring(0,10));
+    public List<CarRezInfoResponseVO> carRezListGetAll(SearchRez searchRez) {
+        return carAdminMapper.carRezListGetAll(searchRez);
     }
 
     @Transactional
@@ -232,6 +231,15 @@ public class CarAdminServiceImpl implements CarAdminService{
         carStatisticsDTO.setOperationCarCount(carAdminMapper.getOperationCarCount("", ""));
         carStatisticsDTO.setMaxOperCar(carAdminMapper.getMaxOperCar("", ""));
         return carStatisticsDTO;
+    }
+
+    @Override
+    public OperationStatisticsDTO getOperationStatistics() {
+        OperationStatisticsDTO operationStatisticsDTO = new OperationStatisticsDTO();
+        operationStatisticsDTO.setTotalDistance(carAdminMapper.getTotalOperation());
+        operationStatisticsDTO.setLastTotalDistance(carAdminMapper.getLastTotalOperation());
+        operationStatisticsDTO.setWeekOfOperationVOList(carAdminMapper.weekOfOperation());
+        return operationStatisticsDTO;
     }
 
 

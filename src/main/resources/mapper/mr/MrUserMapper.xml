@@ -196,21 +196,23 @@
             mk.keyword_code,
             mk.keyword_name
         FROM (
-                 SELECT * FROM (
-                                   SELECT * FROM MR_REZ
-                                   WHERE mem_code = #{mem_code}
-                                   ORDER BY created_at DESC
-                               ) WHERE ROWNUM <= 10
+                 SELECT *
+                 FROM (
+                          SELECT *
+                          FROM MR_REZ
+                          WHERE mem_code = #{mem_code} AND deleted_at IS NULL
+                          ORDER BY created_at DESC
+                      )
+                 WHERE ROWNUM <= 10
              ) r
                  JOIN MR m ON r.mr_code = m.mr_code
                  LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
                  LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
                  LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
-                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code AND p.deleted_at IS NULL
                  LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
                  LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
         WHERE r.deleted_at IS NULL
-          AND p.deleted_at IS NULL
         ]]>
     </select>
 
@@ -480,6 +482,7 @@
                     OR
                     (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '대회의실')
                 )
+              AND m.is_opened = 0
         ]]>
     </select>
 

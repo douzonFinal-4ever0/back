@@ -1,8 +1,6 @@
 package com.kosa.resq.service.car;
 
-import com.kosa.resq.domain.dto.car.CarStatisticsDTO;
-import com.kosa.resq.domain.dto.car.SearchCar;
-import com.kosa.resq.domain.dto.car.SearchOperation;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -35,7 +33,7 @@ public interface CarAdminService {
     List<OperationResponseVO> operationGetOne(String car_code, Date originSdate, Date originEdate);
     List<CarVO> carListGetAll();
 
-    List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate);
+    List<CarRezInfoResponseVO> carRezListGetAll(SearchRez searchRez);
 
     CarRezDetailResponseVO carRezGetOne(String car_rez_code);
     void carRezCancel(String car_rez_code);
@@ -44,6 +42,7 @@ public interface CarAdminService {
 //    CarStatisticsDTO getCarStatistics(Date sdate, Date edate);
     CarStatisticsDTO getCarStatistics();
 
-
+//    운행 통계
+    OperationStatisticsDTO getOperationStatistics();
 
 }
