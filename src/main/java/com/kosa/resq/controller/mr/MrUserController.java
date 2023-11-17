@@ -2,6 +2,7 @@ package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.BmMrRequestDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
@@ -122,6 +123,14 @@ public class MrUserController {
         log.info("==================즐겨찾기 회의실 컨트롤러==================");
         List<BmMrVO> result = service.bmMrGetAll(mem_code);
         return  new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/bm") // 즐겨찾기 회의실 등록
+    public ResponseEntity<String> bmMrSave(@RequestBody BmMrRequestDTO bmMrRequestDTO) {
+        log.info("==================즐겨찾기 회의실  등록한다=================");
+        log.info(bmMrRequestDTO);
+        service.bmMrSave(bmMrRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
 

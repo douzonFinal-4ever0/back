@@ -3,6 +3,7 @@ package com.kosa.resq.service.mr;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.BmMrRequestDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.common.MemResquestVO;
 import com.kosa.resq.domain.vo.mr.*;
@@ -402,6 +403,16 @@ public class MrUserServiceImpl implements MrUserService {
 
     @Override
     public List<BmMrVO> bmMrGetAll(String mem_code) {
-        return mapper.bmMrGetAll(mem_code);
+        List<BmMrVO> list = mapper.bmMrGetAll(mem_code);
+        for(BmMrVO bm: list) {
+            MrResponseVO mr = mapper.mrGetAllByBM(bm.mr_code);
+            bm.setMr(mr);
+        }
+        return list;
+    }
+
+    @Override
+    public void bmMrSave(BmMrRequestDTO bmMrRequestDTO) {
+        mapper.bmMrSave(bmMrRequestDTO.getMem_code(), bmMrRequestDTO.getMr_code());
     }
 }
