@@ -1,8 +1,10 @@
 package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.*;
+import com.kosa.resq.domain.dto.common.AlertDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.domain.vo.common.AlertResponseVO;
 import com.kosa.resq.service.AddressService;
 import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.car.CarUserService;
@@ -146,5 +148,26 @@ public class CarUserController {
             return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
         }
         return new ResponseEntity<Object>("Success", HttpStatus.OK);
+    }
+
+    @PostMapping("/alarmSave")
+    public ResponseEntity<String> alarmSave(@RequestBody AlertDTO alertDTO){
+        if(service.alarmSave(alertDTO)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+    @GetMapping("/loadAlarm/{mem_code}")
+    public List<AlertResponseVO> loadMemAlarmGetAll(@PathVariable String mem_code){
+        return service.memAlarmGetAll(mem_code);
+    }
+    @PatchMapping("/clickAlarm/{alert_code}")
+    public ResponseEntity<String> clickAlarm(@PathVariable String alert_code){
+        if(service.alarmUpdate(alert_code)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 }

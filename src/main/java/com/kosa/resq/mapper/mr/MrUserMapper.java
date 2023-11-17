@@ -51,4 +51,7 @@ public interface MrUserMapper {
     public List<BmMrVO> bmMrGetAll(String mem_code);
 
     public List<MrResponseVO> recentMrGetFive(String mem_code);
+
+    public List<String> mrRezCodeGetAll();
+    public List<String> participantPerRez(String mr_rez_code);
 }

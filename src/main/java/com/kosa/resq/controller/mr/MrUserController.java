@@ -6,6 +6,7 @@ import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRezResponseVO;
+import com.kosa.resq.domain.vo.mr.ParticipantPerRezVO;
 import com.kosa.resq.exception.DuplicateReservationException;
 import com.kosa.resq.service.mr.MrUserService;
 import lombok.extern.log4j.Log4j2;
@@ -51,8 +52,9 @@ public class MrUserController {
     @PostMapping("/rez") // 회의실 예약 등록
     public ResponseEntity<String> mrRezSave(@RequestBody MrRezRequestDTO requestDTO) {
         try {
-            service.mrRezSave(requestDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("success");
+            String mr_rez_code=service.mrRezSave(requestDTO);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(mr_rez_code);
         } catch (DuplicateReservationException e) {
             // 중복 예약 예외 처리
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate reservation: " + e.getMessage());
@@ -130,6 +132,12 @@ public class MrUserController {
         log.info("**************** 회의실 통계 ****************");
         List<MrRezResponseVO> result =  service.mrRezGetAllByDate(date);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/participantPerRez")
+    public List<ParticipantPerRezVO> participantPerRezGetAll(){
+        System.out.println("asdasd");
+        return service.participantPerRezGetAll();
     }
 
 }

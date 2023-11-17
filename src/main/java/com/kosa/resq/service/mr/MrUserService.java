@@ -6,12 +6,13 @@ import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
 import com.kosa.resq.domain.vo.mr.MrRezResponseVO;
+import com.kosa.resq.domain.vo.mr.ParticipantPerRezVO;
 
 import java.text.ParseException;
 import java.util.List;
 
 public interface MrUserService {
-    public void mrRezSave(MrRezRequestDTO mrRezRequestDTO);
+    public String mrRezSave(MrRezRequestDTO mrRezRequestDTO);
 
     public void mrRezUpdate(MrRezRequestDTO mrRezRequestDTO);
 
@@ -34,4 +35,6 @@ public interface MrUserService {
     public void bmGroupMemSave(BmGroupRequestDTO bmGroupRequestDTO);
 
     public List<BmMrVO> bmMrGetAll(String mem_code);
+
+    public List<ParticipantPerRezVO> participantPerRezGetAll();
 }
