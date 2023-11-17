@@ -3,6 +3,7 @@ package com.kosa.resq.service.car;
 import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.AlertDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.domain.vo.common.AlertResponseVO;
 import com.kosa.resq.domain.vo.mr.ParticipantPerRezVO;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,4 +32,6 @@ public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, Str
     public int selectedCarUpdate(String car_code);
     public boolean receiptImgSave(MultipartFile[] images);
     public int alarmSave(AlertDTO alertDTO);
+    public List<AlertResponseVO>memAlarmGetAll(String mem_code);
+    public int alarmUpdate(String alert_code);
 }

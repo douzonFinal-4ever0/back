@@ -278,4 +278,10 @@
         insert into alert (alert_code,mem_code,alert_at,is_read,contents)
         values (#{alert_code},#{mem_code},localtimestamp,#{is_read},#{contents})
     </insert>
+    <select id="memAlarmGetAll">
+        select * from alert where mem_code=#{mem_code}
+    </select>
+    <update id="alarmUpdate">
+        update alert set is_read=1 where alert_code=#{alert_code}
+    </update>
 </mapper>
