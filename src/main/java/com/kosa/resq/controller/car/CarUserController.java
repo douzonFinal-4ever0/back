@@ -182,4 +182,9 @@ public class CarUserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
+
+    @GetMapping("/loadAnnouncement")
+    public List<AlertResponseVO> announcementGetAll() {
+        return service.announcementGetAll();
+    }
 }

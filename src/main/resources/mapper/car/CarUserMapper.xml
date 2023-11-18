@@ -279,7 +279,7 @@
         values (#{alert_code},#{mem_code},localtimestamp,#{is_read},#{contents})
     </insert>
     <select id="memAlarmGetAll">
-        select * from alert where CONTENTS LIKE '%전체%' or mem_code in
+        select * from alert where  mem_code is null or mem_code in
                             <foreach collection="mem_codes" item="mem_code" open="(" separator="," close=")">
                                 #{mem_code}
                             </foreach>
@@ -296,4 +296,9 @@
         insert into alert (alert_code,mem_code,alert_at,is_read,contents)
         values (#{alert_code},null,localtimestamp,#{is_read},#{contents})
     </insert>
+    <select id="announcementGetAll">
+--         select * from alert where CONTENTS LIKE '%전체%'
+        select * from alert
+        order by ALERT_AT DESC
+    </select>
 </mapper>

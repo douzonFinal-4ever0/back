@@ -460,5 +460,10 @@ public class CarUserServiceImpl implements CarUserService{
         return mapper.announcementSave(alertRequestVO);
     }
 
+    @Override
+    public List<AlertResponseVO> announcementGetAll() {
+        return mapper.announcementGetAll();
+    }
+
 
 }

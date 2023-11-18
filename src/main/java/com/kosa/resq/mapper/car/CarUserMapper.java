@@ -46,4 +46,5 @@ public interface CarUserMapper {
     public List<AlertResponseVO>memAlarmGetAll(List<String> mem_codes);
     public int alarmUpdate(String alert_code);
     public int announcementSave(AlertRequestVO alertDTO);
+    public List<AlertResponseVO> announcementGetAll();
 }
