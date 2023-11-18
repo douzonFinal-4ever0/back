@@ -10,6 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +41,7 @@ class CarUserMapperTest {
 //            e.printStackTrace();
 //        }
 //        System.out.println(mapper.filterCarRezGetAll("MEM001","1",0));
-
+//        String[] array={"MEM001"};
+//        System.out.println(mapper.memAlarmGetAll(array));
     }
 }

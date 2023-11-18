@@ -43,6 +43,7 @@ public interface CarUserMapper {
     public int selectedCarUpdate(String car_code);
     public int expImgUpdate(String url,String exp_code);
     public int alarmSave(AlertRequestVO alertDTO);
-    public List<AlertResponseVO>memAlarmGetAll(String mem_code);
+    public List<AlertResponseVO>memAlarmGetAll(List<String> mem_codes);
     public int alarmUpdate(String alert_code);
+    public int announcementSave(AlertRequestVO alertDTO);
 }

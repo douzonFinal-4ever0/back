@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -158,13 +159,24 @@ public class CarUserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
-    @GetMapping("/loadAlarm/{mem_code}")
-    public List<AlertResponseVO> loadMemAlarmGetAll(@PathVariable String mem_code){
-        return service.memAlarmGetAll(mem_code);
+    @GetMapping("/loadAlarm/{mem_codes}")
+    public List<AlertResponseVO> loadMemAlarmGetAll(@PathVariable List<String> mem_codes){
+        System.out.println(mem_codes);
+
+
+        return service.memAlarmGetAll(mem_codes);
     }
     @PatchMapping("/clickAlarm/{alert_code}")
     public ResponseEntity<String> clickAlarm(@PathVariable String alert_code){
         if(service.alarmUpdate(alert_code)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+    @PostMapping("/announcementSave")
+    public ResponseEntity<String> announcementSave(@RequestBody AlertDTO alertDTO){
+        if(service.announcementSave(alertDTO)>0){
             return ResponseEntity.status(HttpStatus.OK).body("success");
         }else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
