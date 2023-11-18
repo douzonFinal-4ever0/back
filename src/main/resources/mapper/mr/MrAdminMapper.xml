@@ -114,6 +114,13 @@
         <result property="dept_name" column="dept_name" />
     </resultMap>
 
+    <resultMap id="mrRezParticipantMap" type="com.kosa.resq.domain.dto.mr.MrRezParticipantDTO">
+        <id property="mr_rez_code" column="mr_rez_code" />
+        <result property="name" column="name" />
+        <result property="position_name" column="position_name" />
+        <result property="dept_name" column="dept_name" />
+    </resultMap>
+
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
         <![CDATA[
         select * from MR m
@@ -156,6 +163,12 @@
                  left join MEM m on mr.MEM_CODE = m.MEM_CODE
                  left join DEPT d on m.DEPT_CODE = d.DEPT_CODE
         where MR_REZ_CODE = #{mr_rez_code}
+    </select>
+    <select id="mrRezPtGetAll" resultType="com.kosa.resq.domain.dto.mr.MrRezParticipantDTO">
+        select mp.MR_REZ_CODE,m.NAME,m.POSITION_NAME,d.DEPT_NAME
+        from MR_PT mp left join mem m on mp.MEM_CODE = m.MEM_CODE
+                      left join DEPT d on m.DEPT_CODE = d.DEPT_CODE
+        where MR_REZ_CODE=#{mr_rez_code}
     </select>
 
     <select id="mrRezRankGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">

@@ -52,6 +52,10 @@ public class MrAdminController {
     public MrRezForQRDTO mrRezGetOne(@PathVariable String mr_rez_code){
         return service.mrRezGetOne(mr_rez_code);
     }
+    @GetMapping("/mrRezPt/{mr_rez_code}")
+    public List<MrRezParticipantDTO> mrRezPtGetAll(@PathVariable String mr_rez_code){
+        return service.mrRezPtGetAll(mr_rez_code);
+    }
     @GetMapping("/mrRezRank")
     public List<MrRezDTO> mrRezRank(){
         return service.mrRezRankGetAll();

@@ -138,4 +138,9 @@ public class MrAdminServiceImpl implements MrAdminService {
         return mapper.mrRezGetOne(mr_rez_code);
     }
 
+    @Override
+    public List<MrRezParticipantDTO> mrRezPtGetAll(String mr_rez_code) {
+        return mapper.mrRezPtGetAll(mr_rez_code);
+    }
+
 }
