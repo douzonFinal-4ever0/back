@@ -115,12 +115,12 @@ public class MrAdminController {
                 service.mrAvailableDaySave(opDayDTO);
             }
         }
-//        if(!supplies.isEmpty()){
-//            for(MrSuppliesDTO suppliesDTO: supplies){
-//                suppliesDTO.setMr_code(mrCode);
-//                spService.mrSuppliesSave(suppliesDTO);
-//            }
-//        }
+        if(!supplies.isEmpty()){
+            for(MrSuppliesDTO suppliesDTO: supplies){
+                suppliesDTO.setMr_code(mrCode);
+                spService.mrSuppliesSave(suppliesDTO);
+            }
+        }
     }
 
     @PatchMapping("/mrUpdate")
@@ -176,6 +176,11 @@ public class MrAdminController {
     @DeleteMapping("/notice/delete/{notice_code}")
     public void noticeDelete(@PathVariable String notice_code) {
         service.noticeDelete(notice_code);
+    }
+
+    @PatchMapping("/notice/update")
+    public void  noticeUpdate(@RequestBody NoticeDTO notice){
+        service.noticeUpdate(notice);
     }
 
     @PostMapping("/mrImg")

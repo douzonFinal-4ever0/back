@@ -128,6 +128,7 @@
             left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
             left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
+                 left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
         order by m.mr_code
         ]]>
     </select>
@@ -249,6 +250,13 @@
         from NOTICE
         where NOTICE_CODE=#{notice_code}
     </delete>
+    <update id="noticeUpdate">
+        update NOTICE
+        set UPDATED_AT = localtimestamp,
+            CONTENTS = #{contents},
+            NOTICE_TITLE = #{notice_title}
+        where NOTICE_CODE=#{notice_code}
+    </update>
 
     <insert id="noticeSave">
         insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
@@ -334,7 +342,7 @@
             MR_TYPE=#{mr_type},
             LOCATION=#{location},
             MAXIMUM_CAPACITY=#{maximum_capacity},
-            IS_OPENED       = 1,
+            IS_OPENED       = #{is_opened},
             DELETED_AT = localtimestamp
         where MR_CODE = #{mr_code}
     </update>

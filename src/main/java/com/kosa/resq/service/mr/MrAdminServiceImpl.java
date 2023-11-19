@@ -143,4 +143,9 @@ public class MrAdminServiceImpl implements MrAdminService {
         return mapper.mrRezPtGetAll(mr_rez_code);
     }
 
+    @Override
+    public void noticeUpdate(NoticeDTO notice) {
+        mapper.noticeUpdate(notice);
+    }
+
 }
