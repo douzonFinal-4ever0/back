@@ -4,6 +4,8 @@ import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.*;
 import com.kosa.resq.domain.dto.mr.statistics.BmMrRequestDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.common.MemResquestVO;
 import com.kosa.resq.domain.vo.mr.*;
@@ -414,5 +416,10 @@ public class MrUserServiceImpl implements MrUserService {
     @Override
     public void bmMrSave(BmMrRequestDTO bmMrRequestDTO) {
         mapper.bmMrSave(bmMrRequestDTO.getMem_code(), bmMrRequestDTO.getMr_code());
+    }
+
+    @Override
+    public List<RezStatisticsDTO> mrRezCharTwo(String date) {
+        return mapper.mrRezCharTwo(date);
     }
 }

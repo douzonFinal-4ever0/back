@@ -2,6 +2,8 @@ package com.kosa.resq.mapper.mr;
 
 import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
 import com.kosa.resq.domain.dto.mr.statistics.BmMrRequestDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -55,4 +57,6 @@ public interface MrUserMapper {
     public List<MrResponseVO> recentMrGetFive(String mem_code);
 
     public void bmMrSave(String mem_code, String mr_code);
+
+    public List<RezStatisticsDTO> mrRezCharTwo(String date);
 }

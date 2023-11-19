@@ -622,6 +622,30 @@
         ]]>
     </select>
 
+
+    <select id="mrRezCharTwo" resultType="com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO">
+        <![CDATA[
+        WITH time_series AS (
+        SELECT
+        TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + (LEVEL - 1) * (30 / (24 * 60)) AS time_slot_start,
+        TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + LEVEL * (30 / (24 * 60)) AS time_slot_end
+        FROM dual
+        CONNECT BY TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + (LEVEL - 1) * (30 / (24 * 60)) < TO_DATE(#{date} || ' 18:00', 'YYYY-MM-DD HH24:MI')
+        )
+        SELECT
+        TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS') AS rez_time,
+        MR.mr_type,
+        COUNT(MR_REZ.mr_rez_code) AS REZ_CNT
+        FROM time_series
+        JOIN MR_REZ ON
+        time_series.time_slot_start >= MR_REZ.rez_start_time AND
+        time_series.time_slot_start < MR_REZ.rez_end_time
+                                      JOIN MR ON MR_REZ.mr_code = MR.mr_code
+                                      WHERE MR_REZ.DELETED_AT IS NULL
+                                      GROUP BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS'), MR.mr_type
+        ORDER BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS')
+        ]]>
+</select>
 </mapper>
 
 
