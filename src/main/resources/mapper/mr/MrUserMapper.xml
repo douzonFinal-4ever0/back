@@ -112,6 +112,7 @@
         <result property="created_at" column="created_at"/>
         <result property="updated_at" column="updated_at"/>
         <result property="deleted_at" column="deleted_at"/>
+        <collection property="mr" resultMap="mrMap"/>
     </resultMap>
 
     <resultMap id="mr_suppliesMap" type="com.kosa.resq.domain.dto.mr.MrSuppliesDTO">
@@ -153,12 +154,24 @@
         ]]>
     </select>
 
-    <select id="bmMrGetAll" parameterType="String" resultType="com.kosa.resq.domain.vo.mr.BmMrVO" resultMap="BmMrMap">
-        SELECT bm_mr_code, mem_code, mr_code, created_at, updated_at, deleted_at
+    <select id="bmMrGetAll" parameterType="String" resultMap="BmMrMap" resultType="com.kosa.resq.domain.vo.mr.BmMrVO">
+        SELECT
+            *
         FROM bm_mr
-        WHERE mem_code = #{mem_code}
-          AND deleted_at IS NULL
+        WHERE bm_mr.mem_code = #{mem_code}
     </select>
+
+    <insert id="bmMrSave">
+        <selectKey keyProperty="bm_mr_code" order="BEFORE"
+                   resultType="String">
+            select 'BMR' || LPAD(TO_CHAR(BM_MR_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO
+            BM_MR (BM_MR_CODE, MEM_CODE, MR_CODE, CREATED_AT, UPDATED_AT, DELETED_AT)
+        VALUES
+            (#{bm_mr_code}, #{mem_code}, #{mr_code}, localtimestamp, null, null)
+    </insert>
+
 
     <!--   예약페이지에서      -->
     <select id="recentMrRezGetAll" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
@@ -442,9 +455,7 @@
         ]]>
     </select>
 
-
-
-    <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
+    <select id="mrGetAllByBM" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
         <![CDATA[
         SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url,
                mop.op_day_code, mop.day, ms.supplies_code, s.supplies_name
@@ -454,37 +465,96 @@
                  LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
                  LEFT JOIN MR_SUPPLIES ms ON m.MR_CODE = ms.MR_CODE
                  LEFT JOIN SUPPLIES s ON ms.SUPPLIES_CODE = s.SUPPLIES_CODE
-            WHERE m.mr_code NOT IN (
-                SELECT DISTINCT mr_code
-                FROM mr_rez
-                WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
-                  AND (
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                    )
-                )
-              AND (
-                -- 여기에서 tot_pt_cnt와 maximum_capacity를 비교
-                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '소회의실')
-                    OR
-                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '중회의실')
-                    OR
-                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '대회의실')
-                )
-              AND m.is_opened = 0
+        WHERE m.mr_code=#{mr_code}
         ]]>
     </select>
+
+
+    <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
+    <![CDATA[
+        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url,
+               mop.op_day_code, mop.day, ms.supplies_code, s.supplies_name
+        FROM mr m
+                 LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
+                 LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+                 LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
+                 LEFT JOIN MR_SUPPLIES ms ON m.MR_CODE = ms.MR_CODE
+                 LEFT JOIN SUPPLIES s ON ms.SUPPLIES_CODE = s.SUPPLIES_CODE
+        WHERE m.mr_code NOT IN (
+            SELECT DISTINCT mr_code
+            FROM mr_rez
+            WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+              AND (
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                )
+              AND (
+                    (m.MR_CODE NOT IN (
+                        SELECT DISTINCT mr_code
+                        FROM mr_rez
+                        WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                          AND (
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                            )
+                          AND deleted_at IS NULL
+                    ))
+                    OR
+                    (m.MR_CODE IN (
+                        SELECT DISTINCT mr_code
+                        FROM mr_rez
+                        WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                          AND (
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                            )
+                          AND deleted_at IS NOT NULL
+                    ))
+                )
+        )
+          AND (
+                (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '소회의실')
+                OR
+                (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '중회의실')
+                OR
+                (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '대회의실')
+            )
+          AND m.is_opened = 0
+        ]]>
+</select>
 
 
     <select id="recentMrGetFive" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO">
@@ -552,6 +622,30 @@
         ]]>
     </select>
 
+
+    <select id="mrRezCharTwo" resultType="com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO">
+        <![CDATA[
+        WITH time_series AS (
+        SELECT
+        TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + (LEVEL - 1) * (30 / (24 * 60)) AS time_slot_start,
+        TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + LEVEL * (30 / (24 * 60)) AS time_slot_end
+        FROM dual
+        CONNECT BY TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + (LEVEL - 1) * (30 / (24 * 60)) < TO_DATE(#{date} || ' 18:00', 'YYYY-MM-DD HH24:MI')
+        )
+        SELECT
+        TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS') AS rez_time,
+        MR.mr_type,
+        COUNT(MR_REZ.mr_rez_code) AS REZ_CNT
+        FROM time_series
+        JOIN MR_REZ ON
+        time_series.time_slot_start >= MR_REZ.rez_start_time AND
+        time_series.time_slot_start < MR_REZ.rez_end_time
+                                      JOIN MR ON MR_REZ.mr_code = MR.mr_code
+                                      WHERE MR_REZ.DELETED_AT IS NULL
+                                      GROUP BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS'), MR.mr_type
+        ORDER BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS')
+        ]]>
+</select>
     <select id="mrRezCodeGetAll" resultType="String">
         select mr_rez_code from mr_rez where rez_status='완료'
     </select>
