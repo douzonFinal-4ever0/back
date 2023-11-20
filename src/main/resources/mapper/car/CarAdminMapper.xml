@@ -147,6 +147,16 @@
         <collection property="carDetailResponseVO" resultMap="carDetailMap"/>
     </resultMap>
 
+    <resultMap id="expenditureResultMap" type="com.kosa.resq.domain.dto.car.ExpenditureResponseDTO">
+        <id property="day_of_week" column="day_of_week"/>
+        <collection property="expenditureDTOS" resultMap="expenditureMap"/>
+    </resultMap>
+
+    <resultMap id="expenditureMap" type="com.kosa.resq.domain.vo.car.ExpenditureResponseVO">
+        <result property="ac_detail" column="ac_detail"/>
+        <result property="cost" column="cost"/>
+    </resultMap>
+
 
     <insert id="carSave" parameterType="com.kosa.resq.domain.vo.car.CarRequestVO">
         INSERT INTO car(car_code, car_name, type, fuel_type, authority, buy_at, memo, created_at, max_capacity)
@@ -505,7 +515,7 @@
 <!--    운행 차량 수-->
     <select id="getOperationCarCount" resultType="int">
         <![CDATA[
-        select count(count(*)) from operation o JOIN car_rez r ON o.car_rez_code=r.car_rez_code WHERE r.start_at > TO_DATE('2023-10-30') AND r.start_at < TO_DATE('2023-11-03') GROUP BY o.car_code
+        select count(count(*)) from operation o JOIN car_rez r ON o.car_rez_code=r.car_rez_code WHERE r.start_at > TO_DATE(#{sdate}) AND r.start_at < TO_DATE(#{edate}) GROUP BY o.car_code
         ]]>
     </select>
 
@@ -516,7 +526,7 @@
         FROM operation o
         JOIN car_rez r ON o.car_rez_code=r.car_rez_code
         JOIN car c ON c.car_code = o.car_code
-        WHERE r.start_at > TO_DATE('2023-10-30') AND r.start_at < TO_DATE('2023-11-03')
+        WHERE r.start_at > TO_DATE(#{sdate}) AND r.start_at < TO_DATE(#{edate})
         GROUP BY o.car_code, c.car_name
         ORDER BY COUNT(o.car_code) DESC
         FETCH FIRST 3 ROWS ONLY
@@ -528,7 +538,7 @@
         <![CDATA[
         SELECT SUM(distance)
             FROM operation o JOIN car_rez r ON o.car_rez_code=r.car_rez_code
-            WHERE r.start_at > TO_DATE('2023-10-30') AND r.start_at < TO_DATE('2023-11-03')
+            WHERE r.start_at > TO_DATE(#{sdate}) AND r.start_at < TO_DATE(#{edate})
         ]]>
     </select>
     
@@ -537,7 +547,7 @@
         SELECT TO_CHAR(r.start_at, 'D') as day_of_week,
                SUM(o.distance) AS distance, SUM(o.nomal_biz_mileage) AS nomal_biz_mileage, SUM(o.commute_mileage) AS commute_mileage
         FROM operation o JOIN car_rez r ON o.car_rez_code=r.car_rez_code
-        WHERE r.start_at > TO_DATE('2023-10-30') AND r.start_at < TO_DATE('2023-11-03')
+        WHERE r.start_at > TO_DATE(#{sdate}) AND r.start_at < TO_DATE(#{edate})
         GROUP BY
             TO_CHAR(r.start_at, 'D')
         ORDER BY
@@ -549,10 +559,107 @@
         <![CDATA[
         SELECT SUM(distance)
             FROM operation o JOIN car_rez r ON o.car_rez_code=r.car_rez_code
-            WHERE r.start_at > TO_DATE('2023-10-23') AND r.start_at < TO_DATE('2023-10-27')
+            WHERE r.start_at > TO_DATE(#{sdate}) AND r.start_at < TO_DATE(#{edate})
         ]]>
     </select>
 
+<!--    초과 정비 개수 가져오기-->
+    <select id="getOverMaint" parameterType="String" resultType="int">
+        <![CDATA[
+        SELECT COUNT(*) AS overCount FROM car_maint JOIN (
+            SELECT
+                m.maint_item_code,
+                CASE
+                    WHEN mr.mileage IS NOT NULL THEN (SELECT accum_mileage FROM car_detail WHERE car_code = #{car_code}) - mr.mileage
+                    ELSE (SELECT accum_mileage FROM car_detail WHERE car_code = #{car_code})
+                    END AS oper_mileage
+            FROM car_maint m
+                     LEFT JOIN
+                 (SELECT mr.*, ROW_NUMBER() OVER (PARTITION BY mr.maint_item_code ORDER BY mr.created_at DESC) AS row_num FROM maint_record mr JOIN car_detail c ON mr.car_code = c.car_code WHERE mr.car_code = #{car_code})
+                     mr ON mr.maint_item_code = m.maint_item_code AND mr.row_num = 1
+            WHERE
+                m.type = 1) a
+                 ON car_maint.maint_item_code=a.maint_item_code
+                 AND car_maint.cycle <= oper_mileage
+        ]]>
+    </select>
 
+<!--    주의 차량 개수-->
+    <select id="getCautionMaint" parameterType="String" resultType="int">
+        <![CDATA[
+        SELECT COUNT(*) AS cautionCount FROM car_maint JOIN (
+            SELECT
+                m.maint_item_code,
+                CASE
+                    WHEN mr.mileage IS NOT NULL THEN (SELECT accum_mileage FROM car_detail WHERE car_code = #{car_code}) - mr.mileage
+                    ELSE (SELECT accum_mileage FROM car_detail WHERE car_code = #{car_code})
+                    END AS oper_mileage
+            FROM car_maint m
+                     LEFT JOIN
+                 (SELECT mr.*, ROW_NUMBER() OVER (PARTITION BY mr.maint_item_code ORDER BY mr.created_at DESC) AS row_num FROM maint_record mr JOIN car_detail c ON mr.car_code = c.car_code WHERE mr.car_code = #{car_code})
+                     mr ON mr.maint_item_code = m.maint_item_code AND mr.row_num = 1
+            WHERE
+                m.type = 1) a
+            ON car_maint.maint_item_code=a.maint_item_code
+            WHERE (car_maint.cycle * 0.7) < oper_mileage
+        ]]>
+    </select>
+
+    <select id="getLocationStatistics" resultType="com.kosa.resq.domain.dto.car.LocationStatisticsDTO">
+    <![CDATA[
+        SELECT DISTINCT r.car_rez_code, latitude, longitude, address
+        FROM car_rez r JOIN car_loc l ON r.car_rez_code=l.car_rez_code
+        WHERE rez_status='5'
+        AND loc_type='목적지'
+        AND start_at >= TO_DATE(#{sdate}) AND start_at <= TO_DATE(#{edate})
+    ]]>
+    </select>
+
+<!--    총 운행 시간 통계-->
+    <select id="getOperTime" resultType="int">
+        <![CDATA[
+        SELECT
+        SUM((return_at - start_at) * 24) AS operhour
+        FROM
+        operation o
+        JOIN car_rez r ON r.car_rez_code = o.car_rez_code
+        WHERE
+        start_at >= TO_DATE(#{sdate}) AND start_at <= TO_DATE(#{edate})
+        ]]>
+    </select>
+    
+    <select id="getWorkinghour" resultType="int">
+        <![CDATA[
+            SELECT COUNT(COUNT(*)) * 40 AS totalhour  FROM mem JOIN operation ON mem.mem_code = operation.mem_code JOIN car_rez r ON operation.car_rez_code=r.car_rez_code
+            WHERE r.start_at >= TO_DATE(#{sdate}) AND r.start_at <= TO_DATE(#{edate})
+            GROUP BY mem.mem_code
+        ]]>
+    </select>
+
+<!--    총 지출-->
+    <select id="getTotalExpenditure" resultType="int">
+        <![CDATA[
+        SELECT sum(cost) FROM expenditure WHERE exp_at >= TO_DATE(#{sdate}) AND exp_at <= TO_DATE(#{edate})
+        ]]>
+    </select>
+
+    <select id="getExpenditure" resultType="com.kosa.resq.domain.dto.car.ExpenditureDTO">
+        <![CDATA[
+        SELECT ac_detail, SUM(cost) AS cost FROM expenditure WHERE exp_at >= TO_DATE(#{sdate}) AND exp_at <= TO_DATE(#{edate}) GROUP BY ac_detail
+        ]]>
+    </select>
+    
+    <select id="getExpenditurePattern" resultMap="expenditureResultMap">
+        <![CDATA[
+        SELECT TO_CHAR(exp_at, 'D') AS day_of_week,
+               ac_detail,
+               SUM(cost) AS cost
+        FROM expenditure
+        WHERE exp_at >= TO_DATE(#{sdate})
+          AND exp_at < TO_DATE(#{edate})
+        GROUP BY TO_CHAR(exp_at, 'D'), ac_detail
+        ORDER BY TO_CHAR(exp_at, 'D'), ac_detail
+        ]]>
+    </select>
 
 </mapper>
