@@ -59,4 +59,6 @@ public interface MrUserMapper {
     public void bmMrSave(String mem_code, String mr_code);
 
     public List<RezStatisticsDTO> mrRezCharTwo(String date);
+    public List<String> mrRezCodeGetAll();
+    public List<String> participantPerRez(String mr_rez_code);
 }

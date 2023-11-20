@@ -30,7 +30,8 @@ public class MrUserServiceImpl implements MrUserService {
 
     @Transactional
     @Override
-    public void mrRezSave(MrRezRequestDTO mrRezRequestDTO) {
+    public String mrRezSave(MrRezRequestDTO mrRezRequestDTO) {
+        String mr_rez_code="";
         try {
             // ************[Start] 예약 시작 시간, 종료 시간 String => Date 변환 *****************
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -95,9 +96,9 @@ public class MrUserServiceImpl implements MrUserService {
 
             // 회의실 예약 데이터 추가
             mapper.mrRezSave(mrRezRequestVO);
-
+            System.out.println("예약된 회의실 번호 :"+mrRezRequestVO.getMr_rez_code());
             // 위의 생성된 회의실 예약 코드 가져오기
-            String mr_rez_code = mrRezRequestVO.getMr_rez_code();
+            mr_rez_code = mrRezRequestVO.getMr_rez_code();
 
             // 회의 참석자 추가
             List<MemDTO> pt_list = mrRezRequestDTO.getMr_pt_list();
@@ -106,12 +107,16 @@ public class MrUserServiceImpl implements MrUserService {
                 mapper.mrPtSave(mr_rez_code, mem_code);
             }
 
+
         } catch (DuplicateReservationException e) {
             throw e; // 예외를 다시 throw하여 상위 메서드에 전파
         } catch(Exception e) {
             // 저장 실패 시 예외 처리
             e.printStackTrace();
+        } finally {
+            return mr_rez_code;
         }
+
     }
 
 
@@ -421,5 +426,20 @@ public class MrUserServiceImpl implements MrUserService {
     @Override
     public List<RezStatisticsDTO> mrRezCharTwo(String date) {
         return mapper.mrRezCharTwo(date);
+    }
+
+    @Override
+    public List<ParticipantPerRezVO> participantPerRezGetAll() {
+        List<String> allRezCode = mapper.mrRezCodeGetAll();
+        List<ParticipantPerRezVO> participantPerRezVOs = new ArrayList<>();
+        for(String mr_rez_code:allRezCode){
+            List<String> memCodes=mapper.participantPerRez(mr_rez_code);
+            if(memCodes.size()!=0){
+                ParticipantPerRezVO participantPerRezVO = new ParticipantPerRezVO(mr_rez_code,memCodes);
+                participantPerRezVOs.add(participantPerRezVO);
+            }
+
+        }
+        return participantPerRezVOs;
     }
 }

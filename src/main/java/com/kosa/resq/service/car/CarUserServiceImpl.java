@@ -5,8 +5,11 @@ import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
 import com.kosa.resq.domain.dto.car.*;
+import com.kosa.resq.domain.dto.common.AlertDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.domain.vo.common.AlertRequestVO;
+import com.kosa.resq.domain.vo.common.AlertResponseVO;
 import com.kosa.resq.mapper.car.CarUserMapper;
 import com.kosa.resq.service.S3UploadService;
 import org.json.JSONArray;
@@ -430,6 +433,24 @@ public class CarUserServiceImpl implements CarUserService{
             expCodes= new ArrayList<String>();
         }
         return true;
+    }
+
+    @Override
+    public int alarmSave(AlertDTO alertDTO) {
+        AlertRequestVO alertRequestVO = new AlertRequestVO(alertDTO.getMem_code(), alertDTO.getContents());
+        return mapper.alarmSave(alertRequestVO);
+    }
+
+    @Override
+    public List<AlertResponseVO> memAlarmGetAll(String mem_code) {
+
+        return mapper.memAlarmGetAll(mem_code);
+    }
+
+    @Override
+    public int alarmUpdate(String alert_code) {
+
+        return mapper.alarmUpdate(alert_code);
     }
 
 

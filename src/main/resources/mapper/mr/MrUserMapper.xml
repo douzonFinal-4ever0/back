@@ -646,6 +646,22 @@
         ORDER BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS')
         ]]>
 </select>
+    <select id="mrRezCodeGetAll" resultType="String">
+        select mr_rez_code from mr_rez where rez_status='완료'
+    </select>
+    <resultMap id="participantPerRezMap" type="com.kosa.resq.domain.vo.mr.ParticipantPerRezVO">
+        <id property="mr_rez_code" column="mr_rez_code"/>
+        <result property="mr_rez_code" column="mr_rez_code"/>
+        <collection property="mem_code_per_rez" resultMap="meetingParticipantMap"/>
+    </resultMap>
+    <resultMap id="meetingParticipantMap" type="com.kosa.resq.domain.vo.mr.MeetingParticipantVO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="mem_code" column="mem_code"/>
+    </resultMap>
+    <select id="participantPerRez">
+        select mem_code from mr_pt where mr_rez_code=#{mr_rez_code}
+    </select>
+
 </mapper>
 
 
