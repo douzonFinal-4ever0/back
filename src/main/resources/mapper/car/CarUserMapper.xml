@@ -279,11 +279,11 @@
         values (#{alert_code},#{mem_code},localtimestamp,#{is_read},#{contents})
     </insert>
     <select id="memAlarmGetAll">
-        select * from alert where  mem_code is null or mem_code in
-                            <foreach collection="mem_codes" item="mem_code" open="(" separator="," close=")">
-                                #{mem_code}
-                            </foreach>
-        order by ALERT_AT DESC
+        select * from alert where ALERT_AT >= localtimestamp - INTERVAL '7' DAY and (mem_code is null or mem_code in
+        <foreach collection="mem_codes" item="mem_code" open="(" separator="," close=")">#{mem_code}
+        </foreach>) or is_read=0
+        order by
+        ALERT_AT DESC
     </select>
     <update id="alarmUpdate">
         update alert set is_read=1 where alert_code=#{alert_code}
