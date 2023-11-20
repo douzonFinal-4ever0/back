@@ -8,11 +8,14 @@ import com.kosa.resq.service.AddressService;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Log
@@ -24,6 +27,11 @@ public class CarAdminServiceImpl implements CarAdminService{
 
     @Autowired
     private AddressService addressService;
+
+    public String toDateString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
 
 
     @Transactional
@@ -68,7 +76,11 @@ public class CarAdminServiceImpl implements CarAdminService{
         log.info(sdate);
 
         SearchCarVO searchCarVO = new SearchCarVO(sdate, edate, searchCar.getAuthority(), searchCar.getMax_capacity(), searchCar.getSdistance(), searchCar.getEdistance());
-        return carAdminMapper.carGetAll(searchCarVO);
+        List<CarListResponseVO> carListResponseVOS = carAdminMapper.carGetAll(searchCarVO);
+        for(CarListResponseVO item : carListResponseVOS) {
+            item.setOverMaintCount(carAdminMapper.getOverMaint(item.getCar_code()));
+        }
+        return carListResponseVOS;
     }
 
 
@@ -170,9 +182,8 @@ public class CarAdminServiceImpl implements CarAdminService{
 
     @Override
     public List<OperationResponseVO> operationGetAll(SearchOperation searchOperation) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String sdate = sdf.format(searchOperation.getOperation_sdate());
-        String edate = sdf.format(searchOperation.getOperation_edate());
+        String sdate = toDateString(searchOperation.getOperation_sdate());
+        String edate = toDateString(searchOperation.getOperation_edate());
         SearchOperationVO searchOperationVO = new SearchOperationVO(sdate, edate, searchOperation.getCar_type(), searchOperation.getDept_name(), searchOperation.getSdistance(), searchOperation.getEdistance());
         log.info(searchOperationVO.toString());
         return carAdminMapper.operationGetAll(searchOperationVO);
@@ -190,9 +201,8 @@ public class CarAdminServiceImpl implements CarAdminService{
 
     @Override
     public List<OperationResponseVO> operationGetOne(String car_code, Date originSdate, Date originEdate) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String sdate = sdf.format(originSdate);
-        String edate = sdf.format(originEdate);
+        String sdate = toDateString(originSdate);
+        String edate = toDateString(originEdate);
         return carAdminMapper.operationGetOne(car_code, sdate, edate);
     }
 
@@ -225,21 +235,112 @@ public class CarAdminServiceImpl implements CarAdminService{
     }
 
     @Override
-    public CarStatisticsDTO getCarStatistics() {
+    public CarStatisticsDTO getCarStatistics(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
         CarStatisticsDTO carStatisticsDTO = new CarStatisticsDTO();
         carStatisticsDTO.setTotalCount(carAdminMapper.getTotalCarCount());
-        carStatisticsDTO.setOperationCarCount(carAdminMapper.getOperationCarCount("", ""));
-        carStatisticsDTO.setMaxOperCar(carAdminMapper.getMaxOperCar("", ""));
+        carStatisticsDTO.setOperationCarCount(carAdminMapper.getOperationCarCount(sdate, edate));
+        carStatisticsDTO.setMaxOperCar(carAdminMapper.getMaxOperCar(sdate, edate));
         return carStatisticsDTO;
     }
 
     @Override
-    public OperationStatisticsDTO getOperationStatistics() {
+    public OperationStatisticsDTO getOperationStatistics(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
         OperationStatisticsDTO operationStatisticsDTO = new OperationStatisticsDTO();
-        operationStatisticsDTO.setTotalDistance(carAdminMapper.getTotalOperation());
-        operationStatisticsDTO.setLastTotalDistance(carAdminMapper.getLastTotalOperation());
-        operationStatisticsDTO.setWeekOfOperationVOList(carAdminMapper.weekOfOperation());
+        operationStatisticsDTO.setTotalDistance(carAdminMapper.getTotalOperation(sdate, edate));
+        operationStatisticsDTO.setLastTotalDistance(carAdminMapper.getLastTotalOperation(sdate, edate));
+        operationStatisticsDTO.setWeekOfOperationVOList(carAdminMapper.weekOfOperation(sdate, edate));
         return operationStatisticsDTO;
+    }
+
+    @Transactional
+    @Override
+    public List<MaintStatisticsDTO> getMaintStatistics(SearchStatistics searchStatistics) {
+        List<CarVO> carList = carAdminMapper.carListGetAll();
+        List<MaintStatisticsDTO> maintStatisticsDTOList = new ArrayList<>();
+        for(CarVO car : carList) {
+            int count = carAdminMapper.getOverMaint(car.getCar_code());
+            // 초과 차량 - 1
+            if(count > 0) {
+                maintStatisticsDTOList.add(new MaintStatisticsDTO(1, car.getCar_code(), car.getCar_name(), count));
+            } else {
+                int cautionCount = carAdminMapper.getCautionMaint(car.getCar_code());
+                if(cautionCount > 0) {
+                    maintStatisticsDTOList.add(new MaintStatisticsDTO(2, car.getCar_code(), car.getCar_name(), cautionCount));
+                }
+            }
+
+        }
+
+        log.info(maintStatisticsDTOList.toString());
+        return maintStatisticsDTOList;
+    }
+
+    @Override
+    public List<LocationStatisticsDTO> getLocationStatistics(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
+        return carAdminMapper.getLocationStatistics(sdate, edate);
+    }
+
+    @Override
+    public OperTimeStatisticsDTO getOperTime(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
+        int operTime = carAdminMapper.getOperTime(sdate, edate);
+        int workTime = carAdminMapper.getWorkinghour(sdate, edate);
+
+        OperTimeStatisticsDTO operTimeStatisticsDTO = new OperTimeStatisticsDTO();
+        operTimeStatisticsDTO.setPercent((float) operTime / workTime);
+        operTimeStatisticsDTO.setTotalOperTime(operTime);
+
+        return operTimeStatisticsDTO;
+    }
+
+    @Override
+    public ExpenditureStatisticsDTO getExpenditureStatistics(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
+
+        ExpenditureStatisticsDTO expenditureDTO = new ExpenditureStatisticsDTO();
+        expenditureDTO.setTotal(carAdminMapper.getTotalExpenditure(sdate, edate));
+        expenditureDTO.setExpenditureDTOS(carAdminMapper.getExpenditure(sdate, edate));
+        return expenditureDTO;
+    }
+
+    @Override
+    public List<ExpenditureResponseDTO> getExpenditurePattern(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
+        return carAdminMapper.getExpenditurePattern(sdate, edate);
+    }
+
+    @Override
+    public Integer getExpenditureDiff(SearchStatistics searchStatistics) {
+        String sdate = toDateString(searchStatistics.getSdate());
+        String edate = toDateString(searchStatistics.getEdate());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(searchStatistics.getSdate());
+
+        // 1주일을 빼줍니다.
+        calendar.add(Calendar.DATE, -7);
+        Date agoSdate = new Date(calendar.getTimeInMillis());
+        // 새로운 날짜를 가져옵니다.
+        calendar.add(Calendar.DATE, 6);
+        Date agoEdate = new Date(calendar.getTimeInMillis());
+
+        String sdate2 = toDateString(agoSdate);
+        String edate2 = toDateString(agoEdate);
+
+        log.info(sdate +  edate +  sdate2 +  edate2);
+
+        int total1 = carAdminMapper.getTotalExpenditure(sdate, edate);
+        int total2 = carAdminMapper.getTotalExpenditure(sdate2, edate2);
+        return total1 - total2;
     }
 
 
