@@ -34,5 +34,7 @@ public interface MrAdminMapper {
     public void mrCheckIn(String mr_code);
     public void mrCheckOut(String mr_code);
     public MrRezForQRDTO mrRezGetOne(String mr_rez_code);
+    public List<MrRezParticipantDTO> mrRezPtGetAll(String mr_rez_code);
+    public void noticeUpdate(NoticeDTO notice);
 
 }

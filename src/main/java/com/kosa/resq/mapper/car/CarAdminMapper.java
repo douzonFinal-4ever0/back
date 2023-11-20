@@ -1,12 +1,11 @@
 package com.kosa.resq.mapper.car;
 
-import com.kosa.resq.domain.dto.car.CarDetailDTO;
-import com.kosa.resq.domain.dto.car.SearchOperation;
-import com.kosa.resq.domain.dto.car.SearchRez;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import org.apache.ibatis.annotations.Mapper;
 
+import javax.xml.stream.Location;
 import java.util.List;
 
 @Mapper
@@ -64,10 +63,21 @@ public interface CarAdminMapper {
     void maintImageSave(String maint_code, String url);
 
     int getTotalCarCount();
-    int getOperationCarCount(String sdate, String edata);
+    int getOperationCarCount(String sdate, String edate);
     List<CarStatisticsVO> getMaxOperCar(String sdate, String edate);
 //    운행 관련 통계
-    int getTotalOperation();
-    List<WeekOfOperationVO> weekOfOperation();
-    int getLastTotalOperation();
+    int getTotalOperation(String sdate, String edate);
+    List<WeekOfOperationVO> weekOfOperation(String sdate, String edate);
+    int getLastTotalOperation(String sdate, String edate);
+    int getOverMaint(String car_code);
+    int getCautionMaint(String car_code);
+    List<LocationStatisticsDTO> getLocationStatistics(String sdate, String edate);
+
+    int getOperTime(String sdate, String edate);
+    int getWorkinghour(String sdate, String edate);
+
+    int getTotalExpenditure(String sdate, String edate);
+    List<ExpenditureDTO> getExpenditure(String sdate, String edate);
+
+    List<ExpenditureResponseDTO> getExpenditurePattern(String sdate, String edate);
 }

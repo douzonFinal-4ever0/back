@@ -23,5 +23,6 @@ public class CarListResponseVO {
     private String position_name;
     private String name;
     private String dept_name;
+    private int overMaintCount;
 
 }

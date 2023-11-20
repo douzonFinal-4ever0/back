@@ -2,6 +2,9 @@ package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.common.MemResponseDTO;
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.BmMrRequestDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.BmMrVO;
 import com.kosa.resq.domain.vo.mr.MrResponseVO;
@@ -126,12 +129,26 @@ public class MrUserController {
         return  new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/bm") // 즐겨찾기 회의실 등록
+    public ResponseEntity<String> bmMrSave(@RequestBody BmMrRequestDTO bmMrRequestDTO) {
+        log.info("==================즐겨찾기 회의실  등록한다=================");
+        log.info(bmMrRequestDTO);
+        service.bmMrSave(bmMrRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+    }
+
 
     @GetMapping("/statistics") // 대시보드 회의실 통계
-    public ResponseEntity<List<MrRezResponseVO>> mrRezGetAll(@RequestParam("date") String date) throws ParseException {
+    public ResponseEntity<List<RezStatisticsDTO>> mrRezGetAll(@RequestParam("date") String date) throws ParseException {
         log.info("**************** 회의실 통계 ****************");
-        List<MrRezResponseVO> result =  service.mrRezGetAllByDate(date);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        log.info(date);
+        // 1. 회의실 전체 예약 현황 카운트 (시간대별)
+        List<RezStatisticsDTO> result = service.mrRezCharTwo(date);
+
+//        List<MrRezResponseVO> result =  service.mrRezGetAllByDate(date);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+//        return null;
     }
 
     @GetMapping("/participantPerRez")
