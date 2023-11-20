@@ -442,15 +442,27 @@ public class CarUserServiceImpl implements CarUserService{
     }
 
     @Override
-    public List<AlertResponseVO> memAlarmGetAll(String mem_code) {
+    public List<AlertResponseVO> memAlarmGetAll(List<String> mem_codes) {
 
-        return mapper.memAlarmGetAll(mem_code);
+        return mapper.memAlarmGetAll(mem_codes);
+//        return null;
     }
 
     @Override
     public int alarmUpdate(String alert_code) {
 
         return mapper.alarmUpdate(alert_code);
+    }
+
+    @Override
+    public int announcementSave(AlertDTO alertDTO) {
+        AlertRequestVO alertRequestVO = new AlertRequestVO(alertDTO.getContents());
+        return mapper.announcementSave(alertRequestVO);
+    }
+
+    @Override
+    public List<AlertResponseVO> announcementGetAll() {
+        return mapper.announcementGetAll();
     }
 
 

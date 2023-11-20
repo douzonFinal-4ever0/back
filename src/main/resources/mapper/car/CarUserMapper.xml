@@ -279,9 +279,26 @@
         values (#{alert_code},#{mem_code},localtimestamp,#{is_read},#{contents})
     </insert>
     <select id="memAlarmGetAll">
-        select * from alert where mem_code=#{mem_code}
+        select * from alert where  mem_code is null or mem_code in
+                            <foreach collection="mem_codes" item="mem_code" open="(" separator="," close=")">
+                                #{mem_code}
+                            </foreach>
+        order by ALERT_AT DESC
     </select>
     <update id="alarmUpdate">
         update alert set is_read=1 where alert_code=#{alert_code}
     </update>
+    <insert id="announcementSave">
+        -- 0이면 안읽은거 1이면 읽은거
+        <selectKey keyProperty="alert_code" order="BEFORE" resultType="String">
+            select 'ALE'||alert_seq.nextval from dual
+        </selectKey>
+        insert into alert (alert_code,mem_code,alert_at,is_read,contents)
+        values (#{alert_code},null,localtimestamp,#{is_read},#{contents})
+    </insert>
+    <select id="announcementGetAll">
+--         select * from alert where CONTENTS LIKE '%전체%'
+        select * from alert
+        order by ALERT_AT DESC
+    </select>
 </mapper>

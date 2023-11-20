@@ -32,6 +32,8 @@ public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, Str
     public int selectedCarUpdate(String car_code);
     public boolean receiptImgSave(MultipartFile[] images);
     public int alarmSave(AlertDTO alertDTO);
-    public List<AlertResponseVO>memAlarmGetAll(String mem_code);
+    public List<AlertResponseVO>memAlarmGetAll(List<String> mem_codes);
     public int alarmUpdate(String alert_code);
+    public int announcementSave(AlertDTO alertDTO);
+    public List<AlertResponseVO> announcementGetAll();
 }

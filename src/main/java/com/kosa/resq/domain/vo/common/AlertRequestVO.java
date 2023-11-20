@@ -22,4 +22,11 @@ public class AlertRequestVO {
         this.is_read=0;
         this.contents=contents;
     }
+    public AlertRequestVO(String contents){
+        this.alert_at=null;
+        this.mem_code=null;
+        this.alert_at=null;
+        this.is_read=0;
+        this.contents=contents;
+    }
 }
