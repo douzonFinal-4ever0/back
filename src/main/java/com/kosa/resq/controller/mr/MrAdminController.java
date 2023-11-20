@@ -52,6 +52,10 @@ public class MrAdminController {
     public MrRezForQRDTO mrRezGetOne(@PathVariable String mr_rez_code){
         return service.mrRezGetOne(mr_rez_code);
     }
+    @GetMapping("/mrRezPt/{mr_rez_code}")
+    public List<MrRezParticipantDTO> mrRezPtGetAll(@PathVariable String mr_rez_code){
+        return service.mrRezPtGetAll(mr_rez_code);
+    }
     @GetMapping("/mrRezRank")
     public List<MrRezDTO> mrRezRank(){
         return service.mrRezRankGetAll();
@@ -111,12 +115,12 @@ public class MrAdminController {
                 service.mrAvailableDaySave(opDayDTO);
             }
         }
-//        if(!supplies.isEmpty()){
-//            for(MrSuppliesDTO suppliesDTO: supplies){
-//                suppliesDTO.setMr_code(mrCode);
-//                spService.mrSuppliesSave(suppliesDTO);
-//            }
-//        }
+        if(!supplies.isEmpty()){
+            for(MrSuppliesDTO suppliesDTO: supplies){
+                suppliesDTO.setMr_code(mrCode);
+                spService.mrSuppliesSave(suppliesDTO);
+            }
+        }
     }
 
     @PatchMapping("/mrUpdate")
@@ -172,6 +176,11 @@ public class MrAdminController {
     @DeleteMapping("/notice/delete/{notice_code}")
     public void noticeDelete(@PathVariable String notice_code) {
         service.noticeDelete(notice_code);
+    }
+
+    @PatchMapping("/notice/update")
+    public void  noticeUpdate(@RequestBody NoticeDTO notice){
+        service.noticeUpdate(notice);
     }
 
     @PostMapping("/mrImg")

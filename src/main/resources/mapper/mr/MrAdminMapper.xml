@@ -114,6 +114,13 @@
         <result property="dept_name" column="dept_name" />
     </resultMap>
 
+    <resultMap id="mrRezParticipantMap" type="com.kosa.resq.domain.dto.mr.MrRezParticipantDTO">
+        <id property="mr_rez_code" column="mr_rez_code" />
+        <result property="name" column="name" />
+        <result property="position_name" column="position_name" />
+        <result property="dept_name" column="dept_name" />
+    </resultMap>
+
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
         <![CDATA[
         select * from MR m
@@ -121,6 +128,7 @@
             left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
             left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
+                 left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
         order by m.mr_code
         ]]>
     </select>
@@ -156,6 +164,12 @@
                  left join MEM m on mr.MEM_CODE = m.MEM_CODE
                  left join DEPT d on m.DEPT_CODE = d.DEPT_CODE
         where MR_REZ_CODE = #{mr_rez_code}
+    </select>
+    <select id="mrRezPtGetAll" resultType="com.kosa.resq.domain.dto.mr.MrRezParticipantDTO">
+        select mp.MR_REZ_CODE,m.NAME,m.POSITION_NAME,d.DEPT_NAME
+        from MR_PT mp left join mem m on mp.MEM_CODE = m.MEM_CODE
+                      left join DEPT d on m.DEPT_CODE = d.DEPT_CODE
+        where MR_REZ_CODE=#{mr_rez_code}
     </select>
 
     <select id="mrRezRankGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
@@ -236,6 +250,13 @@
         from NOTICE
         where NOTICE_CODE=#{notice_code}
     </delete>
+    <update id="noticeUpdate">
+        update NOTICE
+        set UPDATED_AT = localtimestamp,
+            CONTENTS = #{contents},
+            NOTICE_TITLE = #{notice_title}
+        where NOTICE_CODE=#{notice_code}
+    </update>
 
     <insert id="noticeSave">
         insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
@@ -321,7 +342,7 @@
             MR_TYPE=#{mr_type},
             LOCATION=#{location},
             MAXIMUM_CAPACITY=#{maximum_capacity},
-            IS_OPENED       = 1,
+            IS_OPENED       = #{is_opened},
             DELETED_AT = localtimestamp
         where MR_CODE = #{mr_code}
     </update>
