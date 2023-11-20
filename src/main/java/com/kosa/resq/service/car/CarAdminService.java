@@ -40,9 +40,23 @@ public interface CarAdminService {
     List<String> isExistOperation();
 
 //    CarStatisticsDTO getCarStatistics(Date sdate, Date edate);
-    CarStatisticsDTO getCarStatistics();
+    CarStatisticsDTO getCarStatistics(SearchStatistics searchStatistics);
 
-//    운행 통계
-    OperationStatisticsDTO getOperationStatistics();
+    OperationStatisticsDTO getOperationStatistics(SearchStatistics searchStatistics);
+
+//    정비가 급한 차량 가져오기
+    List<MaintStatisticsDTO> getMaintStatistics(SearchStatistics searchStatistics);
+
+    // 위치 패턴
+    List<LocationStatisticsDTO> getLocationStatistics(SearchStatistics searchStatistics);
+
+    // 운행시간
+    OperTimeStatisticsDTO getOperTime(SearchStatistics searchStatistics);
+
+    ExpenditureStatisticsDTO getExpenditureStatistics(SearchStatistics searchStatistics);
+
+    List<ExpenditureResponseDTO> getExpenditurePattern(SearchStatistics searchStatistics);
+
+    Integer getExpenditureDiff(SearchStatistics searchStatistics);
 
 }
