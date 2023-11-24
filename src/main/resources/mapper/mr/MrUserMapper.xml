@@ -20,6 +20,7 @@
         <collection property="mr_keyword" resultMap="mr_keywordMap"/>
         <collection property="mr_img" resultMap="mr_imgMap"/>
         <collection property="mr_op_day" resultMap="mr_op_dayMap"/>
+        <collection property="mr_supplies" resultMap="mr_suppliesMap" />
     </resultMap>
 
     <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.vo.mr.MrKeywordResponseVO">
@@ -111,7 +112,35 @@
         <result property="created_at" column="created_at"/>
         <result property="updated_at" column="updated_at"/>
         <result property="deleted_at" column="deleted_at"/>
+        <collection property="mr" resultMap="mrMap"/>
     </resultMap>
+
+    <resultMap id="mr_suppliesMap" type="com.kosa.resq.domain.dto.mr.MrSuppliesDTO">
+        <id property="supplies_code" column="supplies_code"/>
+        <id property="mr_code" column="mr_code"/>
+        <result property="amount" column="amount"/>
+        <collection property="supplies" resultMap="suppliesMap"/>
+    </resultMap>
+
+    <resultMap id="suppliesMap" type="com.kosa.resq.domain.dto.mr.SuppliesDTO">
+        <id property="supplies_code" column="supplies_code"/>
+        <result property="supplies_name" column="supplies_name"/>
+        <result property="stock_amount" column="stock_amount"/>
+        <result property="unit" column="unit"/>
+        <result property="type" column="type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+    </resultMap>
+
+    <select id="mrRezGetAllByDate" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO" resultMap="mr_rezMap" >
+        SELECT
+            mr_rez.*,
+            mr.mr_type
+        FROM mr_rez
+                 JOIN mr ON mr_rez.mr_code = mr.mr_code
+        WHERE TRUNC(mr_rez.rez_start_time) = TRUNC(TO_DATE(#{rez_start_time}, 'YYYY-MM-DD'))
+    </select>
 
     <select id="getReservationsForMeetingRoom" resultType="com.kosa.resq.domain.vo.mr.MrRezRequestVO">
          <![CDATA[
@@ -125,22 +154,78 @@
         ]]>
     </select>
 
-    <select id="bmMrGetAll" parameterType="String" resultType="com.kosa.resq.domain.vo.mr.BmMrVO" resultMap="BmMrMap">
-        SELECT bm_mr_code, mem_code, mr_code, created_at, updated_at, deleted_at
+    <select id="bmMrGetAll" parameterType="String" resultMap="BmMrMap" resultType="com.kosa.resq.domain.vo.mr.BmMrVO">
+        SELECT
+            *
         FROM bm_mr
-        WHERE mem_code = #{mem_code}
-          AND deleted_at IS NULL
+        WHERE bm_mr.mem_code = #{mem_code}
     </select>
 
+    <insert id="bmMrSave">
+        <selectKey keyProperty="bm_mr_code" order="BEFORE"
+                   resultType="String">
+            select 'BMR' || LPAD(TO_CHAR(BM_MR_SEQ.NEXTVAL), 3, '0') from dual
+        </selectKey>
+        INSERT INTO
+            BM_MR (BM_MR_CODE, MEM_CODE, MR_CODE, CREATED_AT, UPDATED_AT, DELETED_AT)
+        VALUES
+            (#{bm_mr_code}, #{mem_code}, #{mr_code}, localtimestamp, null, null)
+    </insert>
+
+
+    <!--   예약페이지에서      -->
     <select id="recentMrRezGetAll" resultType="com.kosa.resq.domain.vo.mr.MrRezResponseVO"  resultMap="mr_rezMap">
        <![CDATA[
-        SELECT m_name
-        FROM MR_REZ
-        WHERE MEM_CODE = #{mem_code}
-          AND CREATED_AT >= ADD_MONTHS(TRUNC(SYSDATE), -3)
-          AND m_name IS NOT NULL
-          AND ROWNUM <= 5
-        ORDER BY CREATED_AT DESC
+        SELECT
+            r.mr_rez_code,
+            r.mem_code,
+            r.rez_start_time,
+            r.rez_end_time,
+            r.created_at,
+            r.updated_at,
+            r.deleted_at,
+            r.rez_status,
+            r.m_name,
+            r.m_type,
+            r.is_confirmed,
+            r.rez_type,
+            m.mr_code,
+            m.mr_name,
+            m.maximum_capacity,
+            m.location,
+            p.mr_pt_code,
+            p.mem_code,
+            mem.mem_code AS pt_mem_code,
+            mem.position_name,
+            mem.name,
+            mem.email,
+            mem.profile_img_url,
+            dept.dept_code,
+            dept.dept_name,
+            mi.img_code,
+            mi.url,
+            mop.op_day_code,
+            mop.day,
+            mk.keyword_code,
+            mk.keyword_name
+        FROM (
+                 SELECT *
+                 FROM (
+                          SELECT *
+                          FROM MR_REZ
+                          WHERE mem_code = #{mem_code} AND deleted_at IS NULL
+                          ORDER BY created_at DESC
+                      )
+                 WHERE ROWNUM <= 10
+             ) r
+                 JOIN MR m ON r.mr_code = m.mr_code
+                 LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
+                 LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
+                 LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code AND p.deleted_at IS NULL
+                 LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
+                 LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
+        WHERE r.deleted_at IS NULL
         ]]>
     </select>
 
@@ -283,7 +368,7 @@
     </insert>
 
     <update id="mrPtDelete">
-        update /*+ NO_PARALLEL(mr_pt) */ mr_pt
+        update  mr_pt
         set deleted_at=localtimestamp
         where mem_code=#{mem_code} AND mr_rez_code=#{mr_rez_code}
     </update>
@@ -370,59 +455,159 @@
         ]]>
     </select>
 
-
-
-    <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
+    <select id="mrGetAllByBM" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
         <![CDATA[
-        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url, mop.op_day_code, mop.day
+        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url,
+               mop.op_day_code, mop.day, ms.supplies_code, s.supplies_name
         FROM mr m
                  LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
                  LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
                  LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
-            WHERE m.mr_code NOT IN (
-                SELECT DISTINCT mr_code
-                FROM mr_rez
-                WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
-                  AND (
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                        OR
-                        (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
-                         TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
-                    )
-                )
-              AND (
-                -- 여기에서 tot_pt_cnt와 maximum_capacity를 비교
-                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '소회의실')
-                    OR
-                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '중회의실')
-                    OR
-                    (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '대회의실')
-                )
+                 LEFT JOIN MR_SUPPLIES ms ON m.MR_CODE = ms.MR_CODE
+                 LEFT JOIN SUPPLIES s ON ms.SUPPLIES_CODE = s.SUPPLIES_CODE
+        WHERE m.mr_code=#{mr_code}
         ]]>
     </select>
 
 
-    <select id="recentMrGetFive" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO">
-        <![CDATA[ SELECT m.mr_code, m.mr_name, m.maximum_capacity, m.location, m.avl_start_time, m.avl_end_time, m.is_opened, m.is_used, m.mr_type, m.created_at, m.updated_at, m.deleted_at, mk.keyword_code, mk.keyword_name
-        FROM MR m
-        LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
-        WHERE m.mr_code IN (
-        SELECT DISTINCT r.mr_code
-        FROM (
-        SELECT * FROM MR_REZ WHERE MEM_CODE = #{MEM_CODE} ORDER BY REZ_START_TIME DESC
-        ) r
-        WHERE ROWNUM <= 5
+    <select id="mrRecommendGetAll" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO" resultMap="mrMap">
+    <![CDATA[
+        SELECT m.*, mk.keyword_code, mk.keyword_name, mi.img_code, mi.url,
+               mop.op_day_code, mop.day, ms.supplies_code, s.supplies_name
+        FROM mr m
+                 LEFT JOIN MR_IMG mi ON m.MR_CODE = mi.MR_CODE
+                 LEFT JOIN MR_OP_DAY mop ON m.MR_CODE = mop.MR_CODE
+                 LEFT JOIN MR_KEYWORD mk ON m.MR_CODE = mk.MR_CODE
+                 LEFT JOIN MR_SUPPLIES ms ON m.MR_CODE = ms.MR_CODE
+                 LEFT JOIN SUPPLIES s ON ms.SUPPLIES_CODE = s.SUPPLIES_CODE
+        WHERE m.mr_code NOT IN (
+            SELECT DISTINCT mr_code
+            FROM mr_rez
+            WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+              AND (
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                    OR
+                    (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                     TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                )
+              AND (
+                    (m.MR_CODE NOT IN (
+                        SELECT DISTINCT mr_code
+                        FROM mr_rez
+                        WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                          AND (
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                            )
+                          AND deleted_at IS NULL
+                    ))
+                    OR
+                    (m.MR_CODE IN (
+                        SELECT DISTINCT mr_code
+                        FROM mr_rez
+                        WHERE TO_DATE(TO_CHAR(rez_start_time, 'YYYY-MM-DD'), 'YYYY-MM-DD') = TO_DATE(#{rez_date}, 'YYYY-MM-DD')
+                          AND (
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') > TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') < TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                                OR
+                                (TO_TIMESTAMP(TO_CHAR(rez_start_time, 'HH24:MI'), 'HH24:MI') >= TO_TIMESTAMP(#{rez_start_time}, 'HH24:MI') AND
+                                 TO_TIMESTAMP(TO_CHAR(rez_end_time, 'HH24:MI'), 'HH24:MI') <= TO_TIMESTAMP(#{rez_end_time}, 'HH24:MI'))
+                            )
+                          AND deleted_at IS NOT NULL
+                    ))
+                )
         )
+          AND (
+                (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '소회의실')
+                OR
+                (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '중회의실')
+                OR
+                (#{tot_pt_ctn} <= m.maximum_capacity AND m.mr_type = '대회의실')
+            )
+          AND m.is_opened = 0
         ]]>
+</select>
+
+
+    <select id="recentMrGetFive" resultType="com.kosa.resq.domain.vo.mr.MrResponseVO">
+        <![CDATA[
+        SELECT
+            r.mr_rez_code,
+            r.mem_code,
+            r.rez_start_time,
+            r.rez_end_time,
+            r.created_at,
+            r.updated_at,
+            r.deleted_at,
+            r.rez_status,
+            r.m_name,
+            r.m_type,
+            r.is_confirmed,
+            r.rez_type,
+            m.mr_code,
+            m.mr_name,
+            m.maximum_capacity,
+            m.location,
+            p.mr_pt_code,
+            p.mem_code,
+            mem.mem_code AS pt_mem_code,
+            mem.position_name,
+            mem.name,
+            mem.email,
+            mem.profile_img_url,
+            dept.dept_code,
+            dept.dept_name,
+            mi.img_code,
+            mi.url,
+            mop.op_day_code,
+            mop.day,
+            mk.keyword_code,
+            mk.keyword_name
+        FROM (
+                 SELECT * FROM MR_REZ
+                 WHERE mem_code = #{mem_code}
+                 ORDER BY created_at DESC
+             ) r
+                 JOIN MR m ON r.mr_code = m.mr_code
+                 LEFT JOIN MR_IMG mi ON m.mr_code = mi.mr_code
+                 LEFT JOIN MR_OP_DAY mop ON m.mr_code = mop.mr_code
+                 LEFT JOIN MR_KEYWORD mk ON m.mr_code = mk.mr_code
+                 LEFT JOIN MR_PT p ON r.mr_rez_code = p.mr_rez_code
+                 LEFT JOIN MEM mem ON p.mem_code = mem.mem_code
+                 LEFT JOIN DEPT dept ON mem.dept_code = dept.dept_code
+        WHERE ROWNUM <= 10
+          AND r.deleted_at IS NULL
+          AND p.deleted_at IS NULL
+        ]]>
+
     </select>
 
 
@@ -435,6 +620,46 @@
                  JOIN DEPT D ON M.dept_code = D.dept_code
         WHERE BMG.mem_code = #{mem_code}
         ]]>
+    </select>
+
+
+    <select id="mrRezCharTwo" resultType="com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO">
+        <![CDATA[
+        WITH time_series AS (
+        SELECT
+        TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + (LEVEL - 1) * (30 / (24 * 60)) AS time_slot_start,
+        TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + LEVEL * (30 / (24 * 60)) AS time_slot_end
+        FROM dual
+        CONNECT BY TO_DATE(#{date} || ' 09:00', 'YYYY-MM-DD HH24:MI') + (LEVEL - 1) * (30 / (24 * 60)) < TO_DATE(#{date} || ' 18:00', 'YYYY-MM-DD HH24:MI')
+        )
+        SELECT
+        TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS') AS rez_time,
+        MR.mr_type,
+        COUNT(MR_REZ.mr_rez_code) AS REZ_CNT
+        FROM time_series
+        JOIN MR_REZ ON
+        time_series.time_slot_start >= MR_REZ.rez_start_time AND
+        time_series.time_slot_start < MR_REZ.rez_end_time
+                                      JOIN MR ON MR_REZ.mr_code = MR.mr_code
+                                      WHERE MR_REZ.DELETED_AT IS NULL
+                                      GROUP BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS'), MR.mr_type
+        ORDER BY TO_CHAR(time_series.time_slot_start, 'YYYY-MM-DD HH24:MI:SS')
+        ]]>
+</select>
+    <select id="mrRezCodeGetAll" resultType="String">
+        select mr_rez_code from mr_rez where rez_status='완료'
+    </select>
+    <resultMap id="participantPerRezMap" type="com.kosa.resq.domain.vo.mr.ParticipantPerRezVO">
+        <id property="mr_rez_code" column="mr_rez_code"/>
+        <result property="mr_rez_code" column="mr_rez_code"/>
+        <collection property="mem_code_per_rez" resultMap="meetingParticipantMap"/>
+    </resultMap>
+    <resultMap id="meetingParticipantMap" type="com.kosa.resq.domain.vo.mr.MeetingParticipantVO">
+        <id property="mem_code" column="mem_code"/>
+        <result property="mem_code" column="mem_code"/>
+    </resultMap>
+    <select id="participantPerRez">
+        select mem_code from mr_pt where mr_rez_code=#{mr_rez_code}
     </select>
 
 </mapper>

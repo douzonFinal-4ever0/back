@@ -1,6 +1,9 @@
 package com.kosa.resq.mapper.mr;
 
 import com.kosa.resq.domain.dto.mr.BmGroupMemResponseDTO;
+import com.kosa.resq.domain.dto.mr.statistics.BmMrRequestDTO;
+import com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO;
+import com.kosa.resq.domain.dto.mr.statistics.RezStatisticsDTO;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.domain.vo.mr.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,6 +14,8 @@ import java.util.List;
 
 @Mapper
 public interface MrUserMapper {
+
+    public List<MrRezResponseVO> mrRezGetAllByDate(String today);
 
     public List<MrRezRequestVO> getReservationsForMeetingRoom(String mr_code, Date rez_start_time, Date rez_end_time);
     public void mrRezSave(MrRezRequestVO mrRezRequestVO);
@@ -38,6 +43,7 @@ public interface MrUserMapper {
 
     public List<MrResponseVO> mrRecommendGetAll(String rez_date, String rez_start_time, String rez_end_time, int tot_pt_ctn);
 
+    public MrResponseVO mrGetAllByBM(String mr_code);
     public List<BmGroupMemResponseDTO> bmGroupMemGetAll(String mem_code);
 
     public void bmGroupSave(String bm_group_name, String mem_code);
@@ -49,4 +55,10 @@ public interface MrUserMapper {
     public List<BmMrVO> bmMrGetAll(String mem_code);
 
     public List<MrResponseVO> recentMrGetFive(String mem_code);
+
+    public void bmMrSave(String mem_code, String mr_code);
+
+    public List<RezStatisticsDTO> mrRezCharTwo(String date);
+    public List<String> mrRezCodeGetAll();
+    public List<String> participantPerRez(String mr_rez_code);
 }

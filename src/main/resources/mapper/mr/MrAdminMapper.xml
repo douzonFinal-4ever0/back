@@ -78,7 +78,47 @@
 <!--    </select>-->
     <resultMap id="mr_suppliesMap" type="com.kosa.resq.domain.dto.mr.MrSuppliesDTO">
         <id property="supplies_code" column="supplies_code"/>
+        <id property="mr_code" column="mr_code"/>
         <result property="amount" column="amount"/>
+        <collection property="supplies" resultMap="suppliesMap"/>
+    </resultMap>
+
+    <resultMap id="suppliesMap" type="com.kosa.resq.domain.dto.mr.SuppliesDTO">
+        <id property="supplies_code" column="supplies_code"/>
+        <result property="supplies_name" column="supplies_name"/>
+        <result property="stock_amount" column="stock_amount"/>
+        <result property="unit" column="unit"/>
+        <result property="type" column="type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="deleted_at" column="deleted_at"/>
+    </resultMap>
+
+    <resultMap id="mrRezRankMap" type="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
+        <id property="mr_code" column="mr_code"/>
+        <result property="mr_name" column="mr_name"/>
+        <result property="rez_cnt" column="rez_cnt"/>
+        <collection property="img_url" ofType="java.lang.String" resultMap="mr_imgMap" />
+    </resultMap>
+
+    <resultMap id="mrRezForQRDTOResultMap" type="com.kosa.resq.domain.dto.mr.MrRezForQRDTO">
+        <id property="mr_rez_code" column="mr_rez_code" />
+        <result property="mem_code" column="mem_code" />
+        <result property="mr_code" column="mr_code" />
+        <result property="m_name" column="m_name" />
+        <result property="rez_date" column="rez_date" />
+        <result property="start_time" column="start_time" />
+        <result property="end_time" column="end_time" />
+        <result property="name" column="name" />
+        <result property="position_name" column="position_name" />
+        <result property="dept_name" column="dept_name" />
+    </resultMap>
+
+    <resultMap id="mrRezParticipantMap" type="com.kosa.resq.domain.dto.mr.MrRezParticipantDTO">
+        <id property="mr_rez_code" column="mr_rez_code" />
+        <result property="name" column="name" />
+        <result property="position_name" column="position_name" />
+        <result property="dept_name" column="dept_name" />
     </resultMap>
 
     <select id="mrGetAll" resultType="com.kosa.resq.domain.dto.mr.MrDTO" resultMap="mrMap">
@@ -88,6 +128,7 @@
             left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
             left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
+                 left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
         order by m.mr_code
         ]]>
     </select>
@@ -98,6 +139,8 @@
                  left join MR_IMG mi on m.MR_CODE = mi.MR_CODE
                  left join MR_OP_DAY mop on m.MR_CODE = mop.MR_CODE
                  left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
+                 left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
+                 left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
         where m.MR_CODE = #{mr_code}
         order by m.mr_code
         ]]>
@@ -106,14 +149,88 @@
         select *
         from MR_REZ mrz left outer join MR mr on mrz.MR_CODE = mr.MR_CODE
     </select>
-
-    <select id="mrRezRank" resultType="com.kosa.resq.domain.dto.mr.MrRezRankDTO">
-        SELECT MR_CODE, COUNT(*) AS REZ_CNT
-        FROM MR_rez
-        GROUP BY MR_CODE
-        ORDER BY REZ_CNT desc
+    <select id="mrRezGetOne" resultType="com.kosa.resq.domain.dto.mr.MrRezForQRDTO">
+        select mr.MR_REZ_CODE,
+               mr.MEM_CODE,
+               mr.MR_CODE,
+               mr.M_NAME,
+               TO_CHAR(mr.REZ_START_TIME, 'YYYY-MM-DD') as REZ_DATE,
+               TO_CHAR(mr.REZ_START_TIME, 'HH24:MI')    as START_TIME,
+               TO_CHAR(mr.REZ_END_TIME, 'HH24:MI')      as END_TIME,
+               m.NAME,
+               m.POSITION_NAME,
+               d.DEPT_NAME
+        from MR_REZ mr
+                 left join MEM m on mr.MEM_CODE = m.MEM_CODE
+                 left join DEPT d on m.DEPT_CODE = d.DEPT_CODE
+        where MR_REZ_CODE = #{mr_rez_code}
     </select>
-    
+    <select id="mrRezPtGetAll" resultType="com.kosa.resq.domain.dto.mr.MrRezParticipantDTO">
+        select mp.MR_REZ_CODE,m.NAME,m.POSITION_NAME,d.DEPT_NAME
+        from MR_PT mp left join mem m on mp.MEM_CODE = m.MEM_CODE
+                      left join DEPT d on m.DEPT_CODE = d.DEPT_CODE
+        where MR_REZ_CODE=#{mr_rez_code}
+    </select>
+
+    <select id="mrRezRankGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRankDTO">
+        SELECT
+            mr.MR_CODE,
+            m.MR_NAME,
+            COUNT(*) AS REZ_CNT,
+            mi.URL AS IMG_URL
+        FROM MR_REZ mr
+                 LEFT JOIN MR m ON mr.MR_CODE = m.MR_CODE
+                 LEFT JOIN MR_IMG mi ON mr.MR_CODE = mi.MR_CODE
+        GROUP BY
+            mr.MR_CODE,
+            m.MR_NAME,
+            mi.URL
+        ORDER BY REZ_CNT DESC
+    </select>
+
+    <select id="mrRezTimeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTimeDTO">
+        SELECT
+            CASE
+                WHEN TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30) * 30 = 0
+                    THEN 30
+                ELSE TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30) * 30
+                END AS minutes,
+            COUNT(*) AS REZ_CNT
+        FROM
+            MR_REZ
+        GROUP BY
+            TRUNC((REZ_END_TIME - REZ_START_TIME) * 24 * 60 / 30)
+        ORDER BY
+            minutes
+    </select>
+
+    <select id="mrRezRowGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezRowDTO">
+        SELECT (SELECT COUNT(*) FROM mr) AS total,
+               (SELECT COUNT(*)
+                FROM (SELECT DISTINCT mr_code
+                      FROM mr_rez))      AS rez_row_count
+        FROM dual
+    </select>
+    <select id="mrRezTypeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezTypeDTO">
+        SELECT m.MR_TYPE, COUNT(mrz.MR_CODE) AS REZ_CNT
+        FROM MR m
+                 LEFT JOIN MR_rez mrz ON m.MR_CODE = mrz.MR_CODE
+        GROUP BY MR_TYPE
+        ORDER BY REZ_CNT DESC
+    </select>
+    <select id="mrRezDateGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezDateDTO">
+        SELECT TRUNC(REZ_START_TIME) AS REZ_DATE, COUNT(*) AS CNT
+        FROM MR_REZ
+        GROUP BY TRUNC(REZ_START_TIME)
+        ORDER BY TRUNC(REZ_START_TIME)
+    </select>
+    <select id="mrRezFavTimeGetAll" resultType="com.kosa.resq.domain.dto.mr.statistics.MrRezFavTimeDTO">
+        select TO_CHAR(REZ_START_TIME, 'HH24:MI') AS rez_time, COUNT(*) AS REZ_CNT
+        from MR_REZ
+        group by TO_CHAR(REZ_START_TIME, 'HH24:MI')
+        ORDER BY TO_CHAR(REZ_START_TIME, 'HH24:MI')
+    </select>
+
     <select id="noticeGetAll" resultType="com.kosa.resq.domain.dto.mr.NoticeDTO" resultMap="noticeMap">
         select *
         from NOTICE n
@@ -133,6 +250,13 @@
         from NOTICE
         where NOTICE_CODE=#{notice_code}
     </delete>
+    <update id="noticeUpdate">
+        update NOTICE
+        set UPDATED_AT = localtimestamp,
+            CONTENTS = #{contents},
+            NOTICE_TITLE = #{notice_title}
+        where NOTICE_CODE=#{notice_code}
+    </update>
 
     <insert id="noticeSave">
         insert into NOTICE (NOTICE_CODE, MEM_CODE, CREATED_AT, UPDATED_AT, DELETED_AT, CONTENTS, IS_OPENED,NOTICE_TITLE)
@@ -218,9 +342,20 @@
             MR_TYPE=#{mr_type},
             LOCATION=#{location},
             MAXIMUM_CAPACITY=#{maximum_capacity},
-            IS_OPENED       = 1,
+            IS_OPENED       = #{is_opened},
             DELETED_AT = localtimestamp
         where MR_CODE = #{mr_code}
+    </update>
+
+    <update id="mrCheckIn">
+        update MR
+        set IS_USED = 0
+        where MR_CODE=#{mr_code}
+    </update>
+    <update id="mrCheckOut">
+        update MR
+        set IS_USED = 1
+        where MR_CODE=#{mr_code}
     </update>
 
     <select id="templateGetAll">

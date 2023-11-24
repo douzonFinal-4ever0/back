@@ -4,6 +4,8 @@ import com.kosa.resq.domain.dto.car.CarDetailDTO;
 import com.kosa.resq.domain.dto.car.CarLocDTO;
 import com.kosa.resq.domain.dto.car.CarRezDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.domain.vo.common.AlertRequestVO;
+import com.kosa.resq.domain.vo.common.AlertResponseVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Date;
@@ -39,4 +41,10 @@ public interface CarUserMapper {
     public CarLocResponseVO carLocReturnGetOne(String car_rez_code);
     public int expenditureSave(ExpenditureRequestVO expenditureRequestVO);
     public int selectedCarUpdate(String car_code);
+    public int expImgUpdate(String url,String exp_code);
+    public int alarmSave(AlertRequestVO alertDTO);
+    public List<AlertResponseVO>memAlarmGetAll(List<String> mem_codes);
+    public int alarmUpdate(String alert_code);
+    public int announcementSave(AlertRequestVO alertDTO);
+    public List<AlertResponseVO> announcementGetAll();
 }

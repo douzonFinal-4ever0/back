@@ -1,9 +1,12 @@
 package com.kosa.resq.controller.car;
 
 import com.kosa.resq.domain.dto.car.*;
+import com.kosa.resq.domain.dto.common.AlertDTO;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
+import com.kosa.resq.domain.vo.common.AlertResponseVO;
 import com.kosa.resq.service.AddressService;
+import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.car.CarUserService;
 import lombok.Getter;
 import oracle.jdbc.proxy.annotation.Post;
@@ -14,10 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +35,8 @@ public class CarUserController {
 
     @Autowired
     private CarUserService service;
+    @Autowired
+    private S3UploadService imgService;
 
     @PostMapping("/rezSave")
     public ResponseEntity<CarRezDTO2> carRezInfoSave(@RequestBody CarRezDTO carRezDTO){
@@ -132,5 +140,51 @@ public class CarUserController {
         }else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(car_code);
         }
+    }
+    @PostMapping("/receiptImg")
+    public ResponseEntity<Object> receiptImgSave(@RequestParam("images") MultipartFile[] images){
+        System.out.println("이미지 controller");
+        System.out.println(images);
+        if(!service.receiptImgSave(images)){
+            return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<Object>("Success", HttpStatus.OK);
+    }
+
+    @PostMapping("/alarmSave")
+    public ResponseEntity<String> alarmSave(@RequestBody AlertDTO alertDTO){
+        if(service.alarmSave(alertDTO)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+    @GetMapping("/loadAlarm/{mem_codes}")
+    public List<AlertResponseVO> loadMemAlarmGetAll(@PathVariable List<String> mem_codes){
+        System.out.println(mem_codes);
+
+
+        return service.memAlarmGetAll(mem_codes);
+    }
+    @PatchMapping("/clickAlarm/{alert_code}")
+    public ResponseEntity<String> clickAlarm(@PathVariable String alert_code){
+        if(service.alarmUpdate(alert_code)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+    @PostMapping("/announcementSave")
+    public ResponseEntity<String> announcementSave(@RequestBody AlertDTO alertDTO){
+        if(service.announcementSave(alertDTO)>0){
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
+    @GetMapping("/loadAnnouncement")
+    public List<AlertResponseVO> announcementGetAll() {
+        return service.announcementGetAll();
     }
 }

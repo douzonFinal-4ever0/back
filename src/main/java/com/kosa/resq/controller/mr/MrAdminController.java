@@ -1,6 +1,7 @@
 package com.kosa.resq.controller.mr;
 
 import com.kosa.resq.domain.dto.mr.*;
+import com.kosa.resq.domain.dto.mr.statistics.*;
 import com.kosa.resq.domain.vo.mr.TemplateVO;
 import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.mr.MrAdminService;
@@ -47,11 +48,38 @@ public class MrAdminController {
         return service.mrRezGetAll();
     }
 
+    @GetMapping("/mrRez/{mr_rez_code}")
+    public MrRezForQRDTO mrRezGetOne(@PathVariable String mr_rez_code){
+        return service.mrRezGetOne(mr_rez_code);
+    }
+    @GetMapping("/mrRezPt/{mr_rez_code}")
+    public List<MrRezParticipantDTO> mrRezPtGetAll(@PathVariable String mr_rez_code){
+        return service.mrRezPtGetAll(mr_rez_code);
+    }
     @GetMapping("/mrRezRank")
     public List<MrRezDTO> mrRezRank(){
-        return service.mrRezRank();
+        return service.mrRezRankGetAll();
     }
-
+    @GetMapping("/mrRezTime")
+    public List<MrRezTimeDTO> mrRezTime(){
+        return service.mrRezTimeGetAll();
+    }
+    @GetMapping("/mrRezRow")
+    public MrRezRowDTO mrRezRow(){
+        return service.mrRezRowGetAll();
+    }
+    @GetMapping("/mrTypeRow")
+    public List<MrRezTypeDTO> mrRezType(){
+        return service.mrRezTypeGetAll();
+    }
+    @GetMapping("/mrRezDate")
+    public List<MrRezDateDTO>mrRezDateGetAll(){
+        return service.mrRezDateGetAll();
+    }
+    @GetMapping("/mrRezFavTime")
+    public List<MrRezFavTimeDTO>mrRezFavTimeGetAll(){
+        return service.mrRezFavTimeGetAll();
+    }
     @GetMapping("/notice")
     public List<NoticeDTO> noticeGetAll() {
         return service.noticeGetAll();
@@ -87,12 +115,12 @@ public class MrAdminController {
                 service.mrAvailableDaySave(opDayDTO);
             }
         }
-//        if(!supplies.isEmpty()){
-//            for(MrSuppliesDTO suppliesDTO: supplies){
-//                suppliesDTO.setMr_code(mrCode);
-//                spService.mrSuppliesSave(suppliesDTO);
-//            }
-//        }
+        if(!supplies.isEmpty()){
+            for(MrSuppliesDTO suppliesDTO: supplies){
+                suppliesDTO.setMr_code(mrCode);
+                spService.mrSuppliesSave(suppliesDTO);
+            }
+        }
     }
 
     @PatchMapping("/mrUpdate")
@@ -121,6 +149,14 @@ public class MrAdminController {
         }
 
     }
+    @PatchMapping("/mrCheckIn/{mr_code}")
+    public void mrCheckIn(@PathVariable String mr_code) {
+        service.mrCheckIn(mr_code);
+    }
+    @PatchMapping("/mrCheckOut/{mr_code}")
+    public void mrCheckOut(@PathVariable String mr_code) {
+        service.mrCheckOut(mr_code);
+    }
 
     @PatchMapping("/mrDeactivate")
     public void mrDeactivate(@RequestBody MrDTO mr) {
@@ -140,6 +176,11 @@ public class MrAdminController {
     @DeleteMapping("/notice/delete/{notice_code}")
     public void noticeDelete(@PathVariable String notice_code) {
         service.noticeDelete(notice_code);
+    }
+
+    @PatchMapping("/notice/update")
+    public void  noticeUpdate(@RequestBody NoticeDTO notice){
+        service.noticeUpdate(notice);
     }
 
     @PostMapping("/mrImg")

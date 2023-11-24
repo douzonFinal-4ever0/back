@@ -1,6 +1,7 @@
 package com.kosa.resq.mapper.car;
 
 import com.kosa.resq.domain.dto.car.CarRezDTO;
+import com.kosa.resq.mapper.mr.MrUserMapper;
 import com.kosa.resq.service.car.CarUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +22,8 @@ class CarUserMapperTest {
     private CarUserMapper mapper;
     @Autowired
     private CarUserService service;
+    @Autowired
+    private MrUserMapper mapper2;
     @Test
     void carRezSave() {
 //        System.out.println(mapper.carRezGetAll("MEM001"));
@@ -37,6 +41,7 @@ class CarUserMapperTest {
 //            e.printStackTrace();
 //        }
 //        System.out.println(mapper.filterCarRezGetAll("MEM001","1",0));
-
+//        String[] array={"MEM001"};
+//        System.out.println(mapper.memAlarmGetAll(array));
     }
 }

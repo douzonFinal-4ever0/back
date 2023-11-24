@@ -2,15 +2,13 @@ package com.kosa.resq.controller.car;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kosa.resq.domain.dto.car.CarDTO;
-import com.kosa.resq.domain.dto.car.CarMaintItemDTO;
-import com.kosa.resq.domain.dto.car.SearchCar;
-import com.kosa.resq.domain.dto.car.SearchOperation;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
 import com.kosa.resq.service.S3UploadService;
 import com.kosa.resq.service.car.CarAdminService;
 import lombok.extern.java.Log;
+import oracle.jdbc.proxy.annotation.Post;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +80,6 @@ public class CarAdminController {
     @PostMapping("/car/carList")
     public List<CarListResponseVO> carGetAll(@RequestBody SearchCar searchCar) {
         log.info(searchCar.toString());
-
         return carAdminService.carGetAll(searchCar);
     }
 
@@ -140,9 +137,9 @@ public class CarAdminController {
 //        return null;
 //    }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/car/maintRecordRegister")
     public MaintRecordResponseVO maintRecordSave(@RequestParam("file") MultipartFile[] files, @RequestParam("maintRegisterData") String maintRegisterData ) throws IOException {
+        log.info(maintRegisterData);
 
         List<String> maintImages = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -237,13 +234,14 @@ public class CarAdminController {
     }
 
     // 예약 리스트 가져오기
-    @GetMapping("/car/rezListGetAll")
-    public List<CarRezInfoResponseVO> carRezListGetAll(@RequestParam String sdate, @RequestParam String edate) {
-        return carAdminService.carRezListGetAll(sdate, edate);
+    @PostMapping("/car/rezListGetAll")
+    public List<CarRezInfoResponseVO> carRezListGetAll(@RequestBody SearchRez searchRez) {
+        log.info(searchRez.toString());
+        return carAdminService.carRezListGetAll(searchRez);
     }
 
-    @GetMapping("/car/rezGetOne")
 
+    @GetMapping("/car/rezGetOne")
     public CarRezDetailResponseVO carRezGetOne(@RequestParam String car_rez_code) {
         return carAdminService.carRezGetOne(car_rez_code);
     }
@@ -260,5 +258,44 @@ public class CarAdminController {
         return carAdminService.isExistOperation();
     }
 
+    @PostMapping("/car/operationStatis")
+    public CarStatisticsDTO getOperationStatis(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getCarStatistics(searchStatistics);
+    }
 
+    @PostMapping("/car/weekOperationStatistics")
+    public OperationStatisticsDTO getWeekOperationStatistics(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getOperationStatistics(searchStatistics);
+    }
+
+    @PostMapping("/car/getMaintStatistics")
+    public List<MaintStatisticsDTO> getMaintStatistics(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getMaintStatistics(searchStatistics);
+    }
+
+    @PostMapping("/car/getLocationStatistics")
+    public List<LocationStatisticsDTO> getLocationStatistics(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getLocationStatistics(searchStatistics);
+    }
+
+    @PostMapping("/car/getOperTimeStatistics")
+    public OperTimeStatisticsDTO getOperTimeStatistics(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getOperTime(searchStatistics);
+    }
+
+    @PostMapping("/car/getExpenditureStatistics")
+    public ExpenditureStatisticsDTO getExpenditureStatistics(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getExpenditureStatistics(searchStatistics);
+    }
+
+    @PostMapping("/car/getExpenditurePattern")
+    public List<ExpenditureResponseDTO> getExpenditurePattern(@RequestBody SearchStatistics searchStatistics) {
+//        log.info(carAdminService.getExpenditurePattern(searchStatistics).toString());
+        return carAdminService.getExpenditurePattern(searchStatistics);
+    }
+
+    @PostMapping("/car/getExpenditureDiff")
+    public Integer getExpenditureDiff(@RequestBody SearchStatistics searchStatistics) {
+        return carAdminService.getExpenditureDiff(searchStatistics);
+    }
 }

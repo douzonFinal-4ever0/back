@@ -3,6 +3,7 @@ package com.kosa.resq.domain.vo.mr;
 import com.kosa.resq.domain.dto.mr.MrImgDTO;
 import com.kosa.resq.domain.dto.mr.MrKeyWordDTO;
 import com.kosa.resq.domain.dto.mr.MrOpDayDTO;
+import com.kosa.resq.domain.dto.mr.MrSuppliesDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -30,5 +31,6 @@ public class MrResponseVO {
     private List<MrKeywordResponseVO> mr_keyword;
     private List<MrImgResponseVO> mr_img;
     private List<MrOpDayResponseVO> mr_op_day;
+    private List<MrSuppliesDTO> mr_supplies;
     private int priority; // 우선순위
 }

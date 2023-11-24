@@ -1,7 +1,6 @@
 package com.kosa.resq.service.car;
 
-import com.kosa.resq.domain.dto.car.SearchCar;
-import com.kosa.resq.domain.dto.car.SearchOperation;
+import com.kosa.resq.domain.dto.car.*;
 import com.kosa.resq.domain.dto.common.MemDTO;
 import com.kosa.resq.domain.vo.car.*;
 import com.kosa.resq.domain.vo.common.MemResponseVO;
@@ -34,10 +33,30 @@ public interface CarAdminService {
     List<OperationResponseVO> operationGetOne(String car_code, Date originSdate, Date originEdate);
     List<CarVO> carListGetAll();
 
-    List<CarRezInfoResponseVO> carRezListGetAll(String sdate, String edate);
+    List<CarRezInfoResponseVO> carRezListGetAll(SearchRez searchRez);
 
     CarRezDetailResponseVO carRezGetOne(String car_rez_code);
     void carRezCancel(String car_rez_code);
     List<String> isExistOperation();
+
+//    CarStatisticsDTO getCarStatistics(Date sdate, Date edate);
+    CarStatisticsDTO getCarStatistics(SearchStatistics searchStatistics);
+
+    OperationStatisticsDTO getOperationStatistics(SearchStatistics searchStatistics);
+
+//    정비가 급한 차량 가져오기
+    List<MaintStatisticsDTO> getMaintStatistics(SearchStatistics searchStatistics);
+
+    // 위치 패턴
+    List<LocationStatisticsDTO> getLocationStatistics(SearchStatistics searchStatistics);
+
+    // 운행시간
+    OperTimeStatisticsDTO getOperTime(SearchStatistics searchStatistics);
+
+    ExpenditureStatisticsDTO getExpenditureStatistics(SearchStatistics searchStatistics);
+
+    List<ExpenditureResponseDTO> getExpenditurePattern(SearchStatistics searchStatistics);
+
+    Integer getExpenditureDiff(SearchStatistics searchStatistics);
 
 }
