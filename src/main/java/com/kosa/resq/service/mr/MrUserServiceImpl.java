@@ -84,11 +84,13 @@ public class MrUserServiceImpl implements MrUserService {
 
             // 중복 예약 확인
             List<MrRezRequestVO> existingReservations = mapper.getReservationsForMeetingRoom(
-                    mrRezRequestVO.getMr_code(),
-                    mrRezRequestVO.getRez_start_time(),
-                    mrRezRequestVO.getRez_end_time()
+                mrRezRequestVO.getMr_code(),
+                mrRezRequestVO.getRez_start_time(),
+                mrRezRequestVO.getRez_end_time()
             );
 
+            log.info("==========================여기여기여기여기");
+            log.info(existingReservations);
             // 예약이 중복되는 경우 예외 처리
             if (!existingReservations.isEmpty()) {
                 throw new DuplicateReservationException("이미 예약 완료된 회의실입니다. 다른 회의실을 이용해주세요.");
@@ -96,6 +98,8 @@ public class MrUserServiceImpl implements MrUserService {
 
             // 회의실 예약 데이터 추가
             mapper.mrRezSave(mrRezRequestVO);
+
+
             System.out.println("예약된 회의실 번호 :"+mrRezRequestVO.getMr_rez_code());
             // 위의 생성된 회의실 예약 코드 가져오기
             mr_rez_code = mrRezRequestVO.getMr_rez_code();
@@ -107,16 +111,14 @@ public class MrUserServiceImpl implements MrUserService {
                 mapper.mrPtSave(mr_rez_code, mem_code);
             }
 
-
         } catch (DuplicateReservationException e) {
             throw e; // 예외를 다시 throw하여 상위 메서드에 전파
         } catch(Exception e) {
             // 저장 실패 시 예외 처리
             e.printStackTrace();
-        } finally {
-            return mr_rez_code;
         }
 
+        return mr_rez_code;
     }
 
 
