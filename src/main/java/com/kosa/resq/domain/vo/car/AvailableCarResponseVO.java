@@ -16,4 +16,5 @@ public class AvailableCarResponseVO {
     private String memo;
     private String type;
     private String authority;
+    private String mem_code;
 }
