@@ -20,15 +20,17 @@ public interface CarUserMapper {
     public int carLocSeq();
     public List<CarDetailResponseVO> carGetAll();
     public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, String mem_code);
+    public List<AvailableCarResponseVO> carGetAll3();
+    public List<CarRezInfoResponseVO2> rezListGetAll();
     public CarDetailResponseVO carGetOne(String car_code);
     public CarRezResponseVO carRezGetOne(String car_rez_code);
     public List<CarLocResponseVO> carLocInfoGetAll(String car_rez_code);
     public List<CarRezInfoResponseVO> carRezGetAll(String mem_code);
     public List<CarRezInfoResponseVO> filterCarRezGetAll(
-            String mem_code,String rez_status,int dateRange
+            String mem_code,String rez_status,int dateRange,String dateInfo
     );
     public List<CarRezInfoResponseVO> filterCarRezGetAll2(
-            String mem_code,String rez_status,int dateRange,Date startDate,Date endDate
+            String mem_code,String rez_status,int dateRange,Date startDate,Date endDate,String dateInfo
     );
     public List<CarNameCodeResponseVO> searchCarGetAll ();
     public int carRezDelete(String car_rez_code);

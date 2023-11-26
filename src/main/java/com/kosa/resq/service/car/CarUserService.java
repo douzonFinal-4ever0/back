@@ -15,12 +15,14 @@ public interface CarUserService {
     public CarRezDTO2 carRezInfoSave(CarRezDTO carRezDTO);
 
     public List<CarDetailDTO2> carGetAll();
-public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, String mem_code);
+    public List<AvailableCarResponseVO> carGetAll2(Date start_at,Date return_at, String mem_code);
+    public List<AvailableCarResponseVO> carGetAll3();
+    public List<CarRezInfoResponseVO2> rezListGetAll();
     public CarDetailDTO2 carGetOne(String car_code);
     public List<CarLocDTO> carLocInfoGetAll(String car_rez_code);
     public List<CarRezInfoResponseVO> carRezGetAll(String mem_code);
     public List<CarRezInfoResponseVO> filterCarRezGetAll(
-            String mem_code,String rez_status,int dateRange,String startAt,String endAt
+            String mem_code,String rez_status,int dateRange,String startAt,String endAt,String dateInfo
     );
     public List<CarNameCodeResponseVO> searchCarGetAll();
     public CarRezResponseVO carRezDetailGetOne(String car_rez_code);
