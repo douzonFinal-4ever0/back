@@ -117,10 +117,19 @@
                                    where #{start_at}>return_at or start_at>#{return_at})))
                             or c.car_code in (select car_code from car_rez where rez_status='2') --취소된 차량
     </select>
+    <select id="carGetAll3" resultType="com.kosa.resq.domain.vo.car.AvailableCarResponseVO">
+        select c.car_code, c.car_name, d.car_address, c.memo, c.type, c.authority, u.mem_code
+        from car c join car_detail d on c.car_code=d.car_code left outer join car_user u on c.car_code=u.car_code
+        where d.car_status='사용가능'
+--             or c.car_code in (select car_code from car_rez where rez_status='2')
 
+    </select>
+    <select id="rezListGetAll">
+        select car_rez_code, car_code, start_at, return_at from car_rez where rez_status!='1'and rez_status!='4'
+    </select>
 
     <select id="carGetOne" resultMap="carDetailMap">
-        select c.car_name, c.car_code, d.accum_mileage, c.authority, c.fuel_type, d.fuel_effciency, d.car_address from car c join car_detail d on c.car_code=d.car_code
+        select c.car_name, c.car_code, d.accum_mileage, c.authority, c.fuel_type, c.type,d.fuel_effciency, d.car_address from car c join car_detail d on c.car_code=d.car_code
         where c.car_code=#{car_code}
     </select>
     <select id="memGetOne" resultMap="memMap">
@@ -158,19 +167,54 @@
 --         4: 설정한 기간
         <if test="dateRange!= 0">
 <!--        <trim prefix="and">-->
-            <choose>
-                <when test="dateRange== 1">
-                    and trunc(r.start_at)=trunc(localtimestamp)
-                </when>
-                <when test="dateRange== 2">
-                    and trunc(r.start_at)>=trunc(localtimestamp)-7
-                    and trunc(localtimestamp)+1>trunc(r.start_at)
-                </when>
-                <when test="dateRange== 3">
-                    and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
-                    and trunc(localtimestamp)+1>trunc(r.start_at)
-                </when>
-            </choose>
+          <choose>
+              <when test ="dateInfo==0">
+                  <choose>
+                      <when test="dateRange== 1">
+                          and trunc(r.start_at)=trunc(localtimestamp)
+                      </when>
+                      <when test="dateRange== 2">
+                          and trunc(r.start_at)>=trunc(localtimestamp)-7
+                          and trunc(localtimestamp)+1>trunc(r.start_at)
+                      </when>
+                      <when test="dateRange== 3">
+                          and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                          and trunc(localtimestamp)+1>trunc(r.start_at)
+                      </when>
+                  </choose>
+              </when>
+              <when test ="dateInfo==1">
+                  <choose>
+                      <when test="dateRange== 1">
+                          and trunc(r.return_at)=trunc(localtimestamp)
+                      </when>
+                      <when test="dateRange== 2">
+                          and trunc(r.return_at)>=trunc(localtimestamp)-7
+                          and trunc(localtimestamp)+1>trunc(r.return_at)
+                      </when>
+                      <when test="dateRange== 3">
+                          and trunc(r.return_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                          and trunc(localtimestamp)+1>trunc(r.return_at)
+                      </when>
+                  </choose>
+              </when>
+              <when test ="dateInfo==2">
+                  <choose>
+                      <when test="dateRange== 1">
+                          and trunc(r.rez_at)=trunc(localtimestamp)
+                      </when>
+                      <when test="dateRange== 2">
+                          and trunc(r.rez_at)>=trunc(localtimestamp)-7
+                          and trunc(localtimestamp)+1>trunc(r.rez_at)
+                      </when>
+                      <when test="dateRange== 3">
+                          and trunc(r.rez_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                          and trunc(localtimestamp)+1>trunc(r.rez_at)
+                      </when>
+                  </choose>
+              </when>
+          </choose>
+
 <!--        </trim>-->
         </if>
         order by r.rez_status,r.rez_at desc
@@ -188,24 +232,84 @@
         --         오늘 날짜 필터링 1 : 오늘, 2 : 일주일전부터 오늘까지 3 : 한달전부터 오늘까지
         --         4: 설정한 기간
         <if test="dateRange!= 0">
-            <!--        <trim prefix="and">-->
+<!--            &lt;!&ndash;        <trim prefix="and">&ndash;&gt;-->
+<!--            <choose>-->
+<!--                <when test="dateRange== 1">-->
+<!--                    and trunc(r.start_at)=trunc(localtimestamp)-->
+<!--                </when>-->
+<!--                <when test="dateRange== 2">-->
+<!--                    and trunc(r.start_at)>=trunc(localtimestamp)-7-->
+<!--                    and trunc(localtimestamp)+1>trunc(r.start_at)-->
+<!--                </when>-->
+<!--                <when test="dateRange== 3">-->
+<!--                    and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)-->
+<!--                    and trunc(localtimestamp)+1>trunc(r.start_at)-->
+<!--                </when>-->
+<!--            </choose>-->
             <choose>
-                <when test="dateRange== 1">
-                    and trunc(r.start_at)=trunc(localtimestamp)
+                <when test ="dateInfo==0">
+                    <choose>
+                        <when test="dateRange== 1">
+                            and trunc(r.start_at)=trunc(localtimestamp)
+                        </when>
+                        <when test="dateRange== 2">
+                            and trunc(r.start_at)>=trunc(localtimestamp)-7
+                            and trunc(localtimestamp)+1>trunc(r.start_at)
+                        </when>
+                        <when test="dateRange== 3">
+                            and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                            and trunc(localtimestamp)+1>trunc(r.start_at)
+                        </when>
+                    </choose>
                 </when>
-                <when test="dateRange== 2">
-                    and trunc(r.start_at)>=trunc(localtimestamp)-7
-                    and trunc(localtimestamp)+1>trunc(r.start_at)
+                <when test ="dateInfo==1">
+                    <choose>
+                        <when test="dateRange== 1">
+                            and trunc(r.return_at)=trunc(localtimestamp)
+                        </when>
+                        <when test="dateRange== 2">
+                            and trunc(r.return_at)>=trunc(localtimestamp)-7
+                            and trunc(localtimestamp)+1>trunc(r.return_at)
+                        </when>
+                        <when test="dateRange== 3">
+                            and trunc(r.return_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                            and trunc(localtimestamp)+1>trunc(r.return_at)
+                        </when>
+                    </choose>
                 </when>
-                <when test="dateRange== 3">
-                    and trunc(r.start_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
-                    and trunc(localtimestamp)+1>trunc(r.start_at)
+                <when test ="dateInfo==2">
+                    <choose>
+                        <when test="dateRange== 1">
+                            and trunc(r.rez_at)=trunc(localtimestamp)
+                        </when>
+                        <when test="dateRange== 2">
+                            and trunc(r.rez_at)>=trunc(localtimestamp)-7
+                            and trunc(localtimestamp)+1>trunc(r.rez_at)
+                        </when>
+                        <when test="dateRange== 3">
+                            and trunc(r.rez_at)>=ADD_MONTHS(TRUNC(localtimestamp,'MM'),-1)
+                            and trunc(localtimestamp)+1>trunc(r.rez_at)
+                        </when>
+                    </choose>
                 </when>
             </choose>
             <!--        </trim>-->
         </if>
-        and trunc(r.start_at)>=trunc(#{startDate})
-        and trunc(#{endDate})+1>trunc(r.start_at)
+          <choose>
+              <when test="dateInfo==0">
+                  and trunc(r.start_at)>=trunc(#{startDate})
+                  and trunc(#{endDate})+1>trunc(r.start_at)
+              </when>
+              <when test="dateInfo==1">
+                  and trunc(r.return_at)>=trunc(#{startDate})
+                  and trunc(#{endDate})+1>trunc(r.return_at)
+              </when>
+              <when test="dateInfo==2">
+                  and trunc(r.rez_at)>=trunc(#{startDate})
+                  and trunc(#{endDate})+1>trunc(r.rez_at)
+              </when>
+          </choose>
+
         order by r.rez_status,r.rez_at desc
     </select>
     <select id="searchCarGetAll" resultType="com.kosa.resq.domain.vo.car.CarNameCodeResponseVO">
@@ -279,11 +383,11 @@
         values (#{alert_code},#{mem_code},localtimestamp,#{is_read},#{contents})
     </insert>
     <select id="memAlarmGetAll">
-        select * from alert where  mem_code is null or mem_code in
-                            <foreach collection="mem_codes" item="mem_code" open="(" separator="," close=")">
-                                #{mem_code}
-                            </foreach>
-        order by ALERT_AT DESC
+        select * from alert where ALERT_AT >= localtimestamp - INTERVAL '7' DAY and (mem_code is null or mem_code in
+        <foreach collection="mem_codes" item="mem_code" open="(" separator="," close=")">#{mem_code}
+        </foreach>) or is_read=0
+        order by
+        ALERT_AT DESC
     </select>
     <update id="alarmUpdate">
         update alert set is_read=1 where alert_code=#{alert_code}

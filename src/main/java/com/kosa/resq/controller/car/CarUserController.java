@@ -64,7 +64,14 @@ public class CarUserController {
 //        System.out.println("return_at:"+return_at);
         return service.carGetAll2(start_at,return_at,mem_code);
     }
-
+    @GetMapping("/availableCars2")
+    public List<AvailableCarResponseVO> availableCarGetAll2(){
+        return service.carGetAll3();
+    }
+    @GetMapping("/allRezList")
+    public List<CarRezInfoResponseVO2> rezListGetAll(){
+        return service.rezListGetAll();
+    }
     @GetMapping("/carDetail/{car_code}")
     public CarDetailDTO2 carDetailGetOne(@PathVariable String car_code){
         return service.carGetOne(car_code);
@@ -78,17 +85,19 @@ public class CarUserController {
 //    public List<CarRezInfoResponseVO> carRezGetAll(@PathVariable String mem_code){
 //        return service.carRezGetAll(mem_code);
 //    }
-    @GetMapping("/rezList/{mem_code}/{rez_status}/{dateRange}/{startAt}/{endAt}")
+    @GetMapping("/rezList/{mem_code}/{rez_status}/{dateRange}/{startAt}/{endAt}/{dateInfo}")
     public List<CarRezInfoResponseVO> confirmedCarRezGetAll(
             @PathVariable String mem_code,
             @PathVariable String rez_status,
             @PathVariable int dateRange,
             @PathVariable("startAt") String startAt,
-            @PathVariable("endAt") String endAt
+            @PathVariable("endAt") String endAt,
+            @PathVariable String dateInfo
     ){
 
-        return service.filterCarRezGetAll(mem_code,rez_status,dateRange,startAt,endAt);
+        return service.filterCarRezGetAll(mem_code,rez_status,dateRange,startAt,endAt,dateInfo);
     }
+
 
     @GetMapping("/searchCarList")
     public List<CarNameCodeResponseVO> searchCarGetAll(){

@@ -175,6 +175,16 @@ public class CarUserServiceImpl implements CarUserService{
         return carList;
     }
 
+    @Override
+    public List<AvailableCarResponseVO> carGetAll3() {
+        return mapper.carGetAll3();
+    }
+
+    @Override
+    public List<CarRezInfoResponseVO2> rezListGetAll() {
+        return mapper.rezListGetAll();
+    }
+
 
     @Override
     public CarDetailDTO2 carGetOne(String car_code) {
@@ -218,7 +228,7 @@ public class CarUserServiceImpl implements CarUserService{
 
     @Override
     public List<CarRezInfoResponseVO> filterCarRezGetAll(
-            String mem_code, String rez_status,int dateRange,String startAt,String endAt
+            String mem_code, String rez_status,int dateRange,String startAt,String endAt,String dateInfo
     ) {
 //        String  status;
 //        if(rez_status.equals("0")){
@@ -228,7 +238,7 @@ public class CarUserServiceImpl implements CarUserService{
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if(startAt.equals("0")&&endAt.equals("0")){
             System.out.println("0");
-            return mapper.filterCarRezGetAll(mem_code,rez_status,dateRange);
+            return mapper.filterCarRezGetAll(mem_code,rez_status,dateRange,dateInfo);
         }else{
             System.out.println("0X");
             Date startDate;
@@ -237,7 +247,7 @@ public class CarUserServiceImpl implements CarUserService{
                 // parse 메서드를 사용하여 문자열을 Date 객체로 변환
                 startDate= dateFormat.parse(startAt);
                 endDate= dateFormat.parse(endAt);
-                return mapper.filterCarRezGetAll2(mem_code,rez_status,dateRange,startDate,endDate);
+                return mapper.filterCarRezGetAll2(mem_code,rez_status,dateRange,startDate,endDate,dateInfo);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
