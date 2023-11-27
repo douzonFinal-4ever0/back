@@ -497,7 +497,7 @@
     </select>
 
     <update id="carRezCancel" parameterType="String">
-        update car_rez set rez_status='4' where car_rez_code=#{car_rez_code}
+        update car_rez set rez_status='2' where car_rez_code=#{car_rez_code}
     </update>
 
 
