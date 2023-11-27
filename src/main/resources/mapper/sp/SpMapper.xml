@@ -25,6 +25,7 @@
     <select id="suppliesGetAll">
         select *
         from SUPPLIES
+        order by TYPE
     </select>
 
     <insert id="mrSuppliesSave">
