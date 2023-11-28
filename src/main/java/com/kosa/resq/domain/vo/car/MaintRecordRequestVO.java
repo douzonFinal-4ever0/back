@@ -23,4 +23,5 @@ public class MaintRecordRequestVO {
     private String pay_method;
     private String memo;
     private int mileage;
+    private String exp_code;
 }

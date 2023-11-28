@@ -131,6 +131,8 @@ public class CarAdminServiceImpl implements CarAdminService{
     @Override
     public MaintRecordResponseVO maintRecordSave(List<String> maintImages, MaintRecordRequestVO maintRecordRequestVO) {
         carAdminMapper.maintRecordSave(maintRecordRequestVO);
+        carAdminMapper.expenditureSave(maintRecordRequestVO);
+
         maintRecordRequestVO.setMaint_code("MAINT" + maintRecordRequestVO.getMaint_code());
 
         // 차량 상태 '정비중'으로 변경
