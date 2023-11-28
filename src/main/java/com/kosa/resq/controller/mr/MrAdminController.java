@@ -127,15 +127,11 @@ public class MrAdminController {
     public void mrUpdate(@RequestBody MrDTO mr) {
         List<MrKeyWordDTO> keyword = mr.getMr_keyword();
         List<MrOpDayDTO> mrOpDay = mr.getMr_op_day();
+        List<MrSuppliesDTO> supplies = mr.getMr_supplies();
+
         service.mrUpdate(mr);
         mrCode = mr.getMr_code();
 
-//        String mrCode = mr.getMr_code(); // 이 부분은 mr 객체에 대한 getter를 사용
-        // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
-//        for (MrKeyWordDTO keywordDTO : keyword) {
-//            keywordDTO.setMr_code(mrCode);
-//            service.mrKeywordSave(keywordDTO);
-//        }
         log.info(mrOpDay);
         log.info(mrCode);
 //
@@ -145,6 +141,33 @@ public class MrAdminController {
                 opDayDTO.setMr_code(mrCode);
                 opDayDTO.setDay(i);
                 service.mrOpDayUpdate(opDayDTO);
+            }
+        }
+
+        int existKeyWord =  service.checkIfMRCodeExists(mrCode);
+        System.out.println(existKeyWord);
+//        if(existKeyWord>0){
+//           service.mrKeyWordDelete(mrCode);
+//        }
+
+        if(!keyword.isEmpty()){
+            // mr_code를 각 DTO에 설정하여 키워드 및 사용 가능한 날짜를 저장
+            for (MrKeyWordDTO keywordDTO : keyword) {
+                keywordDTO.setMr_code(mrCode);
+                service.mrKeywordSave(keywordDTO);
+            }
+        }
+
+        int existSupply = spService.checkIfMRCodeExists(mrCode);
+        System.out.println(existSupply);
+        log.info(existSupply);
+//        if(existSupply>0){
+//            spService.mrSuppliesDelete(mrCode);
+//        }
+        if(!supplies.isEmpty()){
+            for(MrSuppliesDTO suppliesDTO: supplies){
+                suppliesDTO.setMr_code(mrCode);
+                spService.mrSuppliesSave(suppliesDTO);
             }
         }
 
@@ -205,5 +228,14 @@ public class MrAdminController {
     @DeleteMapping("/mrImg/{img_code}")
     public void mrImgDelete(@PathVariable String img_code){
         service.mrImgDelete(img_code);
+    }
+    @DeleteMapping("/mrKeyWord/{mr_code}")
+    public void mrKeyWordDelete(@PathVariable String mr_code){
+        log.info("삭제먼저함!!!!!!!!!!!!!!!!!!");
+        service.mrKeyWordDelete("'"+mr_code+"'");
+    }
+    @DeleteMapping("/supplies/{mr_code}")
+    public void mrSupplies(@PathVariable String mr_code){
+        spService.mrSuppliesDelete(mr_code);
     }
 }

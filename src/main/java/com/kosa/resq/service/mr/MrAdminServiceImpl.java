@@ -148,4 +148,14 @@ public class MrAdminServiceImpl implements MrAdminService {
         mapper.noticeUpdate(notice);
     }
 
+    @Override
+    public void mrKeyWordDelete(String mr_code) {
+        mapper.mrKeyWordDelete(mr_code);
+    }
+
+    @Override
+    public int checkIfMRCodeExists(String mr_code) {
+        return mapper.checkIfMRCodeExists(mr_code);
+    }
+
 }

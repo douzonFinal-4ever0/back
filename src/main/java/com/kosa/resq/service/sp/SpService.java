@@ -8,4 +8,6 @@ import java.util.List;
 public interface SpService {
     public List<SuppliesDTO> suppliesGetAll();
     public void mrSuppliesSave(MrSuppliesDTO mrSupplies);
+    public void mrSuppliesDelete(String mr_code);
+    public int checkIfMRCodeExists(String mr_code);
 }
