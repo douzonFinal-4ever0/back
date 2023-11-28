@@ -312,6 +312,20 @@
         </selectKey>
     </insert>
 
+<!-- 지출 등록하기 -->
+    <insert id="expenditureSave" parameterType="com.kosa.resq.domain.vo.car.MaintRecordRequestVO">
+        <selectKey keyProperty="exp_code" order="BEFORE" resultType="String">
+            select 'EXP'||expenditure_seq.nextval from dual
+        </selectKey>
+        insert into expenditure (
+        exp_code,exp_at,exp_content,cost,status,
+        created_at,account,ac_detail,pay_method,mem_code
+        ) values (
+        #{exp_code},#{maint_start_at},'차량 정비',#{maint_cost},'미승인' ,localtimestamp,
+        '차량유지비' ,'정비',#{pay_method},#{mem_code}
+        )
+    </insert>
+
     <insert id="maintImageSave" parameterType="String">
         INSERT INTO maint_img (img_code, maint_code, url) VALUES (maint_img_seq.nextval, #{maint_code}, #{url})
     </insert>
