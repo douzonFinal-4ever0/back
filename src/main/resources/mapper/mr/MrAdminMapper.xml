@@ -129,7 +129,7 @@
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
             left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
                  left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
-        order by m.MR_NAME
+        ORDER BY m.MR_TYPE ASC, m.MR_NAME ASC
         ]]>
     </select>
     <select id="mrGetOne" resultMap="mrMap" resultType="com.kosa.resq.domain.dto.mr.MrDTO">
