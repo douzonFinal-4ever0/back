@@ -25,7 +25,7 @@
     <resultMap id="mr_keywordMap" type="com.kosa.resq.domain.dto.mr.MrKeyWordDTO">
         <id property="keyword_code" column="keyword_code"/>
         <result property="keyword_name" column="keyword_name"/>
-<!--        <result property="mr_code" column="mr_code"/>-->
+        <result property="mr_code" column="mr_code"/>
     </resultMap>
     
     <resultMap id="mr_imgMap" type="com.kosa.resq.domain.dto.mr.MrImgDTO">
@@ -129,7 +129,7 @@
             left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
             left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
                  left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
-        order by m.MR_NAME
+        ORDER BY m.MR_TYPE ASC, m.MR_NAME ASC
         ]]>
     </select>
     <select id="mrGetOne" resultMap="mrMap" resultType="com.kosa.resq.domain.dto.mr.MrDTO">
@@ -141,7 +141,7 @@
                  left join MR_KEYWORD mk on m.MR_CODE = mk.MR_CODE
                  left join MR_SUPPLIES ms on m.MR_CODE = ms.MR_CODE
                  left join SUPPLIES s on ms.SUPPLIES_CODE = s.SUPPLIES_CODE
-        where m.MR_CODE = #{mr_code}
+        where m.MR_CODE = #{mr_code} AND s.supplies_code IS NOT NULL
         order by m.mr_code
         ]]>
     </select>
@@ -312,10 +312,10 @@
             (select 'R' || LPAD(TO_CHAR(MR_CODE_SEQ.currval), 3, '0') from dual)
         </if>, #{keyword_name})
     </insert>
-    <delete id="mrKeyWordDelete">
+    <delete id="mrKeyWordDelete" parameterType="String">
         delete
         from MR_KEYWORD
-        where KEYWORD_CODE=${keyword_code}
+        where MR_CODE=${mr_code}
     </delete>
     <insert id="mrImgSave">
         insert into MR_IMG (IMG_CODE, URL, MR_CODE)
@@ -366,9 +366,13 @@
     <delete id="mrImgDelete">
         delete
         from MR_IMG
-        where IMG_CODE=#{img_code}
+        where IMG_CODE= #{img_code}
     </delete>
 
-
+    <select id="checkIfMRCodeExists" resultType="int">
+        SELECT COUNT(*)
+        FROM MR_KEYWORD
+        WHERE MR_CODE = #{mr_code}
+    </select>
 
 </mapper>

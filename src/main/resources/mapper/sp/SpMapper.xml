@@ -33,4 +33,17 @@
         values (#{mr_code},#{supplies_code},1)
     </insert>
 
+    <delete id="mrSuppliesDelete">
+        delete
+        from MR_SUPPLIES
+        where MR_CODE =#{mr_code}
+    </delete>
+
+    <select id="checkIfMRCodeExists" resultType="int">
+        SELECT COUNT(*)
+        FROM MR_SUPPLIES
+        WHERE MR_CODE = #{mr_code}
+    </select>
+
+
 </mapper>

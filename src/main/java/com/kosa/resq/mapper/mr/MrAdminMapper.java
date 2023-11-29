@@ -36,5 +36,7 @@ public interface MrAdminMapper {
     public MrRezForQRDTO mrRezGetOne(String mr_rez_code);
     public List<MrRezParticipantDTO> mrRezPtGetAll(String mr_rez_code);
     public void noticeUpdate(NoticeDTO notice);
+    public void mrKeyWordDelete(String mr_code);
+    public int checkIfMRCodeExists(String mr_code);
 
 }

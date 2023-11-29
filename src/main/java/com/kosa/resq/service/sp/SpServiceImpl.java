@@ -21,4 +21,14 @@ public class SpServiceImpl implements SpService{
     public void mrSuppliesSave(MrSuppliesDTO mrSupplies) {
         mapper.mrSuppliesSave(mrSupplies);
     }
+
+    @Override
+    public void mrSuppliesDelete(String mr_code) {
+        mapper.mrSuppliesDelete(mr_code);
+    }
+
+    @Override
+    public int checkIfMRCodeExists(String mr_code) {
+        return mapper.checkIfMRCodeExists(mr_code);
+    }
 }
